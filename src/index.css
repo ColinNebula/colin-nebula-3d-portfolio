@@ -38,6 +38,23 @@
 	align-items: center;
 }
 
+.card:hover {
+	box-shadow: 5px 10px 20px 1px rgba(0,0,0,0.253)!important;
+}
+
+.rounded {
+	transform: scale(1);
+	transition:transform 0.6s ease;
+}
+
+.bg-dark-text-white-shadow-lg {
+	overflow: hidden;
+}
+
+.rounded:hover {
+	transform:scale(1.1);
+}
+
 html,
 body {
   min-height: 100%;
@@ -120,6 +137,7 @@ a {
 	justify-content: center;
 	align-items: center;
 	flex-direction: column;
+	padding:3rem 0 !important;
   }
   
   .img-col {

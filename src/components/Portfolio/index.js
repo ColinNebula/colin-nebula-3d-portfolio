@@ -51,7 +51,7 @@ function Portfolio() {
         </Card>
 
         <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto" }}>
-          <Card.Img src="https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Ffantasyartdesign.com%2F3dgallery%2Fa-digital%2F3D-images%2F0611abstract-weston%2Fabstract_3d_04.jpg&f=1&nofb=1&ipt=9538ccffea3d1c75525cca7662f66970907259e4ae50c106e3f6fd49e5faca0c&ipo=images/100px270" className="rounded" 
+          <Card.Img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.nutscomputergraphics.com%2Fwp-content%2Fuploads%2F2019%2F09%2FSkyup_Aurelium_with_MakingOf_1080p_Gatti-01143.jpg&f=1&nofb=1&ipt=4df5c5524953a49258af18112f70beb59ba3a56ba23e53ffdbe81939dc83b5b3&ipo=images/100px270" className="rounded" 
           alt="Card image" />
           <Card.Body>
             <Card.Title>Card title</Card.Title>
@@ -105,7 +105,7 @@ function Portfolio() {
         </Card>
 
         <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto" }}>
-          <Card.Img src="https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Ffantasyartdesign.com%2F3dgallery%2Fa-digital%2F3D-images%2F0611abstract-weston%2Fabstract_3d_04.jpg&f=1&nofb=1&ipt=9538ccffea3d1c75525cca7662f66970907259e4ae50c106e3f6fd49e5faca0c&ipo=images/100px270" className="rounded" 
+          <Card.Img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.nutscomputergraphics.com%2Fwp-content%2Fuploads%2F2019%2F09%2FSkyup_Aurelium_with_MakingOf_1080p_Gatti-01143.jpg&f=1&nofb=1&ipt=4df5c5524953a49258af18112f70beb59ba3a56ba23e53ffdbe81939dc83b5b3&ipo=images/100px270" className="rounded" 
           alt="Card image" />
           <Card.Body>
             <Card.Title>Card title</Card.Title>
