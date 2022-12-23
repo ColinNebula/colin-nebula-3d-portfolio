@@ -5,7 +5,7 @@ import React from 'react';
 // import PropaneTanks from '../../assets/images/Propane2.jpeg';
 // import HandGun from '../../assets/images/GRSDis_02.jpeg';
 // import Truck from '../../assets/images/TruckB_01.jpeg';
-import { Container, Row, Col, Card, Button } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button, NavDropdown } from 'react-bootstrap';
 import CardGroup from 'react-bootstrap/CardGroup';
 
 
@@ -13,6 +13,8 @@ function Portfolio() {
     return (
         <Container fluid>
             <Row>
+        <h2 class="middle_text"> Welcome to my portfolio</h2>
+        <NavDropdown.Divider />
         <Col>
       <CardGroup>
         <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto"}}>
@@ -67,6 +69,9 @@ function Portfolio() {
         </Card.Footer>
         </Card>
       </CardGroup>
+      <br />
+      <NavDropdown.Divider />
+      <br />
 
       <CardGroup>
         <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto"}}>
@@ -122,7 +127,11 @@ function Portfolio() {
         </Card>
       </CardGroup>
       </Col>
+      
       </Row>
+      <br />
+    <NavDropdown.Divider />
+    <br />  
     </Container>
     );
   }

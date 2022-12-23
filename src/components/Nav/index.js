@@ -33,10 +33,10 @@ function Navigation(props) {
               <span onClick={() => setCurrentTab("animation")}>Animation</span>
 
               </NavDropdown.Item>
-              <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
+              
               <NavDropdown.Divider />
-              <NavDropdown.Item href="#action/3.4">
-                Separated link
+              <NavDropdown.Item href="https://colinnebula3dartist.blogspot.com/">
+                VFX Portfolio
               </NavDropdown.Item>
             </NavDropdown>
           </Nav>

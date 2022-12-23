@@ -1,11 +1,13 @@
 import React from 'react';
 import { capitalizeFirstLetter } from '../../utils/helpers';
-import { Card, CardGroup, Container, Row, Col, Button } from 'react-bootstrap/';
+import { Card, CardGroup, Container, Row, Col, Button, NavDropdown } from 'react-bootstrap/';
 
 function Artwork() {
   return (
     <Container fluid>
       <Row>
+      <h2 class="top_text"> Welcome to my artwork </h2>
+      <NavDropdown.Divider />
         <Col ms={'auto'}>
     <CardGroup>
       <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto" }}>
@@ -53,7 +55,10 @@ function Artwork() {
       </Card>
     </CardGroup>
         </Col>
+      
       </Row>
+    <br />
+    <NavDropdown.Divider />  
     </Container>
   )
 }

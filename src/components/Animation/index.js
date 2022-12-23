@@ -2,7 +2,7 @@
 import React, {useState} from "react";
 // import OldBar from '../../assets/images/ACL_Bar_Dis4.jpeg';
 // import SniperRifle from '../../assets/images/SniperRifleTestxx6.jpg';
-import { Card, Container, Button, Col, Row, CardGroup } from 'react-bootstrap';
+import { Card, Container, Button, Col, Row, CardGroup, NavDropdown } from 'react-bootstrap';
 
 
 function Animation() {
@@ -10,6 +10,8 @@ function Animation() {
     return (
         <Container fluid>
             <Row>
+            <h2 class="top_text"> Welcome to Nebula 3D</h2>
+            <NavDropdown.Divider />
                 <Col ms={"auto"}>
                 <CardGroup>
                 <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto"}}>
@@ -61,7 +63,9 @@ function Animation() {
               </CardGroup>
         
         </Col>
-        </Row>
+      </Row>
+      <br />
+      <NavDropdown.Divider />
     </Container>
     )
 }

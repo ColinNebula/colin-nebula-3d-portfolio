@@ -48,9 +48,7 @@ function App() {
       <div>
       <main>{renderTab()}</main>
     </div>
-    <div>
-      <Footer></Footer>
-    </div>
+   
   </div>
 
   );

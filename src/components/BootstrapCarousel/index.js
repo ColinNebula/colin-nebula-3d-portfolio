@@ -49,7 +49,7 @@ export default function BootstrapCarousel() {
         alt="Colin Nebula's Old Bar Occlusion Layer"
       />
 
-      <Carousel.Caption>
+      <Carousel.Caption className="text-dark">
       <h3>Century Bar Occlusion Layer</h3>
       <p>Modeled in Maya and sculpted in Zbrush. Xnormal was used to bake
       the normal maps.</p>
