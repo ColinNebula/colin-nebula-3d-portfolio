@@ -1,18 +1,20 @@
 
 import React, {useState} from "react";
 // import OldBar from '../../assets/images/ACL_Bar_Dis4.jpeg';
-// import SniperRifle from '../../assets/images/SniperRifleTestxx6.jpg';
+import img4 from '../../assets/images/TruckB_01.jpg';
 import { Card, Container, Button, Col, Row, CardGroup, NavDropdown, Modal } from 'react-bootstrap';
 import { SocialIcon } from 'react-social-icons';
 
 function Animation() {
   const [lgShow, setLgShow] = useState(false);
+  const [lgShow1, setLgShow1] = useState(false);
+  const [lgShow2, setLgShow2] = useState(false);
 
     return (
         <Container fluid>
             <Row>
 
-            <div>
+        <div>
         <>
       <Modal
         size="lg"
@@ -33,8 +35,79 @@ function Animation() {
           Volutpat diam ut venenatis tellus in metus vulputate.
 
           </p>
-          <Card.Img src={(img4)} className="rounded" alt="Card image" />
-          <a href="https://react-bootstrap.github.io/components/modal/"></a>
+          <iframe width="640" height="360" src="https://www.youtube.com/embed/WcK6dYu5yI0" 
+          title="YouTube video player" frameborder="0" 
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+          allowfullscreen>
+          </iframe>
+        
+        </Modal.Body>
+      </Modal>
+    </>
+        </div>
+
+      <div>
+      <>
+      <Modal
+        size="lg"
+        show={lgShow1}
+        onHide={() => setLgShow1(false)}
+        aria-labelledby="example-modal-sizes-title-lg"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="example-modal-sizes-title-lg">
+            What we do
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+          Nibh cras pulvinar mattis nunc. Mollis aliquam ut porttitor leo a. 
+          Mattis ullamcorper velit sed ullamcorper morbi tincidunt ornare massa eget. 
+          Volutpat diam ut venenatis tellus in metus vulputate.
+
+          </p>
+          <iframe width="640" height="360" 
+          src="https://www.youtube.com/embed/lIrnDytiNxA" 
+          title="YouTube video player" 
+          frameborder="0" 
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+          allowfullscreen>
+          </iframe>
+        
+        </Modal.Body>
+      </Modal>
+    </>
+        </div>
+
+        <div>
+      <>
+      <Modal
+        size="lg"
+        show={lgShow2}
+        onHide={() => setLgShow2(false)}
+        aria-labelledby="example-modal-sizes-title-lg"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="example-modal-sizes-title-lg">
+            What we do
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+          Nibh cras pulvinar mattis nunc. Mollis aliquam ut porttitor leo a. 
+          Mattis ullamcorper velit sed ullamcorper morbi tincidunt ornare massa eget. 
+          Volutpat diam ut venenatis tellus in metus vulputate.
+
+          </p>
+          <iframe width="640" height="360" 
+          src="https://www.youtube.com/embed/zj8Vv7ln-r4" 
+          title="YouTube video player" 
+          frameborder="0" 
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+          allowfullscreen>
+          </iframe>
         
         </Modal.Body>
       </Modal>
@@ -56,7 +129,7 @@ function Animation() {
                     </Card.Text>
                   </Card.Body>
                   <Card.Footer>
-                  <Button variant="outline-primary" size="sm">View video here</Button>{' '}
+                  <Button variant="outline-primary" size="sm" onClick={() => setLgShow(true)}>View video here</Button>{' '}
                     
                   </Card.Footer>
                 </Card>
@@ -71,7 +144,7 @@ function Animation() {
                     </Card.Text>
                   </Card.Body>
                   <Card.Footer>
-                  <Button variant="outline-primary" size="sm">View video here</Button>{' '}
+                  <Button variant="outline-primary" size="sm"onClick={() => setLgShow1(true)}>View video here</Button>{' '}
                     
                   </Card.Footer>
                 </Card>
@@ -87,7 +160,7 @@ function Animation() {
                     </Card.Text>
                   </Card.Body>
                   <Card.Footer>
-                  <Button variant="outline-primary" size="sm">View video here</Button>{' '}
+                  <Button variant="outline-primary" size="sm" onClick={() => setLgShow2(true)}>View video here</Button>{' '}
                     
                   </Card.Footer>
                 </Card>

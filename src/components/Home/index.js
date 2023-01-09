@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Card, Container, Row, Col, CardGroup, NavDropdown, Modal, Button } from 'react-bootstrap';
 import maskm from '../../assets/images/maskm.png';
 import img4 from '../../assets/images/TruckB_01.jpg';
-import img5 from '../../assets/images/shield1.png';
+import demoR from '../../assets/images/3dModels.png';
 import { FaGithub, FaLinkedin, FaYoutube } from "react-icons/fa";
 import { SocialIcon } from 'react-social-icons';
 export const Home = () => {
@@ -53,19 +53,26 @@ export const Home = () => {
       >
         <Modal.Header closeButton>
           <Modal.Title id="example-modal-sizes-title-lg">
-            What we do
+          VFX Demo Reel
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-          Nibh cras pulvinar mattis nunc. Mollis aliquam ut porttitor leo a. 
-          Mattis ullamcorper velit sed ullamcorper morbi tincidunt ornare massa eget. 
-          Volutpat diam ut venenatis tellus in metus vulputate.
+          This VFX demo reel displays the work I participated in during my internship. First, the reel shows a 'Gomu' eraser TV commercial, which was a fun project preparing 2D and 3D product placement. I researched the types of products used, created concept art of the positioning of the items, 3D bubbles, 
+          and other aspects to help complete the project. 
+          Photoshop and Maya were used predominantly.
+          <br />
+          <br />
+          Second in the reel is the pilot for the 'Alphas' which is a SYFY TV show and hit series.
+          My job was to very precisely rotoscope the actor Bryant Cartwright, who plays Gary Bell, out of the green screen and into specific environments. 
+          This was accomplished utilizing Nuke primarily.
 
           </p>
-          <Card.Img src={(img4)} className="rounded" alt="Card image" />
-          <a href="https://react-bootstrap.github.io/components/modal/"></a>
+          <iframe width="640" height="360" src="https://www.youtube.com/embed/tFwtXZw_VzM" 
+          title="YouTube video player" frameborder="0" 
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+          allowfullscreen></iframe>
+      
         
         </Modal.Body>
       </Modal>
@@ -89,11 +96,12 @@ export const Home = () => {
     </Card>
 
     <h2 class="middle_text"> Colin Nebula 3D portfolio</h2>
+    <p> </p>
     <NavDropdown.Divider />
 
     <CardGroup>
     <Card className="overflow bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto" }}>
-      <Card.Img variant="top" src={img5} 
+      <Card.Img variant="top" src={demoR} 
       className="card-image rounded" 
       alt="Card image"/>
       <Card.Body>
@@ -112,14 +120,14 @@ export const Home = () => {
       <Card.Img variant="top" src={img4} className="card-image rounded" 
       alt="Card image"/>
       <Card.Body>
-        <Card.Title>Military Truck</Card.Title>
+        <Card.Title>VFX Demo Reel</Card.Title>
         <Card.Text>
           This card has supporting text below as a natural lead-in to
           additional content.{' '}
         </Card.Text>
       </Card.Body>
       <Card.Footer>
-      <Button variant="outline-primary" onClick={() => setLgShow1(true)}>View here</Button>{' '}
+      <Button variant="outline-primary" onClick={() => setLgShow1(true)}>View reel here</Button>{' '}
         
       </Card.Footer>
     </Card>

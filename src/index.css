@@ -67,11 +67,17 @@ footer {
 	padding: 5px;
 }
 
+.mid-p {
+	text-align: center;
+	color: white;
+	padding: 5px;
+}
+
 
 .middle_text {
 	text-align: center;
 	color: white;
-	padding: 20px;
+	padding: 10px;
 }
 
 html,

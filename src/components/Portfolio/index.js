@@ -106,6 +106,7 @@ function Portfolio() {
     </>
         </div>
         <h2 class="middle_text"> Welcome to my portfolio</h2>
+        <p class="top-p"> Here is a collection of objects modeled using various Industry 3D softwares</p>
         <NavDropdown.Divider />
         <Col>
       <CardGroup>
@@ -150,7 +151,7 @@ function Portfolio() {
           <Card.Body>
             <Card.Title>Riot Shield</Card.Title>
             <Card.Text>
-              This is a wider card with supporting text below as a natural lead-in
+              A shield modeled in Blender
               to additional content. This card has even longer content than the
               first to show that equal height action.
             </Card.Text>
@@ -164,6 +165,8 @@ function Portfolio() {
       <br />
       <NavDropdown.Divider />
       <br />
+      <h2 class="middle_text"> Industry software used on all projects</h2>
+      <p class="mid-p">Software used include Maya, Blander, nuke, fusion, Adobe After effects, Adobe Photoshop and Zbrush.</p>
 
       <CardGroup>
         <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto"}}>
@@ -179,7 +182,7 @@ function Portfolio() {
             </Card.Body>
             <Card.Footer>
             <Button variant="outline-primary" size="sm">View here</Button>{' '}
-            <small className="text-muted">Last updated 3 mins ago</small>
+            
             </Card.Footer>
         
         </Card>
@@ -197,7 +200,7 @@ function Portfolio() {
             </Card.Body>
             <Card.Footer>
             <Button variant="outline-primary" size="sm">View here</Button>{' '}
-            <small className="text-muted">Last updated 3 mins ago</small>
+            
           </Card.Footer>
         </Card>
 
@@ -214,7 +217,7 @@ function Portfolio() {
             </Card.Body>
         <Card.Footer>
           <Button variant="outline-primary" size="sm">View here</Button>{' '}
-          <small className="text-muted">Last updated 3 mins ago</small>
+          
         </Card.Footer>
         </Card>
       </CardGroup>
@@ -229,7 +232,7 @@ function Portfolio() {
     <Col>
     <SocialIcon url="https://github.com/ColinNebula" network="github" className="icon" />
     <SocialIcon url="https://www.linkedin.com/in/colin-nebula-07176022/" network="linkedin" className="icon" />
-    <SocialIcon url="mailto:colinnebula@gmail.com" network="mailto" />
+    <SocialIcon url="mailto:colinnebula@gmail.com" network="mailto" bgColor="#ff5a01" />
     </Col>
     </Row>
     </Container>
