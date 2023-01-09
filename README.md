@@ -2,7 +2,7 @@
 
 ## Description
 This webpage was made using React. 
-It was created to display my skills an 3D artist. 
+It was created to display my skills a 3D artist. 
 
 ## Table of Contents
   * [Description](#description)
