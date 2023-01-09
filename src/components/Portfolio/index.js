@@ -35,10 +35,9 @@ function Portfolio() {
         </Modal.Header>
         <Modal.Body>
           <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-          Nibh cras pulvinar mattis nunc. Mollis aliquam ut porttitor leo a. 
-          Mattis ullamcorper velit sed ullamcorper morbi tincidunt ornare massa eget. 
-          Volutpat diam ut venenatis tellus in metus vulputate.
+          Model of a mask. 
+          Blender was used to model, uv, and texture the objects. 
+          Painting was done in photoshop.
 
           </p>
           <Card.Img src={maskall} className="rounded" alt="Card image" />
@@ -58,15 +57,15 @@ function Portfolio() {
       >
         <Modal.Header closeButton>
           <Modal.Title id="example-modal-sizes-title-lg">
-            What we do
+            Old 20th Century bar
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-          Nibh cras pulvinar mattis nunc. Mollis aliquam ut porttitor leo a. 
-          Mattis ullamcorper velit sed ullamcorper morbi tincidunt ornare massa eget. 
-          Volutpat diam ut venenatis tellus in metus vulputate.
+          Model of a old 20 Centrury bar at night time. 
+          Maya was used to model, uv, and texture the objects. 
+          Painting was done in photoshop. 
+          
 
           </p>
           <Card.Img src={oldBar} className="rounded" alt="Card image" />
@@ -92,10 +91,9 @@ function Portfolio() {
         </Modal.Header>
         <Modal.Body>
           <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-          Nibh cras pulvinar mattis nunc. Mollis aliquam ut porttitor leo a. 
-          Mattis ullamcorper velit sed ullamcorper morbi tincidunt ornare massa eget. 
-          Volutpat diam ut venenatis tellus in metus vulputate.
+          Model of a crowd control shield. 
+          Blender was used to model, uv, and texture the objects. 
+          Painting was done in Adobe photoshop.
 
           </p>
           <Card.Img src={shield1} className="rounded" alt="Card image" />
@@ -116,9 +114,8 @@ function Portfolio() {
           <Card.Body>
             <Card.Title>Mask of Malice</Card.Title>
             <Card.Text>
-            This is a wider card with supporting text below as a natural lead-in
-            to additional content. This card has even longer content than the
-            first to show that equal height action.{' '}
+            This mask was modeled in Blender. Zbrush was used to add more details.
+            to additional content. {' '}
             </Card.Text>
             </Card.Body>
             <Card.Footer>
@@ -134,9 +131,9 @@ function Portfolio() {
           <Card.Body>
             <Card.Title>Old Bar</Card.Title>
             <Card.Text>
-            This is a wider card with supporting text below as a natural lead-in
-            to additional content. This card has even longer content than the
-            first to show that equal height action.{' '}
+            Utilizing my 3D knowledge to build complicated scenes.
+            to additional content. 
+            {' '}
             </Card.Text>
             </Card.Body>
             <Card.Footer>
@@ -153,7 +150,6 @@ function Portfolio() {
             <Card.Text>
               A shield modeled in Blender
               to additional content. This card has even longer content than the
-              first to show that equal height action.
             </Card.Text>
             </Card.Body>
         <Card.Footer>
@@ -176,8 +172,7 @@ function Portfolio() {
             <Card.Title>Card title</Card.Title>
             <Card.Text>
             This is a wider card with supporting text below as a natural lead-in
-            to additional content. This card has even longer content than the
-            first to show that equal height action.{' '}
+            to additional content. This card has even longer content than{' '}
             </Card.Text>
             </Card.Body>
             <Card.Footer>
@@ -194,8 +189,7 @@ function Portfolio() {
             <Card.Title>Card title</Card.Title>
             <Card.Text>
             This is a wider card with supporting text below as a natural lead-in
-            to additional content. This card has even longer content than the
-            first to show that equal height action.{' '}
+            to additional content. This card has even{' '}
             </Card.Text>
             </Card.Body>
             <Card.Footer>
@@ -211,8 +205,7 @@ function Portfolio() {
             <Card.Title>Card title</Card.Title>
             <Card.Text>
               This is a wider card with supporting text below as a natural lead-in
-              to additional content. This card has even longer content than the
-              first to show that equal height action.
+              to additional content. 
             </Card.Text>
             </Card.Body>
         <Card.Footer>
