@@ -24,15 +24,14 @@ function Animation() {
       >
         <Modal.Header closeButton>
           <Modal.Title id="example-modal-sizes-title-lg">
-            What we do
+            Logo Animation Demo
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-          Nibh cras pulvinar mattis nunc. Mollis aliquam ut porttitor leo a. 
-          Mattis ullamcorper velit sed ullamcorper morbi tincidunt ornare massa eget. 
-          Volutpat diam ut venenatis tellus in metus vulputate.
+          A short logo animation demo. 
+          Maya was used to model, uv, texture the objects.
+          Adobe After Effects was used to create color textures.
 
           </p>
           <iframe width="640" height="360" src="https://www.youtube.com/embed/WcK6dYu5yI0" 
@@ -56,15 +55,14 @@ function Animation() {
       >
         <Modal.Header closeButton>
           <Modal.Title id="example-modal-sizes-title-lg">
-            What we do
+            Facial Rigging Demo
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-          Nibh cras pulvinar mattis nunc. Mollis aliquam ut porttitor leo a. 
-          Mattis ullamcorper velit sed ullamcorper morbi tincidunt ornare massa eget. 
-          Volutpat diam ut venenatis tellus in metus vulputate.
+          A short facial rigging demo. Maya was used to model, uv, texture, and rig character. 
+          Zbrush was used to add details. 
+          Xnormal was used to extract the normal map.
 
           </p>
           <iframe width="640" height="360" 
@@ -90,15 +88,15 @@ function Animation() {
       >
         <Modal.Header closeButton>
           <Modal.Title id="example-modal-sizes-title-lg">
-            What we do
+            3D Model Headset Demo
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-          Nibh cras pulvinar mattis nunc. Mollis aliquam ut porttitor leo a. 
-          Mattis ullamcorper velit sed ullamcorper morbi tincidunt ornare massa eget. 
-          Volutpat diam ut venenatis tellus in metus vulputate.
+          A short logo animation demo. 
+          Maya was used to model, uv, texture the objects.
+          Photoshop was used to create color textures. 
+          
 
           </p>
           <iframe width="640" height="360" 
@@ -113,7 +111,7 @@ function Animation() {
       </Modal>
     </>
         </div>
-            <h2 class="top_text"> Animation and renders</h2>
+            <h2 class="top_text"> Animation and video renders</h2>
             <p class="top-p">Videos are rendered though a 3D software and worked on in post production, for added effects.</p>
             <NavDropdown.Divider />
                 <Col ms={"auto"}>
@@ -122,10 +120,10 @@ function Animation() {
                   <Card.Img variant="top" src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.sketchfab.com%2Fmodels%2F7327dc1dafa34222bb0e1f71d7c5102b%2Fthumbnails%2Fce8ded829a254046ba4e7e24f24fc53e%2F6b83033856604611a256e6b7c23a43c7.jpeg&f=1&nofb=1&ipt=250c39f9aae33b6f4167945527fbaeee25cbf59ce3394fcae089bc37b0c046df&ipo=images/100px160" className="rounded" 
                   alt="Card image" />
                   <Card.Body>
-                    <Card.Title>Card title</Card.Title>
+                    <Card.Title>Logo Animation</Card.Title>
                     <Card.Text>
-                      This is a wider card with supporting text below as a natural lead-in
-                      to additional content. This content is a little bit longer.
+                    A 3D model logo. 
+                    Maya was used to model, uv, and texture the object.
                     </Card.Text>
                   </Card.Body>
                   <Card.Footer>
@@ -137,10 +135,11 @@ function Animation() {
                   <Card.Img variant="top" src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwallup.net%2Fwp-content%2Fuploads%2F2018%2F10%2F04%2F147084-space-3d-art-planet-stars.jpg&f=1&nofb=1&ipt=5df166e91601e2a54f1c26a247a5d23404d941e1380df5bfa49d780c48c175cf&ipo=images/100px160" className="rounded" 
                   alt="Card image" />
                   <Card.Body>
-                    <Card.Title>Card title</Card.Title>
+                    <Card.Title>Lip sync and rigging</Card.Title>
                     <Card.Text>
-                      This card has supporting text below as a natural lead-in to
-                      additional content.gymry, dryruyoy  rdtydy{' '}
+                    Facial rigging demo. 
+                    Maya was used to model, uv, texture, and rig character.
+                    {' '}
                     </Card.Text>
                   </Card.Body>
                   <Card.Footer>
@@ -152,11 +151,11 @@ function Animation() {
                   <Card.Img variant="top" src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwallup.net%2Fwp-content%2Fuploads%2F2017%2F03%2F27%2F440249-abstract-3D.jpg&f=1&nofb=1&ipt=43290cf58251f642eedd14c190f9b82c7a1557e22ba6d8c8c0167a63203ddaea&ipo=images/100px160" className="rounded" 
                   alt="Card image" />
                   <Card.Body>
-                    <Card.Title>Card title</Card.Title>
+                    <Card.Title>Photorealistic modeling</Card.Title>
                     <Card.Text>
-                      This is a wider card with supporting text below as a natural lead-in
-                      to additional content. This card has even longer content than the
-                      first to show that equal height action.
+                      A 3D model headset. 
+                      Blender was used to model, uv, and texture the object.
+                      
                     </Card.Text>
                   </Card.Body>
                   <Card.Footer>
