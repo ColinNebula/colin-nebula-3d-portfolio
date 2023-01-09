@@ -1,8 +1,9 @@
 import React from 'react';
 import { FaGithub, FaLinkedin, FaYoutube } from "react-icons/fa";
-
+// import { Card, Container, Row, Col, CardGroup, NavDropdown, Modal, Button } from 'react-bootstrap';
 function Footer() {
     return (
+        
             <div className="footer">
                 <footer>
                         <a href="https://github.com/ColinNebula" target="blank" rel="noopener noreferrer">
@@ -20,18 +21,15 @@ function Footer() {
                                 <FaYoutube />
                             </li>
                         </a>
-                    
-                        
                         <div>
-                        
-        
-                        <a href="#"><i class="fa fa-home fa-fw" aria-hidden="true"></i>&nbsp;Home</a>
+                        <a href="/"><i class="fa fa-home fa-fw" aria-hidden="true"></i>&nbsp;Home</a>
                         <br/>
                         
                         &copy; 2022 <a href="mailto:colinnebula@gmail.com">colinnebula@gmail.com</a>
                         </div>
                 </footer>
             </div>
+        
         );
     }
 

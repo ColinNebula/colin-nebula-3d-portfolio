@@ -1,47 +1,140 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { capitalizeFirstLetter } from '../../utils/helpers';
-import { Card, CardGroup, Container, Row, Col, Button, NavDropdown } from 'react-bootstrap/';
-
+import { Card, CardGroup, Container, Row, Col, Button, NavDropdown, Modal } from 'react-bootstrap/';
+import img1 from '../../assets/images/LifeDrawingWeb_05.jpg';
+import img2 from '../../assets/images/LifeDrawingWeb_03.jpg';
+import img3 from '../../assets/images/LifeDrawingWeb_06.jpg';
+import { SocialIcon } from 'react-social-icons';
 function Artwork() {
+  const [lgShow, setLgShow] = useState(false);
+  const [lgShow1, setLgShow1] = useState(false);
+  const [lgShow2, setLgShow2] = useState(false);
   return (
     <Container fluid>
       <Row>
-      <h2 class="top_text"> Welcome to my artwork </h2>
+
+      <div>
+        <>
+      <Modal
+        size="lg"
+        show={lgShow}
+        onHide={() => setLgShow(false)}
+        aria-labelledby="example-modal-sizes-title-lg"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="example-modal-sizes-title-lg">
+            What we do
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+          Nibh cras pulvinar mattis nunc. Mollis aliquam ut porttitor leo a. 
+          Mattis ullamcorper velit sed ullamcorper morbi tincidunt ornare massa eget. 
+          Volutpat diam ut venenatis tellus in metus vulputate.
+
+          </p>
+          <Card.Img src={img1} className="rounded" alt="Card image" />
+          <a href="https://react-bootstrap.github.io/components/modal/"></a>
+        
+        </Modal.Body>
+      </Modal>
+    </>
+        </div>
+
+        <div>
+        <>
+      <Modal
+        size="lg"
+        show={lgShow1}
+        onHide={() => setLgShow1(false)}
+        aria-labelledby="example-modal-sizes-title-lg"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="example-modal-sizes-title-lg">
+            What we do
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+          Nibh cras pulvinar mattis nunc. Mollis aliquam ut porttitor leo a. 
+          Mattis ullamcorper velit sed ullamcorper morbi tincidunt ornare massa eget. 
+          Volutpat diam ut venenatis tellus in metus vulputate.
+
+          </p>
+          <Card.Img src={img2} className="rounded" alt="Card image" />
+          <a href="https://react-bootstrap.github.io/components/modal/"></a>
+        
+        </Modal.Body>
+      </Modal>
+    </>
+        </div>
+
+        <div>
+        <>
+      <Modal
+        size="lg"
+        show={lgShow2}
+        onHide={() => setLgShow2(false)}
+        aria-labelledby="example-modal-sizes-title-lg"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="example-modal-sizes-title-lg">
+            What we do
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+          Nibh cras pulvinar mattis nunc. Mollis aliquam ut porttitor leo a. 
+          Mattis ullamcorper velit sed ullamcorper morbi tincidunt ornare massa eget. 
+          Volutpat diam ut venenatis tellus in metus vulputate.
+
+          </p>
+          <Card.Img src={(img3)} className="rounded" alt="Card image" />
+          <a href="https://react-bootstrap.github.io/components/modal/"></a>
+        
+        </Modal.Body>
+      </Modal>
+    </>
+        </div>
+      <h2 class="top_text"> 2D Artwork and life drawing </h2>
       <NavDropdown.Divider />
         <Col ms={'auto'}>
     <CardGroup>
       <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto" }}>
-        <Card.Img variant="top" src="https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2F3dprintingindustry.com%2Fwp-content%2Fuploads%2F2016%2F04%2Fart-1024x646.jpg&f=1&nofb=1&ipt=e82d698b474310c5c554b98fb0fe2c20d4ea257a9ad0a71b46971df08424b4a8&ipo=images/100px160" className="rounded" alt="Card image" />
+        <Card.Img variant="top" src={img1} className="rounded" alt="Card image" />
         <Card.Body>
-          <Card.Title>Card title</Card.Title>
+          <Card.Title>5 Minute pose </Card.Title>
           <Card.Text>
             This is a wider card with supporting text below as a natural lead-in
             to additional content. This content is a little bit longer.
           </Card.Text>
         </Card.Body>
         <Card.Footer>
-          <Button variant="outline-primary" size="sm">Primary</Button>{' '}
-          <small className="text-muted">Last updated 3 mins ago</small>
+          <Button variant="outline-primary" size="sm" onClick={() => setLgShow(true)}>View here</Button>{' '}
+          
         </Card.Footer>
       </Card>
       <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto" }}>
-        <Card.Img variant="top" src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fpapers.co%2Fwallpaper%2Fpapers.co-bb01-digital-art-color-circle-illustration-art-3d-36-3840x2400-4k-wallpaper.jpg&f=1&nofb=1&ipt=4bb59499184508c353be1d1a59723aedff9cc79fbcc78ed44441f56de893db23&ipo=images/100px160" className="rounded" alt="Card image" />
+        <Card.Img variant="top" src={img2} className="rounded" alt="Card image" />
         <Card.Body>
-          <Card.Title>Card title</Card.Title>
+          <Card.Title>One minute pose</Card.Title>
           <Card.Text>
             This card has supporting text below as a natural lead-in to
             additional content.{' '}
           </Card.Text>
         </Card.Body>
         <Card.Footer>
-        <Button variant="outline-primary" size="sm">Primary</Button>{' '}
-          <small className="text-muted">Last updated 3 mins ago</small>
+        <Button variant="outline-primary" size="sm" onClick={() => setLgShow1(true)}>View Here</Button>{' '}
+          
         </Card.Footer>
       </Card>
       <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto" }}>
-        <Card.Img variant="top" src="https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fwww.pixelstalk.net%2Fwp-content%2Fuploads%2F2016%2F09%2F3D-Abstract-Art-Background.jpg&f=1&nofb=1&ipt=ca9a6421535ff0b5222c200a37f84cdc4d30bdcf4cc08f33a0753af60dbd3c68&ipo=images/100px160" className="rounded" alt="Card image" />
+        <Card.Img variant="top" src={img3} className="rounded" alt="Card image" />
         <Card.Body>
-          <Card.Title>Card title</Card.Title>
+          <Card.Title>One minute pose</Card.Title>
           <Card.Text>
             This is a wider card with supporting text below as a natural lead-in
             to additional content. This card has even longer content than the
@@ -49,8 +142,8 @@ function Artwork() {
           </Card.Text>
         </Card.Body>
         <Card.Footer>
-        <Button variant="outline-primary" size="sm">Primary</Button>{' '}
-          <small className="text-muted">Last updated 3 mins ago</small>
+        <Button variant="outline-primary" size="sm" onClick={() => setLgShow2(true)}>View here</Button>{' '}
+          
         </Card.Footer>
       </Card>
     </CardGroup>
@@ -59,6 +152,11 @@ function Artwork() {
       </Row>
     <br />
     <NavDropdown.Divider />  
+    <div className="icons">
+    <SocialIcon url="https://github.com/ColinNebula" network="github"  />
+    <SocialIcon url="https://www.linkedin.com/in/colin-nebula-07176022/" network="linkedin" />
+    <SocialIcon url="mailto:colinnebula@gmail.com" network="mailto" />
+    </div>
     </Container>
   )
 }

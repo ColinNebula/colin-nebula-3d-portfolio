@@ -1,10 +1,27 @@
 import React from 'react'
 
 import { Carousel } from "react-bootstrap"
+import shield1 from '../../assets/images/shield1.png';
+import maskall from '../../assets/images/maskall.png';
 export default function BootstrapCarousel() {
   return (
     <div>
     <Carousel>
+
+    <Carousel.Item>
+      <img
+        className="d-block w-100 h-100 carousel-fade" data-bs-interval="10000"
+        src={maskall}
+        alt="Colin Nebula's Mask"
+      />
+      
+  
+      <Carousel.Caption>
+        <h3>Mask of Malice</h3>
+        <p>Modeled in Blender and sculpted in Zbrush. </p>
+      </Carousel.Caption>
+    </Carousel.Item>
+
     <Carousel.Item>
       <img
         className="d-block w-100 h-100"
@@ -108,6 +125,22 @@ export default function BootstrapCarousel() {
         the normal maps.</p>
       </Carousel.Caption>
     </Carousel.Item>
+
+    <Carousel.Item>
+      <img
+        className="d-block w-100 h-100 carousel-fade" data-bs-interval="10000"
+        src={shield1}
+        alt="Colin Nebula's Mask"
+      />
+      
+  
+      <Carousel.Caption>
+        <h3>Riot Shield</h3>
+        <p>Modeled in Blender and sculpted in Zbrush. </p>
+      </Carousel.Caption>
+    </Carousel.Item>
+
+    
   </Carousel>
     </div>
   )

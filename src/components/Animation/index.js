@@ -2,15 +2,46 @@
 import React, {useState} from "react";
 // import OldBar from '../../assets/images/ACL_Bar_Dis4.jpeg';
 // import SniperRifle from '../../assets/images/SniperRifleTestxx6.jpg';
-import { Card, Container, Button, Col, Row, CardGroup, NavDropdown } from 'react-bootstrap';
-
+import { Card, Container, Button, Col, Row, CardGroup, NavDropdown, Modal } from 'react-bootstrap';
+import { SocialIcon } from 'react-social-icons';
 
 function Animation() {
+  const [lgShow, setLgShow] = useState(false);
 
     return (
         <Container fluid>
             <Row>
-            <h2 class="top_text"> Welcome to Nebula 3D</h2>
+
+            <div>
+        <>
+      <Modal
+        size="lg"
+        show={lgShow}
+        onHide={() => setLgShow(false)}
+        aria-labelledby="example-modal-sizes-title-lg"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="example-modal-sizes-title-lg">
+            What we do
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+          Nibh cras pulvinar mattis nunc. Mollis aliquam ut porttitor leo a. 
+          Mattis ullamcorper velit sed ullamcorper morbi tincidunt ornare massa eget. 
+          Volutpat diam ut venenatis tellus in metus vulputate.
+
+          </p>
+          <Card.Img src={(img4)} className="rounded" alt="Card image" />
+          <a href="https://react-bootstrap.github.io/components/modal/"></a>
+        
+        </Modal.Body>
+      </Modal>
+    </>
+        </div>
+            <h2 class="top_text"> Animation and renders</h2>
+            <p class="top-p">Videos are rendered though a 3D software and worked on in post production, for added effects.</p>
             <NavDropdown.Divider />
                 <Col ms={"auto"}>
                 <CardGroup>
@@ -25,8 +56,8 @@ function Animation() {
                     </Card.Text>
                   </Card.Body>
                   <Card.Footer>
-                  <Button variant="outline-primary" size="sm">Video</Button>{' '}
-                    <small className="text-muted">Last updated 3 mins ago</small>
+                  <Button variant="outline-primary" size="sm">View video here</Button>{' '}
+                    
                   </Card.Footer>
                 </Card>
                 <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto"}}>
@@ -40,8 +71,8 @@ function Animation() {
                     </Card.Text>
                   </Card.Body>
                   <Card.Footer>
-                  <Button variant="outline-primary" size="sm">Video</Button>{' '}
-                    <small className="text-muted">Last updated 3 mins ago</small>
+                  <Button variant="outline-primary" size="sm">View video here</Button>{' '}
+                    
                   </Card.Footer>
                 </Card>
                 <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto" }}>
@@ -56,8 +87,8 @@ function Animation() {
                     </Card.Text>
                   </Card.Body>
                   <Card.Footer>
-                  <Button variant="outline-primary" size="sm">Video</Button>{' '}
-                    <small className="text-muted">Last updated 3 mins ago</small>
+                  <Button variant="outline-primary" size="sm">View video here</Button>{' '}
+                    
                   </Card.Footer>
                 </Card>
               </CardGroup>
@@ -66,6 +97,13 @@ function Animation() {
       </Row>
       <br />
       <NavDropdown.Divider />
+      <div>
+    <SocialIcon url="https://github.com/ColinNebula" network="github"  />
+
+    <SocialIcon url="https://www.linkedin.com/in/colin-nebula-07176022/" network="linkedin" />
+
+    <SocialIcon url="mailto:colinnebula@gmail.com" network="mailto" bgColor="#ff5a01" />
+    </div>
     </Container>
     )
 }

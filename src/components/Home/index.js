@@ -1,54 +1,126 @@
-import React from 'react'
-import { Card, Container, Row, Col, CardGroup, NavDropdown } from 'react-bootstrap';
-
+import React, { useState } from 'react'
+import { Card, Container, Row, Col, CardGroup, NavDropdown, Modal, Button } from 'react-bootstrap';
+import maskm from '../../assets/images/maskm.png';
+import img4 from '../../assets/images/TruckB_01.jpg';
+import img5 from '../../assets/images/shield1.png';
+import { FaGithub, FaLinkedin, FaYoutube } from "react-icons/fa";
+import { SocialIcon } from 'react-social-icons';
 export const Home = () => {
+  const [lgShow, setLgShow] = useState(false);
+  const [lgShow1, setLgShow1] = useState(false);
   return (
     <Container fluid>
       <Row>
+      <div>
+        <>
+      <Modal
+        size="lg"
+        show={lgShow}
+        onHide={() => setLgShow(false)}
+        aria-labelledby="example-modal-sizes-title-lg"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="example-modal-sizes-title-lg">
+            2014 Demo Reel
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>
+          Objects were modeled, Uv, Textured in Maya 3d software. 
+          Sculpted in Zbrush and painted in photoshop. 
+          Post effects were done using fusion.
+
+          </p>
+          <iframe width="640" height="360" src="https://www.youtube.com/embed/1BP8ezuSDT4" 
+          title="YouTube video player" 
+          frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+          allowfullscreen></iframe>
+          
+          <a href="https://react-bootstrap.github.io/components/modal/"></a>
+        
+        </Modal.Body>
+      </Modal>
+    </>
+        </div>
+
+        <div>
+        <>
+      <Modal
+        size="lg"
+        show={lgShow1}
+        onHide={() => setLgShow1(false)}
+        aria-labelledby="example-modal-sizes-title-lg"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="example-modal-sizes-title-lg">
+            What we do
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+          Nibh cras pulvinar mattis nunc. Mollis aliquam ut porttitor leo a. 
+          Mattis ullamcorper velit sed ullamcorper morbi tincidunt ornare massa eget. 
+          Volutpat diam ut venenatis tellus in metus vulputate.
+
+          </p>
+          <Card.Img src={(img4)} className="rounded" alt="Card image" />
+          <a href="https://react-bootstrap.github.io/components/modal/"></a>
+        
+        </Modal.Body>
+      </Modal>
+    </>
+        </div>  
       <h2 class="top_text"> Welcome to Nebula 3D</h2>
+      <p class="top-p"> My name is Colin Nebula and I am a 3D Artist and a computer enthusiast. </p>
       <NavDropdown.Divider />
         <Col ms={'auto'}>
-    <Card className="overflow bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto" }}>
-      <Card.Img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fdesign4users.com%2Fwp-content%2Fuploads%2F2019%2F06%2Falex-kuskov-3d-art-1.jpg&f=1&nofb=1&ipt=d2826d405690126291673d6c5607829c17541fa302f5195335d0a985ebda91f6&ipo=images/100px270" className="card-image rounded" 
+    <Card className=" bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto" }}>
+      <Card.Img src={maskm} className="card-image rounded" 
       alt="Card image" />
       <Card.ImgOverlay>
-        <Card.Title>Card title</Card.Title>
+        <Card.Title>Mask of Malice</Card.Title>
         <Card.Text>
-          This is a wider card with supporting text below as a natural lead-in
-          to additional content. This content is a little bit longer.
+          This Mask is a high ploy mesh. It was modeled, Uv, normal maps, and texture using blender.
+          ZBrush was used to add detail. Photoshop was used for color and grunge mapping.
         </Card.Text>
-        <Card.Text>Last updated 3 mins ago</Card.Text>
+        
       </Card.ImgOverlay>
     </Card>
 
-    <h2 class="middle_text"> Welcome to Nebula 3D</h2>
+    <h2 class="middle_text"> Colin Nebula 3D portfolio</h2>
     <NavDropdown.Divider />
 
     <CardGroup>
     <Card className="overflow bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto" }}>
-      <Card.Img variant="top" src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.ZBXzE3Lsa6lVA0dkRd66TwHaEK%26pid%3DApi&f=1&ipt=2a2a7795d8df817207f1325abc61a3a333529ba4f003e8014338ebb476ff9330&ipo=images/100px160" />
+      <Card.Img variant="top" src={img5} 
+      className="card-image rounded" 
+      alt="Card image"/>
       <Card.Body>
-        <Card.Title>Card title</Card.Title>
+        <Card.Title>Demo Reel</Card.Title>
         <Card.Text>
-          This is a wider card with supporting text below as a natural lead-in
-          to additional content. This content is a little bit longer.
+        This Demo Reel displays my 3D Modeling and Texturing skills utilizing industry software.
+        Some of the programs used include Autodesk Maya, Photoshop, xNormal, and After Effects.
         </Card.Text>
       </Card.Body>
       <Card.Footer>
-        <small className="text-muted">Last updated 3 mins ago</small>
+      <Button variant="outline-primary" onClick={() => setLgShow(true)}>View reel here</Button>{' '}
+        
       </Card.Footer>
     </Card>
     <Card className="overflow bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto" }}>
-      <Card.Img variant="top" src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.JEO6_HmvVUDbW4-m7k8LHQHaEK%26pid%3DApi&f=1&ipt=8cc6817c9f24b620799f6268f369c30d5b3104953c2ac86695c313231727d2ef&ipo=images/100px160" />
+      <Card.Img variant="top" src={img4} className="card-image rounded" 
+      alt="Card image"/>
       <Card.Body>
-        <Card.Title>Card title</Card.Title>
+        <Card.Title>Military Truck</Card.Title>
         <Card.Text>
           This card has supporting text below as a natural lead-in to
           additional content.{' '}
         </Card.Text>
       </Card.Body>
       <Card.Footer>
-        <small className="text-muted">Last updated 3 mins ago</small>
+      <Button variant="outline-primary" onClick={() => setLgShow1(true)}>View here</Button>{' '}
+        
       </Card.Footer>
     </Card>
     </CardGroup>
@@ -56,6 +128,20 @@ export const Home = () => {
     </Row>
     <br />
     <NavDropdown.Divider />
+    <Container fluid>
+    <Row>
+    <Col className="icons">
+    <div>
+    <SocialIcon url="https://github.com/ColinNebula" network="github"  />
+
+    <SocialIcon url="https://www.linkedin.com/in/colin-nebula-07176022/" network="linkedin" />
+
+    <SocialIcon url="mailto:colinnebula@gmail.com" network="mailto" bgColor="#ff5a01" />
+    </div>
+    </Col>
+    </Row>
+    
+    </Container>
     </Container>
     
   );
