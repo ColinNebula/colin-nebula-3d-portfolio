@@ -1,7 +1,9 @@
 
 import React, {useState} from "react";
 // import OldBar from '../../assets/images/ACL_Bar_Dis4.jpeg';
-import img4 from '../../assets/images/TruckB_01.jpg';
+import shapeAnimation from '../../assets/images/shapeAnimation.png';
+import logoD from '../../assets/images/logoD.png';
+import rigging from '../../assets/images/rigging.png';
 import { Card, Container, Button, Col, Row, CardGroup, NavDropdown, Modal } from 'react-bootstrap';
 import { SocialIcon } from 'react-social-icons';
 
@@ -88,19 +90,19 @@ function Animation() {
       >
         <Modal.Header closeButton>
           <Modal.Title id="example-modal-sizes-title-lg">
-            3D Model Headset Demo
+            2D Shape Animation
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <p>
-          A short logo animation demo. 
-          Maya was used to model, uv, texture the objects.
-          Photoshop was used to create color textures. 
+          This is a short 2D animation using different shapes. 
+          Adobe After Effects is the software used in the project.
+          
           
 
           </p>
-          <iframe width="640" height="360" 
-          src="https://www.youtube.com/embed/zj8Vv7ln-r4" 
+          <iframe width="560" height="315" 
+          src="https://www.youtube.com/embed/FVVFcjpg5eA" 
           title="YouTube video player" 
           frameborder="0" 
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
@@ -117,7 +119,7 @@ function Animation() {
                 <Col ms={"auto"}>
                 <CardGroup>
                 <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto"}}>
-                  <Card.Img variant="top" src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.sketchfab.com%2Fmodels%2F7327dc1dafa34222bb0e1f71d7c5102b%2Fthumbnails%2Fce8ded829a254046ba4e7e24f24fc53e%2F6b83033856604611a256e6b7c23a43c7.jpeg&f=1&nofb=1&ipt=250c39f9aae33b6f4167945527fbaeee25cbf59ce3394fcae089bc37b0c046df&ipo=images/100px160" className="rounded" 
+                  <Card.Img variant="top" src={logoD} className="rounded" 
                   alt="Card image" />
                   <Card.Body>
                     <Card.Title>Logo Animation</Card.Title>
@@ -132,7 +134,7 @@ function Animation() {
                   </Card.Footer>
                 </Card>
                 <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto"}}>
-                  <Card.Img variant="top" src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwallup.net%2Fwp-content%2Fuploads%2F2018%2F10%2F04%2F147084-space-3d-art-planet-stars.jpg&f=1&nofb=1&ipt=5df166e91601e2a54f1c26a247a5d23404d941e1380df5bfa49d780c48c175cf&ipo=images/100px160" className="rounded" 
+                  <Card.Img variant="top" src={rigging} className="rounded" 
                   alt="Card image" />
                   <Card.Body>
                     <Card.Title>Lip sync and rigging</Card.Title>
@@ -148,12 +150,12 @@ function Animation() {
                   </Card.Footer>
                 </Card>
                 <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto" }}>
-                  <Card.Img variant="top" src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwallup.net%2Fwp-content%2Fuploads%2F2017%2F03%2F27%2F440249-abstract-3D.jpg&f=1&nofb=1&ipt=43290cf58251f642eedd14c190f9b82c7a1557e22ba6d8c8c0167a63203ddaea&ipo=images/100px160" className="rounded" 
+                  <Card.Img variant="top" src={shapeAnimation} className="rounded" 
                   alt="Card image" />
                   <Card.Body>
-                    <Card.Title>Photorealistic modeling</Card.Title>
+                    <Card.Title>2D Shape Animation</Card.Title>
                     <Card.Text>
-                      A 3D model headset. 
+                      Utilizing shapes and lines to  
                       Blender was used to model, uv, and texture the object.
                       
                     </Card.Text>
