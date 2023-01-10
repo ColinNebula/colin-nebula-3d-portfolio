@@ -3,7 +3,7 @@ import { Card, Container, Row, Col, CardGroup, NavDropdown, Modal, Button } from
 import maskm from '../../assets/images/maskm.png';
 import img4 from '../../assets/images/TruckB_01.jpg';
 import demoR from '../../assets/images/3dModels.png';
-import { FaGithub, FaLinkedin, FaYoutube } from "react-icons/fa";
+// import { FaGithub, FaLinkedin, FaYoutube } from "react-icons/fa";
 import { SocialIcon } from 'react-social-icons';
 export const Home = () => {
   const [lgShow, setLgShow] = useState(false);
@@ -31,12 +31,11 @@ export const Home = () => {
           Post effects were done using fusion.
 
           </p>
-          <iframe width="640" height="360" src="https://www.youtube.com/embed/1BP8ezuSDT4" 
+          <iframe width="640" height="360" class="iframe" src="https://www.youtube.com/embed/1BP8ezuSDT4" 
           title="YouTube video player" 
           frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-          allowfullscreen></iframe>
-          
-          <a href="https://react-bootstrap.github.io/components/modal/"></a>
+          allowfullscreen>
+          </iframe>
         
         </Modal.Body>
       </Modal>

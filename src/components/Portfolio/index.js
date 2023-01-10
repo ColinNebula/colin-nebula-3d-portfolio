@@ -171,8 +171,8 @@ function Portfolio() {
           <Card.Body>
             <Card.Title>Military Truck</Card.Title>
             <Card.Text>
-            This is a wider card with supporting text below as a natural lead-in
-            to additional content. This card has even longer content than{' '}
+            This 3D military truck model was designed, modeled, textured in Maya 3D software.
+            {' '}
             </Card.Text>
             </Card.Body>
             <Card.Footer>
@@ -188,8 +188,9 @@ function Portfolio() {
           <Card.Body>
             <Card.Title>3D Model</Card.Title>
             <Card.Text>
-            This is a wider card with supporting text below as a natural lead-in
-            to additional content. This card has even{' '}
+            3D face mask.
+            modeled, Uv, and textured in Blender.
+            Sculpted and added details using ZBrush{' '}
             </Card.Text>
             </Card.Body>
             <Card.Footer>

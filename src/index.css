@@ -73,6 +73,12 @@ footer {
 	padding: 5px;
 }
 
+.iframe {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
 
 .middle_text {
 	text-align: center;
