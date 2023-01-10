@@ -5,6 +5,7 @@ import shield1 from '../../assets/images/shield1.png';
 // import TacticalKnife from '../../assets/images/SurvivalKnife_Dis.jpg';
 // import Truck from '../../assets/images/TruckB_01.jpeg';
 import maskm from '../../assets/images/maskm.png';
+import maskSide from '../../assets/images/maskSide.png';
 import maskall from '../../assets/images/maskall.png';
 import shield from '../../assets/images/shield.png';
 import { Container, Row, Col, Card, Button, NavDropdown, Modal } from 'react-bootstrap';
@@ -182,7 +183,7 @@ function Portfolio() {
         </Card>
 
         <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto" }}>
-          <Card.Img  src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwallup.net%2Fwp-content%2Fuploads%2F2016%2F01%2F271719-digital_art-abstract-colorful-CGI-geometry-lines-3D-circle.jpg&f=1&nofb=1&ipt=fd56c62c702903a9e04ca4d664995aacc6881e58a791ba3b30a0cfc246a2bc25&ipo=images/100px270" className="rounded"
+          <Card.Img  src={maskSide} className="rounded"
           alt="Card image"/>
           <Card.Body>
             <Card.Title>Card title</Card.Title>
