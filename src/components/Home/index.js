@@ -123,8 +123,9 @@ export const Home = () => {
       <Card.Body>
         <Card.Title>VFX Demo Reel</Card.Title>
         <Card.Text>
-          This card has supporting text below as a natural lead-in to
-          additional content.{' '}
+          This video reel displays post production effect. 
+          It contains some of the work I was task with at Intelligent Creatures.
+          {' '}
         </Card.Text>
       </Card.Body>
       <Card.Footer>

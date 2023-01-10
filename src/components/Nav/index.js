@@ -10,7 +10,7 @@ function Navigation(props) {
   return (
     <Navbar bg="dark" expand="md" variant="dark" sticky="top" collapseOnSelect>
       <Container>
-        <Navbar.Brand href="/home">
+        <Navbar.Brand href="home">
         <img src={logo} width="90px" height="40px" alt="logo" />
         Colin Nebula 3D 
         </Navbar.Brand>

@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import oldBar from '../../assets/images/oldBar.png';
 import oldBarAo from '../../assets/images/oldBarAo.png';
 import shield1 from '../../assets/images/shield1.png';
-// import TacticalKnife from '../../assets/images/SurvivalKnife_Dis.jpg';
-// import Truck from '../../assets/images/TruckB_01.jpeg';
+import tacticalK from '../../assets/images/tacticalK.png';
+import truck from '../../assets/images/truck.png';
 import maskm from '../../assets/images/maskm.png';
 import maskSide from '../../assets/images/maskSide.png';
 import maskall from '../../assets/images/maskall.png';
@@ -87,7 +87,7 @@ function Portfolio() {
       >
         <Modal.Header closeButton>
           <Modal.Title id="example-modal-sizes-title-lg">
-            What we do
+            3D Riot Shield
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -132,7 +132,7 @@ function Portfolio() {
             <Card.Title>Old Bar</Card.Title>
             <Card.Text>
             Utilizing my 3D knowledge to build complicated scenes.
-            to additional content. 
+           
             {' '}
             </Card.Text>
             </Card.Body>
@@ -148,8 +148,8 @@ function Portfolio() {
           <Card.Body>
             <Card.Title>Riot Shield</Card.Title>
             <Card.Text>
-              A shield modeled in Blender
-              to additional content. This card has even longer content than the
+              A shield modeled in Blender.
+              
             </Card.Text>
             </Card.Body>
         <Card.Footer>
@@ -166,10 +166,10 @@ function Portfolio() {
 
       <CardGroup>
         <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto"}}>
-          <Card.Img  variant="top" src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages4.alphacoders.com%2F116%2F116386.jpg&f=1&nofb=1&ipt=33b66a54d8d03fa8c53694367977d382b16469c022d23693fda90edd32381bc5&ipo=images/100px270" className="rounded"
+          <Card.Img  src={truck} className="rounded"
           alt="Card image" />
           <Card.Body>
-            <Card.Title>Card title</Card.Title>
+            <Card.Title>Military Truck</Card.Title>
             <Card.Text>
             This is a wider card with supporting text below as a natural lead-in
             to additional content. This card has even longer content than{' '}
@@ -186,7 +186,7 @@ function Portfolio() {
           <Card.Img  src={maskSide} className="rounded"
           alt="Card image"/>
           <Card.Body>
-            <Card.Title>Card title</Card.Title>
+            <Card.Title>3D Model</Card.Title>
             <Card.Text>
             This is a wider card with supporting text below as a natural lead-in
             to additional content. This card has even{' '}
@@ -199,13 +199,13 @@ function Portfolio() {
         </Card>
 
         <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto" }}>
-          <Card.Img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.nutscomputergraphics.com%2Fwp-content%2Fuploads%2F2019%2F09%2FSkyup_Aurelium_with_MakingOf_1080p_Gatti-01143.jpg&f=1&nofb=1&ipt=4df5c5524953a49258af18112f70beb59ba3a56ba23e53ffdbe81939dc83b5b3&ipo=images/100px270" className="rounded" 
+          <Card.Img src={tacticalK} className="rounded" 
           alt="Card image" />
           <Card.Body>
-            <Card.Title>Card title</Card.Title>
+            <Card.Title>Tactical Knife </Card.Title>
             <Card.Text>
-              This is a wider card with supporting text below as a natural lead-in
-              to additional content. 
+              Tactical knife 3D model. Modeled, uv, and textured using Maya 3D software.
+ 
             </Card.Text>
             </Card.Body>
         <Card.Footer>
