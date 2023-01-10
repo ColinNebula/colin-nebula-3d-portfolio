@@ -79,7 +79,7 @@ export const Home = () => {
     </>
         </div>  
       <h2 class="top_text"> Welcome to Nebula 3D</h2>
-      <p class="top-p"> My name is Colin Nebula and I am a 3D Artist and a computer enthusiast. </p>
+      <p class="top-p"> My name is Colin Nebula and I am a 3D Artist and a computer enthusiast. Thank you for visiting.</p>
       <NavDropdown.Divider />
         <Col ms={'auto'}>
     <Card className=" bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto" }}>
@@ -96,7 +96,8 @@ export const Home = () => {
     </Card>
 
     <h2 class="middle_text"> Colin Nebula 3D portfolio</h2>
-    <p> </p>
+    <p class="mid-p">3D modeling is fun for me, it is where I can escape sometimes into endless space. 
+    Creating and animating objects as I go. Learning and Improving.</p>
     <NavDropdown.Divider />
 
     <CardGroup>

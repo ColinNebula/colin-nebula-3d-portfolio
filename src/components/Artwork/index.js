@@ -23,16 +23,14 @@ function Artwork() {
       >
         <Modal.Header closeButton>
           <Modal.Title id="example-modal-sizes-title-lg">
-            What we do
+            Five minute pose
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-          Nibh cras pulvinar mattis nunc. Mollis aliquam ut porttitor leo a. 
-          Mattis ullamcorper velit sed ullamcorper morbi tincidunt ornare massa eget. 
-          Volutpat diam ut venenatis tellus in metus vulputate.
-
+          This image is a render of a five minute pose. 
+          Drawing and adding more details of a live model within five minutes.  
+          
           </p>
           <Card.Img src={img1} className="rounded" alt="Card image" />
           <a href="https://react-bootstrap.github.io/components/modal/"></a>
@@ -52,15 +50,13 @@ function Artwork() {
       >
         <Modal.Header closeButton>
           <Modal.Title id="example-modal-sizes-title-lg">
-            What we do
+            One minute pose
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-          Nibh cras pulvinar mattis nunc. Mollis aliquam ut porttitor leo a. 
-          Mattis ullamcorper velit sed ullamcorper morbi tincidunt ornare massa eget. 
-          Volutpat diam ut venenatis tellus in metus vulputate.
+           Capturing the lines of the human body. One minute render of a live model. 
+          
 
           </p>
           <Card.Img src={img2} className="rounded" alt="Card image" />
@@ -81,15 +77,14 @@ function Artwork() {
       >
         <Modal.Header closeButton>
           <Modal.Title id="example-modal-sizes-title-lg">
-            What we do
+            One minute pose
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-          Nibh cras pulvinar mattis nunc. Mollis aliquam ut porttitor leo a. 
-          Mattis ullamcorper velit sed ullamcorper morbi tincidunt ornare massa eget. 
-          Volutpat diam ut venenatis tellus in metus vulputate.
+          A one minute pose of a live model. 
+          Capturing details and motion within a minute. 
+          
 
           </p>
           <Card.Img src={(img3)} className="rounded" alt="Card image" />
@@ -100,16 +95,18 @@ function Artwork() {
     </>
         </div>
       <h2 class="top_text"> 2D Artwork and life drawing </h2>
+      <p class="mid-p"> Classical art and life drawing skills are essential as an artist.
+      </p>
       <NavDropdown.Divider />
         <Col ms={'auto'}>
     <CardGroup>
       <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto" }}>
         <Card.Img variant="top" src={img1} className="rounded" alt="Card image" />
         <Card.Body>
-          <Card.Title>5 Minute pose </Card.Title>
+          <Card.Title>Five Minute pose </Card.Title>
           <Card.Text>
-            This is a wider card with supporting text below as a natural lead-in
-            to additional content. This content is a little bit longer.
+          Five minute pose with a live model. 
+          Five minutes to capture as many details as possible.
           </Card.Text>
         </Card.Body>
         <Card.Footer>
@@ -122,8 +119,8 @@ function Artwork() {
         <Card.Body>
           <Card.Title>One minute pose</Card.Title>
           <Card.Text>
-            This card has supporting text below as a natural lead-in to
-            additional content.{' '}
+            One minute pose with live model. The pose changes every minute. 
+            {' '}
           </Card.Text>
         </Card.Body>
         <Card.Footer>
@@ -136,9 +133,9 @@ function Artwork() {
         <Card.Body>
           <Card.Title>One minute pose</Card.Title>
           <Card.Text>
-            This is a wider card with supporting text below as a natural lead-in
-            to additional content. This card has even longer content than the
-            first to show that equal height action.
+            One minute pose with a live model. 
+            Capture as many details as possible within a minute.
+      
           </Card.Text>
         </Card.Body>
         <Card.Footer>
@@ -155,7 +152,7 @@ function Artwork() {
     <div className="icons">
     <SocialIcon url="https://github.com/ColinNebula" network="github"  />
     <SocialIcon url="https://www.linkedin.com/in/colin-nebula-07176022/" network="linkedin" />
-    <SocialIcon url="mailto:colinnebula@gmail.com" network="mailto" />
+    <SocialIcon url="mailto:colinnebula@gmail.com" network="mailto" bgColor="#ff5a01" />
     </div>
     </Container>
   )

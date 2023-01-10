@@ -114,8 +114,7 @@ function Portfolio() {
           <Card.Body>
             <Card.Title>Mask of Malice</Card.Title>
             <Card.Text>
-            This mask was modeled in Blender. Zbrush was used to add more details.
-            to additional content. {' '}
+            This mask was modeled in Blender. Zbrush was used to add more details. {' '}
             </Card.Text>
             </Card.Body>
             <Card.Footer>
