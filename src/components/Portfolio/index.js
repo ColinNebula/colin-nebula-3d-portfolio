@@ -122,7 +122,7 @@ function Portfolio() {
         </Modal.Header>
         <Modal.Body>
           <p>
-          Model of a mask. 
+          Sword Model. 
           Blender was used to model, uv, and texture the objects. 
           The sculpting details were done in Zbrush.
           The normal map was baked in Xnormal, and Photoshop was used for painting.
@@ -201,7 +201,7 @@ function Portfolio() {
           <Card.Img  src={sword} className="rounded"
           alt="Card image" />
           <Card.Body>
-            <Card.Title>Military Truck</Card.Title>
+            <Card.Title>Sword</Card.Title>
             <Card.Text>
             This sword is a 3D model. 
             It was designed, modeled, textured using blender. 
