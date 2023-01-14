@@ -257,9 +257,9 @@ function Portfolio() {
     <Container fluid>
     <Row>
     <Col>
-    <SocialIcon url="https://github.com/ColinNebula" network="github" className="icon" />
+    <SocialIcon url="https://github.com/ColinNebula" network="github" className="icon" bgColor="#2a9d8f" />
     <SocialIcon url="https://www.linkedin.com/in/colin-nebula-07176022/" network="linkedin" className="icon" />
-    <SocialIcon url="mailto:colinnebula@gmail.com" network="mailto" bgColor="#ff5a01" />
+    <SocialIcon url="mailto:colinnebula@gmail.com" network="mailto" bgColor="#e63946" />
     </Col>
     </Row>
     </Container>
