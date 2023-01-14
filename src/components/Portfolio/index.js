@@ -3,7 +3,8 @@ import oldBar from '../../assets/images/oldBar.png';
 import oldBarAo from '../../assets/images/oldBarAo.png';
 import shield1 from '../../assets/images/shield1.png';
 import tacticalK from '../../assets/images/tacticalK.png';
-import truck from '../../assets/images/truck.png';
+import sword from '../../assets/images/sword.png';
+import swordAll from '../../assets/images/swordAll.png';
 import maskm from '../../assets/images/maskm.png';
 import maskSide from '../../assets/images/maskSide.png';
 import maskall from '../../assets/images/maskall.png';
@@ -17,6 +18,7 @@ function Portfolio() {
   const [lgShow, setLgShow] = useState(false);
   const [lgShow1, setLgShow1] = useState(false);
   const [lgShow2, setLgShow2] = useState(false);
+  const [lgShow3, setLgShow3] = useState(false);
     return (
         <Container fluid>
             <Row>
@@ -104,6 +106,36 @@ function Portfolio() {
       </Modal>
     </>
         </div>
+
+        <div>
+      <>
+      <Modal
+        size="lg"
+        show={lgShow3}
+        onHide={() => setLgShow3(false)}
+        aria-labelledby="example-modal-sizes-title-lg"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="example-modal-sizes-title-lg">
+            Sword
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>
+          Model of a mask. 
+          Blender was used to model, uv, and texture the objects. 
+          The sculpting details were done in Zbrush.
+          The normal map was baked in Xnormal, and Photoshop was used for painting.
+
+          </p>
+          <Card.Img src={swordAll} className="rounded" alt="Card image" />
+          <a href="https://react-bootstrap.github.io/components/modal/"></a>
+        
+        </Modal.Body>
+      </Modal>
+    </>
+        </div>
+
         <h2 class="middle_text"> Welcome to my portfolio</h2>
         <p class="top-p"> Here is a collection of objects modeled using various Industry 3D softwares</p>
         <NavDropdown.Divider />
@@ -166,17 +198,18 @@ function Portfolio() {
 
       <CardGroup>
         <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto"}}>
-          <Card.Img  src={truck} className="rounded"
+          <Card.Img  src={sword} className="rounded"
           alt="Card image" />
           <Card.Body>
             <Card.Title>Military Truck</Card.Title>
             <Card.Text>
-            This 3D military truck model was designed, modeled, textured in Maya 3D software.
+            This sword is a 3D model. 
+            It was designed, modeled, textured using blender. 
             {' '}
             </Card.Text>
             </Card.Body>
             <Card.Footer>
-            <Button variant="outline-primary" size="sm">View here</Button>{' '}
+            <Button variant="outline-primary" size="sm" onClick={() => setLgShow3(true)}>View here</Button>{' '}
             
             </Card.Footer>
         

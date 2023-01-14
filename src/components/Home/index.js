@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Card, Container, Row, Col, CardGroup, NavDropdown, Modal, Button } from 'react-bootstrap';
 import maskm from '../../assets/images/maskm.png';
-import img4 from '../../assets/images/TruckB_01.jpg';
+import sword from '../../assets/images/sword.png';
 import demoR from '../../assets/images/3dModels.png';
 // import { FaGithub, FaLinkedin, FaYoutube } from "react-icons/fa";
 import { SocialIcon } from 'react-social-icons';
@@ -117,7 +117,7 @@ export const Home = () => {
       </Card.Footer>
     </Card>
     <Card className="overflow bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto" }}>
-      <Card.Img variant="top" src={img4} className="card-image rounded" 
+      <Card.Img variant="top" src={sword} className="card-image rounded" 
       alt="Card image"/>
       <Card.Body>
         <Card.Title>VFX Demo Reel</Card.Title>
