@@ -149,7 +149,7 @@ function Artwork() {
       </Row>
     <br />
     <NavDropdown.Divider />  
-    <div className="icons">
+    <div className="bottom">
     <SocialIcon url="https://github.com/ColinNebula" network="github" bgColor="#2a9d8f" />
     <SocialIcon url="https://www.linkedin.com/in/colin-nebula-07176022/" network="linkedin" />
     <SocialIcon url="mailto:colinnebula@gmail.com" network="mailto" bgColor="#e63946" />

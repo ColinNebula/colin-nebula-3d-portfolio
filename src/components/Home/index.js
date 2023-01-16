@@ -80,7 +80,8 @@ export const Home = () => {
       <h2 class="top_text"> Welcome to Nebula 3D</h2>
       <p class="top-p"> My name is Colin Nebula and I am a 3D Artist and a computer enthusiast. Thank you for visiting.</p>
       <NavDropdown.Divider />
-        <Col ms={'auto'}>
+
+    <Col ms={'auto'}>
     <Card className=" bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto" }}>
       <Card.Img src={maskm} className="card-image rounded" 
       alt="Card image" />
@@ -140,7 +141,7 @@ export const Home = () => {
     <Container fluid>
     <Row>
     <Col className="icons">
-    <div>
+    <div className="bottom">
     <SocialIcon url="https://github.com/ColinNebula" network="github" bgColor="#2a9d8f" />
     
     <SocialIcon url="https://www.linkedin.com/in/colin-nebula-07176022/" network="linkedin" />

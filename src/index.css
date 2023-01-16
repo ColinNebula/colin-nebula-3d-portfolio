@@ -4,8 +4,8 @@
   
   main {
 	background: linear-gradient(90deg,
-		#251e31,
-		#626269);
+		#1a1523,
+		#39393d);
 	padding-bottom: 24px;
 	
   
@@ -28,7 +28,8 @@ footer {
 		#0e0a0a,
 		#48494a);
   }
-  
+
+/* Card */
   .card {
 	flex: 40%;
 	width: 50%;
@@ -55,6 +56,7 @@ footer {
 	transform:scale(1.1);
 }
 
+/* Text elements */
 .top_text {
 	text-align: center;
 	color: white;
@@ -79,6 +81,11 @@ footer {
 	align-items: center;
 }
 
+.bottom {
+	display: flex;
+	justify-content: space-around;
+  }
+  
 
 .middle_text {
 	text-align: center;
@@ -136,6 +143,7 @@ button {
 	width: 40%;
   }
   
+  /* Input element */
   input {
 	font-size: 1rem;
 	padding: 0.25rem;

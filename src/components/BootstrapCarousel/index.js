@@ -14,10 +14,10 @@ export default function BootstrapCarousel() {
       <img
         className="d-block w-100 h-100 carousel-fade" data-bs-interval="10000"
         src={sword}
-        alt="Colin Nebula's Old Bar Occlusion Layer"
+        alt="Colin Nebula's Sword"
       />
 
-      <Carousel.Caption className="text-dark">
+      <Carousel.Caption className="text-light">
       <h3>Sword model</h3>
       <p>Modeled in Maya and sculpted in Zbrush. Xnormal was used to bake
       the normal maps.</p>
