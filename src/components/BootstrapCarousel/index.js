@@ -13,20 +13,6 @@ export default function BootstrapCarousel() {
     <Carousel.Item>
       <img
         className="d-block w-100 h-100 carousel-fade" data-bs-interval="10000"
-        src={sword}
-        alt="Colin Nebula's Sword"
-      />
-
-      <Carousel.Caption className="text-light">
-      <h3>Sword model</h3>
-      <p>Modeled in Maya and sculpted in Zbrush. Xnormal was used to bake
-      the normal maps.</p>
-    </Carousel.Caption>
-  </Carousel.Item>
-
-    <Carousel.Item>
-      <img
-        className="d-block w-100 h-100 carousel-fade" data-bs-interval="10000"
         src="https://1.bp.blogspot.com/-Ge9N6vdTKHA/UTUI34cwZ8I/AAAAAAAAAZ0/YVS8B_oQmLc/s640/ACL_Bar_Ao.jpeg"
         alt="Colin Nebula's Old Bar Occlusion Layer"
       />
@@ -38,6 +24,20 @@ export default function BootstrapCarousel() {
     </Carousel.Caption>
   </Carousel.Item>
 
+  <Carousel.Item>
+      <img
+        className="d-block w-100 h-100 carousel-fade" data-bs-interval="10000"
+        src={sword}
+        alt="Colin Nebula's Sword"
+      />
+
+      <Carousel.Caption className="text-light">
+      <h3>Sword model</h3>
+      <p>Modeled in Maya and sculpted in Zbrush. Xnormal was used to bake
+      the normal maps.</p>
+    </Carousel.Caption>
+  </Carousel.Item>
+  
     <Carousel.Item>
       <img
         className="d-block w-100 h-100"

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Card, Container, Row, Col, CardGroup, NavDropdown, Modal, Button } from 'react-bootstrap';
-import maskm from '../../assets/images/maskm.png';
+// import maskm from '../../assets/images/maskm.png';
 import sword from '../../assets/images/sword.png';
 import demoR from '../../assets/images/3dModels.png';
 // import { FaGithub, FaLinkedin, FaYoutube } from "react-icons/fa";
@@ -31,12 +31,14 @@ export const Home = () => {
           Post effects were done using fusion.
 
           </p>
+          <div className="iframe">
           <iframe width="640" height="360" class="iframe" src="https://www.youtube.com/embed/1BP8ezuSDT4" 
           title="YouTube video player" 
           frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
           allowfullscreen>
           </iframe>
-        
+          </div>
+          
         </Modal.Body>
       </Modal>
     </>
@@ -67,11 +69,12 @@ export const Home = () => {
           This was accomplished utilizing Nuke primarily.
 
           </p>
+          <div className="iframe">
           <iframe width="640" height="360" src="https://www.youtube.com/embed/tFwtXZw_VzM" 
           title="YouTube video player" frameborder="0" 
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
           allowfullscreen></iframe>
-      
+          </div>
         
         </Modal.Body>
       </Modal>
@@ -83,13 +86,12 @@ export const Home = () => {
 
     <Col ms={'auto'}>
     <Card className=" bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto" }}>
-      <Card.Img src={maskm} className="card-image rounded" 
+      <Card.Img src={sword} className="card-image rounded" 
       alt="Card image" />
       <Card.ImgOverlay>
-        <Card.Title>Mask of Malice</Card.Title>
+        <Card.Title></Card.Title>
         <Card.Text>
-          This Mask is a high ploy mesh. It was modeled, Uv, normal maps, and texture using blender.
-          ZBrush was used to add detail. Photoshop was used for color and grunge mapping.
+        
         </Card.Text>
         
       </Card.ImgOverlay>
