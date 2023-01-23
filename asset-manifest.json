@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/colin-nebula-3d-portfolio/static/css/main.85c1ae29.css",
-    "main.js": "/colin-nebula-3d-portfolio/static/js/main.3f14acda.js",
+    "main.js": "/colin-nebula-3d-portfolio/static/js/main.fb0c9c5b.js",
     "static/js/787.232ae905.chunk.js": "/colin-nebula-3d-portfolio/static/js/787.232ae905.chunk.js",
     "static/media/m16Close.png": "/colin-nebula-3d-portfolio/static/media/m16Close.5ede0a987e64a9acf7c5.png",
     "static/media/rigging.png": "/colin-nebula-3d-portfolio/static/media/rigging.3b953aa6dabd4f8cbfc8.png",
     "static/media/3dModels.png": "/colin-nebula-3d-portfolio/static/media/3dModels.1b38c2b3a9e6d597f35a.png",
     "static/media/maskSide.png": "/colin-nebula-3d-portfolio/static/media/maskSide.11e27355ab3b08e16293.png",
-    "static/media/swordAll.png": "/colin-nebula-3d-portfolio/static/media/swordAll.2e26926ebb9146c9d50a.png",
+    "static/media/swordAll.png": "/colin-nebula-3d-portfolio/static/media/swordAll.0b9b5f33b048266938a7.png",
     "static/media/maskall.png": "/colin-nebula-3d-portfolio/static/media/maskall.f5a09a8a3ffb2562e069.png",
     "static/media/oldBar.png": "/colin-nebula-3d-portfolio/static/media/oldBar.a47efe8f006189155317.png",
     "static/media/shield1.png": "/colin-nebula-3d-portfolio/static/media/shield1.f77ada7aecae936993be.png",
@@ -25,11 +25,11 @@
     "static/media/LifeDrawingWeb_06.jpg": "/colin-nebula-3d-portfolio/static/media/LifeDrawingWeb_06.323a3195c548ee8218bf.jpg",
     "index.html": "/colin-nebula-3d-portfolio/index.html",
     "main.85c1ae29.css.map": "/colin-nebula-3d-portfolio/static/css/main.85c1ae29.css.map",
-    "main.3f14acda.js.map": "/colin-nebula-3d-portfolio/static/js/main.3f14acda.js.map",
+    "main.fb0c9c5b.js.map": "/colin-nebula-3d-portfolio/static/js/main.fb0c9c5b.js.map",
     "787.232ae905.chunk.js.map": "/colin-nebula-3d-portfolio/static/js/787.232ae905.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.85c1ae29.css",
-    "static/js/main.3f14acda.js"
+    "static/js/main.fb0c9c5b.js"
   ]
 }
