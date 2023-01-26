@@ -98,8 +98,8 @@ export const Home = () => {
     </Card>
 
     <h2 class="middle_text"> Colin Nebula 3D portfolio</h2>
-    <p class="mid-p">3D modeling is fun for me, it is where I can escape sometimes into endless space. 
-    Creating and animating objects as I go. Learning and Improving.</p>
+    <p class="mid-p">3D modeling is fun, and it is also a learning process. 
+    Creating and animating objects. Learning and Improving.</p>
     <NavDropdown.Divider />
 
     <CardGroup>
