@@ -116,19 +116,7 @@ export default function BootstrapCarousel() {
       the normal maps.</p>
     </Carousel.Caption>
   </Carousel.Item>
-  <Carousel.Item>
-    <img
-      className="d-block w-100 h-100 carousel-fade" data-bs-interval="10000"
-      src="https://1.bp.blogspot.com/-9CTDLb1uzDk/UQAWP4ew7JI/AAAAAAAAAWU/toksX0zgSUc/s640/GRSDis_02.jpeg"
-      alt="Colin Nebula's 9mm Handgun"
-    />
-
-      <Carousel.Caption>
-        <h3>9mm Handgun</h3>
-        <p>Modeled in Maya and sculpted in Zbrush. Xnormal was used to bake
-        the normal maps.</p>
-      </Carousel.Caption>
-    </Carousel.Item>
+  
     <Carousel.Item>
       <img
         className="d-block w-100 h-100 carousel-fade" data-bs-interval="10000"

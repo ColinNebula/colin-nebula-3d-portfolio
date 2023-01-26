@@ -85,7 +85,7 @@ export const Home = () => {
       <NavDropdown.Divider />
 
     <Col ms={'auto'}>
-    <Card className=" bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto" }}>
+    <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto" }}>
       <Card.Img src={sword} className="card-image rounded" 
       alt="Card image" />
       <Card.ImgOverlay>

@@ -6,8 +6,9 @@ import About from './components/About';
 import Portfolio from './components/Portfolio';
 import Animation from './components/Animation';
 import Artwork from './components/Artwork';
+import Landing from './components/Landing';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Footer from './components/Footer';
+// import Footer from './components/Footer';
 
 import BootstrapCarousel from './components/BootstrapCarousel';
 
@@ -15,7 +16,7 @@ import BootstrapCarousel from './components/BootstrapCarousel';
 
 function App() {
 
-  const [currentTab, setCurrentTab] = useState("home");
+  const [currentTab, setCurrentTab] = useState("landing");
 
   const renderTab = () => {
     switch (currentTab) {
@@ -29,6 +30,8 @@ function App() {
         return <Artwork />;
       case "animation":
           return <Animation />;
+          case "landing":
+            return <Landing />;
       default:
         return null;
     }

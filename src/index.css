@@ -7,26 +7,50 @@
 		#1a1523,
 		#39393d);
 	padding-bottom: 24px;
-	
-  
   }
   
   .carousel-item {
 	height: 25rem;
+	transition: 0.5s;
   }
-  
-  /* footer */
-footer {
-	width: 100%;
-	height: 80px;
-	/* position: sticky; */
-	bottom: 0;
+  .line {
+	text-decoration: none;
+  }
+
+  h1 {
+	display: inline-block;
+	font-size: .6em;
+	text-decoration: none;
+	color:#358ed3;
+	font-weight: 600;
+	line-height: 1.1;
+	letter-spacing: -2px;
+	transition: 2s;
+	font-family: "Oswald", sans-serif;
+  }
+
+  .lastly {
+	font-size: 3.4em
+  }
+
+  .logo {
+	width: 800px;
+	margin-bottom: -1px;
+	transition: 0.6s;
+  } 
+
+  .welcome {
+	color: white;
+  }
+
+  .landing {
+	height: 100vh;
 	display: flex;
-	justify-content: space-evenly;
+	flex-direction: column;
+	justify-content: center;
+	margin-top: 20px;
+	transition: 0.6s;
 	align-items: center;
-	background: linear-gradient(90deg,
-		#0e0a0a,
-		#48494a);
   }
 
 /* Card */
@@ -37,6 +61,7 @@ footer {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	transition: 0.5s;
 }
 
 .card:hover {
@@ -61,36 +86,42 @@ footer {
 	text-align: center;
 	color: white;
 	padding: 20px;
+	transition: 0.5s;
 }
 
 .top-p {
 	text-align: center;
 	color: white;
 	padding: 5px;
+	transition: 0.6s;
 }
 
 .mid-p {
 	text-align: center;
 	color: white;
 	padding: 5px;
+	transition: 0.6s;
 }
 
+/* iframe elements*/
 .iframe {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	transition: 0.5s;
 }
 
 .bottom {
 	display: flex;
 	justify-content: space-around;
-  }
+}
   
-
+/* middle texts elements*/
 .middle_text {
 	text-align: center;
 	color: white;
 	padding: 10px;
+	transition: 0.5s;
 }
 
 html,
@@ -124,6 +155,8 @@ button {
 
   button:hover {
 	background-color: #eb9c34;
+	transform: 0.4s ease-in-out transform;
+	transform: translateY(5px);
   }
   
   button[disabled] {
@@ -139,8 +172,10 @@ button {
 	cursor: default;
   }
   
-  form {
+  .form {
 	width: 40%;
+	align-items: center;
+	position: center;
   }
   
   /* Input element */
