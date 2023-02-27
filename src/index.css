@@ -116,6 +116,15 @@
 	display: flex;
 	justify-content: space-around;
 }
+
+.rights {
+	text-align: center;
+	color: white;
+	padding: 5px;
+	transition: 0.6s;
+	transform: scale(1);
+	transition:transform 0.6s ease;
+}
   
 /* middle texts elements*/
 .middle_text {
@@ -241,7 +250,15 @@ button {
 
   .icons {
 	display: inline-block;
-  }
+	transition: 0.5s;
+	transform: scale(1);
+	transition:transform 0.6s ease;
+}
+
+.icons:hover {
+	transform: 0.4s ease-in-out transform;
+	transform: translateY(5px);
+}
   
   .img-thumbnail {
 	width: auto;

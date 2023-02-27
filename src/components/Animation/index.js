@@ -171,13 +171,29 @@ function Animation() {
       </Row>
       <br />
       <NavDropdown.Divider />
-      <div className="bottom">
+
+      <Container fluid>
+      <Row>
+      <div class="col-md-12">
+    <div class="rights">
+    Colin Nebula 
+    </div>
+    </div>
+    <br />
+    <br />
+    <Col className="icons">
+    <div className="bottom">
     <SocialIcon url="https://github.com/ColinNebula" network="github" bgColor="#2a9d8f" />
 
     <SocialIcon url="https://www.linkedin.com/in/colin-nebula-07176022/" network="linkedin" />
 
     <SocialIcon url="mailto:colinnebula@gmail.com" network="mailto" bgColor="#e63946" />
     </div>
+    
+    </Col>
+    </Row>
+
+    </Container>
     </Container>
     )
 }
