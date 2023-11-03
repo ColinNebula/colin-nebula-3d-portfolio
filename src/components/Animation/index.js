@@ -2,7 +2,7 @@
 import React, {useState} from "react";
 // import OldBar from '../../assets/images/ACL_Bar_Dis4.jpeg';
 import shapeAnimation from '../../assets/images/shapeAnimation.png';
-import logoD from '../../assets/images/logoD.png';
+import rundown from '../../assets/images/rundown.png';
 import rigging from '../../assets/images/rigging.png';
 import { Card, Container, Button, Col, Row, CardGroup, NavDropdown, Modal } from 'react-bootstrap';
 import { SocialIcon } from 'react-social-icons';
@@ -19,25 +19,27 @@ function Animation() {
         <div>
         <>
       <Modal
-        size="lg"
+        size="xxl-down"
         show={lgShow}
         onHide={() => setLgShow(false)}
         aria-labelledby="example-modal-sizes-title-lg"
       >
         <Modal.Header closeButton>
           <Modal.Title id="example-modal-sizes-title-lg">
-            Logo Animation Demo
+            Free Rider Animation Demo
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <p>
-          A short logo animation demo. 
-          Maya was used to model, uv, texture the objects.
-          Adobe After Effects was used to create color textures.
+          A short low budget animated film made completely in blender.
 
           </p>
-          <iframe width="640" height="360" src="https://www.youtube.com/embed/WcK6dYu5yI0" 
-          title="YouTube video player" frameborder="0" 
+          <iframe 
+          width="560" 
+          height="315" 
+          src="https://www.youtube.com/embed/N2WhwHaicR4?si=oH6JWh_VnC-jWj0H" 
+          title="YouTube video player" 
+          frameborder="0" 
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
           allowfullscreen>
           </iframe>
@@ -50,7 +52,7 @@ function Animation() {
       <div>
       <>
       <Modal
-        size="lg"
+        size="xl"
         show={lgShow1}
         onHide={() => setLgShow1(false)}
         aria-labelledby="example-modal-sizes-title-lg"
@@ -83,7 +85,7 @@ function Animation() {
         <div>
       <>
       <Modal
-        size="lg"
+        size="xl"
         show={lgShow2}
         onHide={() => setLgShow2(false)}
         aria-labelledby="example-modal-sizes-title-lg"
@@ -119,13 +121,13 @@ function Animation() {
                 <Col ms={"auto"}>
                 <CardGroup>
                 <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto"}}>
-                  <Card.Img variant="top" src={logoD} className="rounded" 
+                  <Card.Img variant="top" src={rundown} className="rounded" 
                   alt="Card image" />
                   <Card.Body>
-                    <Card.Title>Logo Animation</Card.Title>
+                    <Card.Title>Shot Film</Card.Title>
                     <Card.Text>
-                    A 3D model logo. 
-                    Maya was used to model, uv, and texture the object.
+                    A short film created using only blender. 
+                    
                     </Card.Text>
                   </Card.Body>
                   <Card.Footer>

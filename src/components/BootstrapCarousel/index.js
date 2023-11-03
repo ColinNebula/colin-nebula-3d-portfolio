@@ -4,11 +4,25 @@ import { Carousel } from "react-bootstrap"
 import shield1 from '../../assets/images/shield1.png';
 import sword from '../../assets/images/sword.png';
 import m16Close from '../../assets/images/m16Close.png';
+import rundown from '../../assets/images/rundown.png';
 import maskall from '../../assets/images/maskall.png';
 export default function BootstrapCarousel() {
   return (
     <div>
     <Carousel>
+
+    <Carousel.Item>
+      <img
+        className="d-block w-100 h-100 carousel-fade" data-bs-interval="10000"
+        src={rundown}
+        alt="broken car"
+      />
+
+      <Carousel.Caption className="text-light">
+      <h3>Free Rider</h3>
+      <p>A short film made in blender.</p>
+    </Carousel.Caption>
+  </Carousel.Item>
 
     <Carousel.Item>
       <img
@@ -148,6 +162,7 @@ export default function BootstrapCarousel() {
 
     
   </Carousel>
+  
     </div>
   )
 }

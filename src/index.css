@@ -248,7 +248,7 @@ button {
 	text-align: center;
   }
 
-  .icons {
+.icons {
 	display: inline-block;
 	transition: 0.5s;
 	transform: scale(1);

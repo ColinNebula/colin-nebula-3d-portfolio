@@ -6,7 +6,7 @@ import {  Link } from "react-router-dom";
 
 function Landing() {
  
-
+    <br />
     return (
         
         <div className="landing">
@@ -17,7 +17,7 @@ function Landing() {
         </h1>
         
         <Button className="button" variant="outline-primary">
-        <a className="line" href="https://colinnebula.github.io/colin-nebula-3d-portfolio/"> View Portfolio</a>
+        <a className="line" href="https://colinnebula.github.io/colin-nebula-3d-portfolio/home"> View Portfolio</a>
         </Button>
         
         </div>

@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Card, Container, Row, Col, CardGroup, NavDropdown, Modal, Button } from 'react-bootstrap';
 // import maskm from '../../assets/images/maskm.png';
 import sword from '../../assets/images/sword.png';
+import rundown from '../../assets/images/rundown.png';
 import demoR from '../../assets/images/3dModels.png';
 // import { FaGithub, FaLinkedin, FaYoutube } from "react-icons/fa";
 import { SocialIcon } from 'react-social-icons';
@@ -86,7 +87,7 @@ export const Home = () => {
 
     <Col ms={'auto'}>
     <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto" }}>
-      <Card.Img src={sword} className="card-image rounded" 
+      <Card.Img src={rundown} className="card-image rounded" 
       alt="Card image" />
       <Card.ImgOverlay>
         <Card.Title></Card.Title>
