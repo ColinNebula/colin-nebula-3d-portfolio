@@ -105,7 +105,7 @@ function VfxVideoEditing() {
                   <Card.Body>
                     <Card.Title>VFX Demo</Card.Title>
                     <Card.Text>
-                    A short film created using only blender. 
+                    My Visual effects demo of some projects I have worked on in the film industry. 
                     
                     </Card.Text>
                   </Card.Body>

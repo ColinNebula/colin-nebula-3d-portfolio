@@ -4,7 +4,9 @@ import oldBarAo from '../../assets/images/oldBarAo.png';
 import shield1 from '../../assets/images/shield1.png';
 import tacticalK from '../../assets/images/tacticalK.png';
 import sword from '../../assets/images/sword.png';
-import swordAll from '../../assets/images/swordAll.png';
+import swordd from '../../assets/images/swordd.png';
+
+import swordInfo from '../../assets/images/swordInfo.png';
 import maskm from '../../assets/images/maskm.png';
 import maskSide from '../../assets/images/maskSide.png';
 import maskall from '../../assets/images/maskall.png';
@@ -126,9 +128,20 @@ function Portfolio() {
           Blender was used to model, uv, and texture the objects. 
           The sculpting details were done in Zbrush.
           The normal map was baked in Xnormal, and Photoshop was used for painting.
-
+          
           </p>
-          <Card.Img src={swordAll} className="rounded" alt="Card image" />
+          <br/>
+          <Card.Img src={swordd} className="rounded" alt="Card image" />
+          <a href="https://react-bootstrap.github.io/components/modal/"></a>
+
+          <NavDropdown.Divider />
+          <br/>
+
+          <p>Blender cycles render at 256 samples.</p>
+
+          <NavDropdown.Divider />
+          <br/>
+          <Card.Img src={swordInfo} className="rounded" alt="Card image" />
           <a href="https://react-bootstrap.github.io/components/modal/"></a>
         
         </Modal.Body>
@@ -194,7 +207,7 @@ function Portfolio() {
       <NavDropdown.Divider />
       <br />
       <h2 class="middle_text"> Industry software used on all projects</h2>
-      <p class="mid-p">Software used include Maya, Blander, nuke, fusion, Adobe After effects, Adobe Photoshop and Zbrush.</p>
+      <p class="mid-p">Software used include Maya, Blender, nuke, fusion, Adobe After effects, Adobe Photoshop and Zbrush.</p>
 
       <CardGroup>
         <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto"}}>
