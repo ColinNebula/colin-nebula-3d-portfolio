@@ -1,9 +1,10 @@
 {
   "files": {
-    "main.css": "/colin-nebula-3d-portfolio/static/css/main.fb6d0fbe.css",
-    "main.js": "/colin-nebula-3d-portfolio/static/js/main.2e70ac2e.js",
+    "main.css": "/colin-nebula-3d-portfolio/static/css/main.a6fb454a.css",
+    "main.js": "/colin-nebula-3d-portfolio/static/js/main.1b463fa9.js",
     "static/js/787.232ae905.chunk.js": "/colin-nebula-3d-portfolio/static/js/787.232ae905.chunk.js",
     "static/media/rundown.png": "/colin-nebula-3d-portfolio/static/media/rundown.61d9b57ddb31b36fe044.png",
+    "static/media/byte3.png": "/colin-nebula-3d-portfolio/static/media/byte3.3f7d5453add43ed62262.png",
     "static/media/m16Close.png": "/colin-nebula-3d-portfolio/static/media/m16Close.5ede0a987e64a9acf7c5.png",
     "static/media/rigging.png": "/colin-nebula-3d-portfolio/static/media/rigging.3b953aa6dabd4f8cbfc8.png",
     "static/media/3dModels.png": "/colin-nebula-3d-portfolio/static/media/3dModels.1b38c2b3a9e6d597f35a.png",
@@ -13,6 +14,7 @@
     "static/media/oldBar.png": "/colin-nebula-3d-portfolio/static/media/oldBar.a47efe8f006189155317.png",
     "static/media/shield1.png": "/colin-nebula-3d-portfolio/static/media/shield1.f77ada7aecae936993be.png",
     "static/media/maskm.png": "/colin-nebula-3d-portfolio/static/media/maskm.72b3726eb6037134179f.png",
+    "static/media/logoD.png": "/colin-nebula-3d-portfolio/static/media/logoD.5f7a34736bb7fd22e824.png",
     "static/media/sword.png": "/colin-nebula-3d-portfolio/static/media/sword.ca002460dfd892569333.png",
     "static/media/tacticalK.png": "/colin-nebula-3d-portfolio/static/media/tacticalK.6c51cc607fcb4e83c76f.png",
     "static/media/cnLogo.png": "/colin-nebula-3d-portfolio/static/media/cnLogo.a269fe4f5b56a438d98d.png",
@@ -25,12 +27,12 @@
     "static/media/LifeDrawingWeb_05.jpg": "/colin-nebula-3d-portfolio/static/media/LifeDrawingWeb_05.5bd95f75278ca9a1c987.jpg",
     "static/media/LifeDrawingWeb_06.jpg": "/colin-nebula-3d-portfolio/static/media/LifeDrawingWeb_06.323a3195c548ee8218bf.jpg",
     "index.html": "/colin-nebula-3d-portfolio/index.html",
-    "main.fb6d0fbe.css.map": "/colin-nebula-3d-portfolio/static/css/main.fb6d0fbe.css.map",
-    "main.2e70ac2e.js.map": "/colin-nebula-3d-portfolio/static/js/main.2e70ac2e.js.map",
+    "main.a6fb454a.css.map": "/colin-nebula-3d-portfolio/static/css/main.a6fb454a.css.map",
+    "main.1b463fa9.js.map": "/colin-nebula-3d-portfolio/static/js/main.1b463fa9.js.map",
     "787.232ae905.chunk.js.map": "/colin-nebula-3d-portfolio/static/js/787.232ae905.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.fb6d0fbe.css",
-    "static/js/main.2e70ac2e.js"
+    "static/css/main.a6fb454a.css",
+    "static/js/main.1b463fa9.js"
   ]
 }
