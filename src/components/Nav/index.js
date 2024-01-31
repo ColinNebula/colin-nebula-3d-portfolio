@@ -24,21 +24,27 @@ function Navigation(props) {
             <Nav.Link className={currentTab === "portfolio" ? "mx-2 navActive" : "mx-2"}>
             <span onClick={() => setCurrentTab("portfolio")}>Portfolio</span>
             </Nav.Link>
-            <NavDropdown title="Dropdown" id="basic-nav-dropdown">
-              <NavDropdown.Item className={currentTab === "artwork" ? "mx-2 navActive" : "mx-2"}>
+            
+              <Nav.Link className={currentTab === "artwork" ? "mx-2 navActive" : "mx-2"}>
               <span onClick={() => setCurrentTab("artwork")}>Artwork</span>
-              </NavDropdown.Item>
+              </Nav.Link>
+              
 
-              <NavDropdown.Item className={currentTab === "animation" ? "mx-2 navActive" : "mx-2"}>
+              <Nav.Link className={currentTab === "animation" ? "mx-2 navActive" : "mx-2"}>
               <span onClick={() => setCurrentTab("animation")}>Animation</span>
+              </Nav.Link>
 
-              </NavDropdown.Item>
+              <Nav.Link className={currentTab === "video-editing" ? "mx-2 navActive" : "mx-2"}>
+              <span onClick={() => setCurrentTab("video-editing")}>VFX</span>
+              </Nav.Link>
+
+              
               
               <NavDropdown.Divider />
               <NavDropdown.Item href="https://colinnebula3dartist.blogspot.com/">
                 VFX Portfolio
               </NavDropdown.Item>
-            </NavDropdown>
+            
           </Nav>
         </Navbar.Collapse>
       </Container>

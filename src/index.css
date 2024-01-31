@@ -293,3 +293,111 @@ button {
 	font-weight: 600;
 	margin-bottom: 25px;
   }
+
+/* ------------------------- LandingPage elements -------------------------- */
+
+
+.landing-page {
+	width: 100%;
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-around;
+	position: relative;
+	transition: 0.5s;
+	font-family: serif;
+  } 
+  
+  .video-bg {
+	width: 100%;
+	height: 100vh;
+	position: absolute;
+	top: 0;
+	z-index: -1;
+	object-fit: cover;
+  }
+  
+  .bg-overlay {
+	height: 100%;
+	width: 100%;
+	background-color: rgba(0,0,0,0.5);
+	position: absolute;
+	top: 0;
+	z-index: 0;
+  }
+  
+  
+  .bar-over {
+	width: 100%;
+	height:1em;
+	border-bottom: 2px solid white;
+	position: absolute;
+	top: 0;
+	left: 0;
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	z-index: 1;
+  }
+
+  .landing-h1 {
+	font-size: 7em;
+	animation-name: fade;
+	animation-duration: 4s;
+	text-shadow: #242627;
+	color: white;
+  }
+  
+  .landing-p {
+	justify-self: flex-end;
+	font-size: 2em;
+	animation-name: fade;
+	animation-duration: 6s;
+	color: white;
+  }
+  
+  .home-text {
+	height: 60%;
+	width: 70%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-around;
+	z-index: 2;
+	/* font-family: "Cavergiz"; */
+  }
+  
+  .home-btn {
+	height: 2em;
+	width: 6em;
+	border: 2px solid white;
+	border-radius: 0.25em;
+	background-color: rgb(138, 145, 148);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-around;
+	font-size: 2em;
+	z-index: 1;
+	align-items: center;
+	cursor: pointer;
+	
+  }
+  
+  .home-btn:hover {
+	background-color: #7eb8dc;
+	transform: 0.4s ease-in-out transform;
+	  transform: translateY(2px);
+  
+  }
+  /* Animation */
+  @keyframes fade {
+	0% {
+	  opacity: 0;
+	  margin-left: 3em;
+	}
+	100% {
+	  opacity: 1;
+	}
+  }
