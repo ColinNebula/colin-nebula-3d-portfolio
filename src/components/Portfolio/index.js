@@ -129,6 +129,17 @@ function Portfolio() {
           The sculpting details were done in Zbrush.
           The normal map was baked in Xnormal, and Photoshop was used for painting.
           
+          <br/>
+          <br/>
+          <iframe width="560" 
+          height="315" 
+          src="https://www.youtube.com/embed/hLH3htg2GS0?si=y5onQfNbBUpvm-Os" 
+          title="YouTube video player" 
+          frameborder="0" 
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+          allowfullscreen>
+          </iframe>
+
           </p>
           <br/>
           <Card.Img src={swordd} className="rounded" alt="Card image" />
@@ -137,7 +148,7 @@ function Portfolio() {
           <NavDropdown.Divider />
           <br/>
 
-          <p>Blender cycles render at 256 samples.</p>
+          <p>Blender cycles render.</p>
 
           <NavDropdown.Divider />
           <br/>

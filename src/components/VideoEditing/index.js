@@ -35,18 +35,26 @@ function VfxVideoEditing() {
           Photoshop and Maya were used predominantly.
           <br />
           <br />
-          Second in the reel is the pilot for the 'Alphas' which is a SYFY TV show and hit series.
-          My job was to very precisely rotoscope the actor Bryant Cartwright, who plays Gary Bell, out of the green screen and into specific environments. 
-          This was accomplished utilizing Nuke primarily.
 
           </p>
           <div className="iframe">
-          <iframe width="640" height="360" src="https://www.youtube.com/embed/tFwtXZw_VzM" 
-          title="YouTube video player" frameborder="0" 
+          <iframe 
+          width="640" 
+          height="360" 
+          src="https://www.youtube.com/embed/tFwtXZw_VzM" 
+          title="YouTube video player" 
+          frameborder="0" 
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-          allowfullscreen></iframe>
+          allowfullscreen>
+          </iframe>
           </div>
-        
+          <br />
+          <br />
+        <p>
+            Second in the reel is the pilot for the 'Alphas' which is a SYFY TV show and hit series.
+            My job was to very precisely rotoscope the actor Bryant Cartwright, who plays Gary Bell, out of the green screen and into specific environments. 
+            This was accomplished utilizing Nuke primarily.
+        </p>
         </Modal.Body>
       </Modal>
     </>
@@ -67,11 +75,9 @@ function VfxVideoEditing() {
             </Modal.Header>
             <Modal.Body>
               <p>
-                A promotion video which teaches kids all about soccer.
-                The soccer videos and images were all provided by the client.
-                The audio and sound effects are royalty free.
-                The post visual effects were added using after effects.
-                The 3D models were done using Maya software and Photoshop.
+              A promotional video that takes young players through various drills and techniques to learn how to play soccer. 
+              Raw footage was provided by the client and the finished product is a result of VFX and video editing as well as, 
+              sound incorporation with effects. 
               </p>
               <div className="iframe">
                 <iframe
@@ -84,6 +90,20 @@ function VfxVideoEditing() {
                   allowfullscreen
                 ></iframe>
               </div>
+              <br />
+              <p>
+              <ul>
+              <li>Created a marking style educational video that promotes Olympian, the late Tony Waiters, dispensing valuable soccer techniques to the next generation
+              </li>
+              <li>for attention, grabbing, and to highlight key points, individual 3-D objects were added in and animated</li>
+              <li>Footage was sequenced for a linear development so that young players can learn the technique or drill easily in this flipped curriculum</li>
+              <li>Planning prior to, customizing the result, and conferring on final shots with the client helped incorporate their vision throughout </li>
+              <li>Smooth and error-free transition allows for an enjoyable viewing experience</li>
+              <li>Integration of appealing text and images was done to keep young players engaged in watching the video to the end just in time for their soccer practice </li>
+              <li>Primary usage of Adobe Suite: Photoshop & After Effects, and Maya.</li>
+              </ul>
+              </p>
+
             </Modal.Body>
           </Modal>
     </>
@@ -95,7 +115,7 @@ function VfxVideoEditing() {
     </>
         </div>
             <h2 class="top_text"> VFX and Video Editing</h2>
-            <p class="top-p">Videos are rendered though a 3D software and worked on in post production, for added effects.</p>
+            <p class="top-p">Videos are rendered though a 3D software and worked on in post production for added effects.</p>
             <NavDropdown.Divider />
                 <Col ms={"auto"}>
                 <CardGroup>
@@ -105,7 +125,7 @@ function VfxVideoEditing() {
                   <Card.Body>
                     <Card.Title>VFX Demo</Card.Title>
                     <Card.Text>
-                    My Visual effects demo of some projects I have worked on in the film industry. 
+                    Visual effects demo of some projects I have worked on in the film industry. 
                     
                     </Card.Text>
                   </Card.Body>
@@ -120,8 +140,8 @@ function VfxVideoEditing() {
                   <Card.Body>
                     <Card.Title>Video editing</Card.Title>
                     <Card.Text>
-                    Video editing is one of my skill set.  
-                    Software used include After effects, Nuke and Adobe Photoshop. 
+                    Video editing is part of my skill set.  
+                    Software used include After Effects, Nuke and Adobe Photoshop. 
                     {' '}
                     </Card.Text>
                   </Card.Body>

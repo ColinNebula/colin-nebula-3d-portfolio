@@ -33,9 +33,12 @@ export const Home = () => {
 
           </p>
           <div className="iframe">
-          <iframe width="640" height="360" class="iframe" src="https://www.youtube.com/embed/1BP8ezuSDT4" 
+          <iframe width="640" 
+          height="360" class="iframe" 
+          src="https://www.youtube.com/embed/1BP8ezuSDT4" 
           title="YouTube video player" 
-          frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+          frameborder="0" 
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
           allowfullscreen>
           </iframe>
           </div>
@@ -112,7 +115,7 @@ export const Home = () => {
         <Card.Title>Demo Reel</Card.Title>
         <Card.Text>
         This Demo Reel displays my 3D Modeling and Texturing skills utilizing industry software.
-        Some of the programs used include Autodesk Maya, Photoshop, xNormal, and After Effects.
+        Some of the programs used include Blender, Zbrush, Photoshop, xNormal, and After Effects.
         </Card.Text>
       </Card.Body>
       <Card.Footer>

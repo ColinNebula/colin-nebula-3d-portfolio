@@ -41,9 +41,7 @@ function Navigation(props) {
               
               
               <NavDropdown.Divider />
-              <NavDropdown.Item href="https://colinnebula3dartist.blogspot.com/">
-                VFX Portfolio
-              </NavDropdown.Item>
+              
             
           </Nav>
         </Navbar.Collapse>
