@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/colin-nebula-3d-portfolio/static/css/main.262ef766.css",
-    "main.js": "/colin-nebula-3d-portfolio/static/js/main.f711430e.js",
+    "main.js": "/colin-nebula-3d-portfolio/static/js/main.85d4a219.js",
     "static/js/787.e6c3d6b9.chunk.js": "/colin-nebula-3d-portfolio/static/js/787.e6c3d6b9.chunk.js",
     "static/media/rundown.png": "/colin-nebula-3d-portfolio/static/media/rundown.61d9b57ddb31b36fe044.png",
     "static/media/byte3.png": "/colin-nebula-3d-portfolio/static/media/byte3.3f7d5453add43ed62262.png",
@@ -29,11 +29,11 @@
     "static/media/LifeDrawingWeb_06.jpg": "/colin-nebula-3d-portfolio/static/media/LifeDrawingWeb_06.323a3195c548ee8218bf.jpg",
     "index.html": "/colin-nebula-3d-portfolio/index.html",
     "main.262ef766.css.map": "/colin-nebula-3d-portfolio/static/css/main.262ef766.css.map",
-    "main.f711430e.js.map": "/colin-nebula-3d-portfolio/static/js/main.f711430e.js.map",
+    "main.85d4a219.js.map": "/colin-nebula-3d-portfolio/static/js/main.85d4a219.js.map",
     "787.e6c3d6b9.chunk.js.map": "/colin-nebula-3d-portfolio/static/js/787.e6c3d6b9.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.262ef766.css",
-    "static/js/main.f711430e.js"
+    "static/js/main.85d4a219.js"
   ]
 }
