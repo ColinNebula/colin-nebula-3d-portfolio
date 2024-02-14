@@ -160,8 +160,8 @@ function Portfolio() {
     </>
         </div>
 
-        <h2 class="middle_text"> Welcome to my portfolio</h2>
-        <p class="top-p"> Here is a collection of objects modeled using various Industry 3D softwares</p>
+        <h2 class="middle_text"> Welcome to My Portfolio</h2>
+        <p class="top-p"> Here is a collection of objects modeled using various industry 3D softwares</p>
         <NavDropdown.Divider />
         <Col>
       <CardGroup>
@@ -171,11 +171,11 @@ function Portfolio() {
           <Card.Body>
             <Card.Title>Mask of Malice</Card.Title>
             <Card.Text>
-            This mask was modeled in Blender. Zbrush was used to add more details. {' '}
+            This mask was modeled in Blender. Zbrush was used to add more details {' '}
             </Card.Text>
             </Card.Body>
             <Card.Footer>
-            <Button variant="outline-primary" size="sm" onClick={() => setLgShow(true)}>View here</Button>{' '}
+            <Button variant="outline-warning" size="sm" onClick={() => setLgShow(true)}>View here</Button>{' '}
             
             </Card.Footer>
         
@@ -187,13 +187,13 @@ function Portfolio() {
           <Card.Body>
             <Card.Title>Old Bar</Card.Title>
             <Card.Text>
-            Utilizing my 3D knowledge to build complicated scenes.
+            Utilizing my 3D knowledge to build complicated scenes
            
             {' '}
             </Card.Text>
             </Card.Body>
             <Card.Footer>
-            <Button variant="outline-primary" size="sm" onClick={() => setLgShow1(true)}>View here</Button>{' '}
+            <Button variant="outline-warning" size="sm" onClick={() => setLgShow1(true)}>View here</Button>{' '}
             
           </Card.Footer>
         </Card>
@@ -204,12 +204,12 @@ function Portfolio() {
           <Card.Body>
             <Card.Title>Riot Shield</Card.Title>
             <Card.Text>
-              A shield modeled in Blender.
+              A shield modeled in Blender
               
             </Card.Text>
             </Card.Body>
         <Card.Footer>
-          <Button variant="outline-primary" size="sm" onClick={() => setLgShow2(true)}>View here</Button>{' '}
+          <Button variant="outline-warning" size="sm" onClick={() => setLgShow2(true)}>View here</Button>{' '}
           
         </Card.Footer>
         </Card>
@@ -218,7 +218,7 @@ function Portfolio() {
       <NavDropdown.Divider />
       <br />
       <h2 class="middle_text"> Industry software used on all projects</h2>
-      <p class="mid-p">Software used include Maya, Blender, nuke, fusion, Adobe After effects, Adobe Photoshop and Zbrush.</p>
+      <p class="mid-p">Software used include Maya, Blender, Nuke, Fusion, Adobe After Effects, Adobe Photoshop, and Zbrush</p>
 
       <CardGroup>
         <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto"}}>
@@ -228,12 +228,12 @@ function Portfolio() {
             <Card.Title>Sword</Card.Title>
             <Card.Text>
             This sword is a 3D model. 
-            It was designed, modeled, textured using blender. 
+            It was designed, modeled, textured using Blender 
             {' '}
             </Card.Text>
             </Card.Body>
             <Card.Footer>
-            <Button variant="outline-primary" size="sm" onClick={() => setLgShow3(true)}>View here</Button>{' '}
+            <Button variant="outline-warning" size="sm" onClick={() => setLgShow3(true)}>View here</Button>{' '}
             
             </Card.Footer>
         
@@ -245,13 +245,13 @@ function Portfolio() {
           <Card.Body>
             <Card.Title>3D Model</Card.Title>
             <Card.Text>
-            3D face mask.
-            modeled, Uv, and textured in Blender.
-            Sculpted and added details using ZBrush{' '}
+            3D face mask
+            modeled, UV, and textured in Blender.
+            Added details and sculpting using ZBrush{' '}
             </Card.Text>
             </Card.Body>
             <Card.Footer>
-            <Button variant="outline-primary" size="sm">View here</Button>{' '}
+            <Button variant="outline-warning" size="sm">View here</Button>{' '}
             
           </Card.Footer>
         </Card>
@@ -262,12 +262,12 @@ function Portfolio() {
           <Card.Body>
             <Card.Title>Tactical Knife </Card.Title>
             <Card.Text>
-              Tactical knife 3D model. Modeled, uv, and textured using Maya 3D software.
+              Tactical knife 3D model. Modeled, UV, and textured using Maya 3D software
  
             </Card.Text>
             </Card.Body>
         <Card.Footer>
-          <Button variant="outline-primary" size="sm">View here</Button>{' '}
+          <Button variant="outline-warning" size="sm">View here</Button>{' '}
           
         </Card.Footer>
         </Card>

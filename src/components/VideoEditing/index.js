@@ -77,7 +77,7 @@ function VfxVideoEditing() {
               <p>
               A promotional video that takes young players through various drills and techniques to learn how to play soccer. 
               Raw footage was provided by the client and the finished product is a result of VFX and video editing as well as, 
-              sound incorporation with effects. 
+              sound incorporation with effects 
               </p>
               <div className="iframe">
                 <iframe
@@ -100,7 +100,7 @@ function VfxVideoEditing() {
               <li>Planning prior to, customizing the result, and conferring on final shots with the client helped incorporate their vision throughout </li>
               <li>Smooth and error-free transition allows for an enjoyable viewing experience</li>
               <li>Integration of appealing text and images was done to keep young players engaged in watching the video to the end just in time for their soccer practice </li>
-              <li>Primary usage of Adobe Suite: Photoshop & After Effects, and Maya.</li>
+              <li>Primary usage of Adobe Suite: Photoshop & After Effects, and Maya</li>
               </ul>
               </p>
 
@@ -115,7 +115,7 @@ function VfxVideoEditing() {
     </>
         </div>
             <h2 class="top_text"> VFX and Video Editing</h2>
-            <p class="top-p">Videos are rendered though a 3D software and worked on in post production for added effects.</p>
+            <p class="top-p">Videos are rendered though a 3D software and worked on in post production for added effects</p>
             <NavDropdown.Divider />
                 <Col ms={"auto"}>
                 <CardGroup>
@@ -123,14 +123,14 @@ function VfxVideoEditing() {
                   <Card.Img variant="top" src={logoD} className="rounded" 
                   alt="Card image" />
                   <Card.Body>
-                    <Card.Title>VFX Demo</Card.Title>
+                    <Card.Title>VFX Reel</Card.Title>
                     <Card.Text>
-                    Visual effects demo of some projects I have worked on in the film industry. 
+                    Visual effects demo of some projects I have worked on in the film industry 
                     
                     </Card.Text>
                   </Card.Body>
                   <Card.Footer>
-                  <Button variant="outline-primary" size="sm" onClick={() => setLgShow(true)}>View video here</Button>{' '}
+                  <Button variant="outline-warning" size="sm" onClick={() => setLgShow(true)}>View video here</Button>{' '}
                     
                   </Card.Footer>
                 </Card>
@@ -138,15 +138,15 @@ function VfxVideoEditing() {
                   <Card.Img variant="top" src={byte3} className="rounded" 
                   alt="Card image" />
                   <Card.Body>
-                    <Card.Title>Video editing</Card.Title>
+                    <Card.Title>Video Editing</Card.Title>
                     <Card.Text>
-                    Video editing is part of my skill set.  
-                    Software used include After Effects, Nuke and Adobe Photoshop. 
+                    Video editing is part of my skill set  
+                    Software used include After Effects, Nuke and Adobe Photoshop 
                     {' '}
                     </Card.Text>
                   </Card.Body>
                   <Card.Footer>
-                  <Button variant="outline-primary" size="sm"onClick={() => setLgShow1(true)}>View video here</Button>{' '}
+                  <Button variant="outline-warning" size="sm"onClick={() => setLgShow1(true)}>View video here</Button>{' '}
                     
                   </Card.Footer>
                 </Card>

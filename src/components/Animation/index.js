@@ -115,8 +115,8 @@ function Animation() {
       </Modal>
     </>
         </div>
-            <h2 class="top_text"> Animation and video renders</h2>
-            <p class="top-p">Videos are rendered though a 3D software and worked on in post production, for added effects.</p>
+            <h2 class="top_text"> Animation and Video Renders</h2>
+            <p class="top-p">Videos are rendered though a 3D software and worked on in post production for added effects</p>
             <NavDropdown.Divider />
                 <Col ms={"auto"}>
                 <CardGroup>
@@ -124,9 +124,9 @@ function Animation() {
                   <Card.Img variant="top" src={rundown} className="rounded" 
                   alt="Card image" />
                   <Card.Body>
-                    <Card.Title>Shot Film</Card.Title>
+                    <Card.Title>Short Film</Card.Title>
                     <Card.Text>
-                    A short film created using only blender. 
+                    A short film created using only Blender 
                     
                     </Card.Text>
                   </Card.Body>
@@ -139,10 +139,10 @@ function Animation() {
                   <Card.Img variant="top" src={rigging} className="rounded" 
                   alt="Card image" />
                   <Card.Body>
-                    <Card.Title>Lip sync and rigging</Card.Title>
+                    <Card.Title>Lip Sync and Rigging</Card.Title>
                     <Card.Text>
-                    Facial rigging demo. 
-                    Maya was used to model, uv, texture, and rig character.
+                    Facial Rigging demo 
+                    using Maya to model, UV, texture, and rig the character
                     {' '}
                     </Card.Text>
                   </Card.Body>
@@ -157,8 +157,7 @@ function Animation() {
                   <Card.Body>
                     <Card.Title>2D Shape Animation</Card.Title>
                     <Card.Text>
-                      Utilizing shapes and lines to  
-                      Blender was used to model, uv, and texture the object.
+                      Simple shapes and lines animation in After Effects
                       
                     </Card.Text>
                   </Card.Body>

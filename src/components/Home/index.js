@@ -101,9 +101,9 @@ export const Home = () => {
       </Card.ImgOverlay>
     </Card>
 
-    <h2 class="middle_text"> Colin Nebula 3D portfolio</h2>
-    <p class="mid-p">3D modeling is fun, and it is also a learning process. 
-    Creating and animating objects. Learning and Improving.</p>
+    <h2 class="middle_text"> Colin Nebula 3D Portfolio</h2>
+    <p class="mid-p">3D modeling is fun and it is also a learning process: 
+    creating, animating learning, and improving</p>
     <NavDropdown.Divider />
 
     <CardGroup>
@@ -115,11 +115,11 @@ export const Home = () => {
         <Card.Title>Demo Reel</Card.Title>
         <Card.Text>
         This Demo Reel displays my 3D Modeling and Texturing skills utilizing industry software.
-        Some of the programs used include Blender, Zbrush, Photoshop, xNormal, and After Effects.
+        Some of the programs used include Blender, Zbrush, Photoshop, xNormal, and After Effects
         </Card.Text>
       </Card.Body>
       <Card.Footer>
-      <Button variant="outline-primary" onClick={() => setLgShow(true)}>View reel here</Button>{' '}
+      <Button variant="outline-warning" onClick={() => setLgShow(true)}>View reel here</Button>{' '}
         
       </Card.Footer>
     </Card>
@@ -127,15 +127,15 @@ export const Home = () => {
       <Card.Img variant="top" src={sword} className="card-image rounded" 
       alt="Card image"/>
       <Card.Body>
-        <Card.Title>VFX Demo Reel</Card.Title>
+        <Card.Title>VFX Reel</Card.Title>
         <Card.Text>
-          This video reel displays post production effect. 
-          It contains some of the work I was task with at Intelligent Creatures.
+          This VFX Reel displays post production effect. 
+          It contains some of the work I was tasked with at Intelligent Creatures Toronto
           {' '}
         </Card.Text>
       </Card.Body>
       <Card.Footer>
-      <Button variant="outline-primary" onClick={() => setLgShow1(true)}>View reel here</Button>{' '}
+      <Button variant="outline-warning" onClick={() => setLgShow1(true)}>View reel here</Button>{' '}
         
       </Card.Footer>
     </Card>

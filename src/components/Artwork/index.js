@@ -94,8 +94,8 @@ function Artwork() {
       </Modal>
     </>
         </div>
-      <h2 class="top_text"> 2D Artwork and life drawing </h2>
-      <p class="mid-p"> Classical art and life drawing skills are essential as an artist.
+      <h2 class="top_text"> 2D Artwork and Life Drawing </h2>
+      <p class="mid-p"> Classical art and life drawing skills are essential as an artist
       </p>
       <NavDropdown.Divider />
         <Col ms={'auto'}>
@@ -103,43 +103,43 @@ function Artwork() {
       <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto" }}>
         <Card.Img variant="top" src={img1} className="rounded" alt="Card image" />
         <Card.Body>
-          <Card.Title>Five Minute pose </Card.Title>
+          <Card.Title>Five Minute Pose </Card.Title>
           <Card.Text>
-          Five minute pose with a live model. 
-          Five minutes to capture as many details as possible.
+          Five minute pose with a live model 
+          Five minutes to capture as many details as possible
           </Card.Text>
         </Card.Body>
         <Card.Footer>
-          <Button variant="outline-primary" size="sm" onClick={() => setLgShow(true)}>View here</Button>{' '}
+          <Button variant="outline-warning" size="sm" onClick={() => setLgShow(true)}>View here</Button>{' '}
           
         </Card.Footer>
       </Card>
       <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto" }}>
         <Card.Img variant="top" src={img2} className="rounded" alt="Card image" />
         <Card.Body>
-          <Card.Title>One minute pose</Card.Title>
+          <Card.Title>One Minute Pose</Card.Title>
           <Card.Text>
-            One minute pose with live model. The pose changes every minute. 
+            One minute pose with live model. The pose changes every minute 
             {' '}
           </Card.Text>
         </Card.Body>
         <Card.Footer>
-        <Button variant="outline-primary" size="sm" onClick={() => setLgShow1(true)}>View Here</Button>{' '}
+        <Button variant="outline-warning" size="sm" onClick={() => setLgShow1(true)}>View Here</Button>{' '}
           
         </Card.Footer>
       </Card>
       <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto" }}>
         <Card.Img variant="top" src={img3} className="rounded" alt="Card image" />
         <Card.Body>
-          <Card.Title>One minute pose</Card.Title>
+          <Card.Title>One Minute Pose</Card.Title>
           <Card.Text>
             One minute pose with a live model. 
-            Capture as many details as possible within a minute.
+            Capture as many details as possible within a minute
       
           </Card.Text>
         </Card.Body>
         <Card.Footer>
-        <Button variant="outline-primary" size="sm" onClick={() => setLgShow2(true)}>View here</Button>{' '}
+        <Button variant="outline-warning" size="sm" onClick={() => setLgShow2(true)}>View here</Button>{' '}
           
         </Card.Footer>
       </Card>

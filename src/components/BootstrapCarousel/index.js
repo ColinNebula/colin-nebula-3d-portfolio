@@ -20,7 +20,7 @@ export default function BootstrapCarousel() {
 
       <Carousel.Caption className="text-light">
       <h3>Free Rider</h3>
-      <p>A short film made in blender.</p>
+      <p>A short film made in blender</p>
     </Carousel.Caption>
   </Carousel.Item>
 
@@ -34,7 +34,7 @@ export default function BootstrapCarousel() {
       <Carousel.Caption className="text-dark">
       <h3>Century Bar Occlusion Layer</h3>
       <p>Modeled in Maya and sculpted in Zbrush. Xnormal was used to bake
-      the normal maps.</p>
+      the normal maps</p>
     </Carousel.Caption>
   </Carousel.Item>
 
@@ -48,7 +48,7 @@ export default function BootstrapCarousel() {
       <Carousel.Caption className="text-light">
       <h3>Sword model</h3>
       <p>Modeled in Maya and sculpted in Zbrush. Xnormal was used to bake
-      the normal maps.</p>
+      the normal maps</p>
     </Carousel.Caption>
   </Carousel.Item>
   
@@ -61,7 +61,7 @@ export default function BootstrapCarousel() {
       <Carousel.Caption>
         <h3>Old Bar</h3>
         <p>Modeled in Maya and sculpted in Zbrush. xNormal was used to bake
-        the normal maps.</p>
+        the normal maps</p>
       </Carousel.Caption>
     </Carousel.Item>
 
@@ -75,7 +75,7 @@ export default function BootstrapCarousel() {
   
       <Carousel.Caption>
         <h3>Mask of Malice</h3>
-        <p>Modeled in Blender and sculpted in Zbrush. </p>
+        <p>Modeled in Blender and sculpted in Zbrush </p>
       </Carousel.Caption>
     </Carousel.Item>
     <Carousel.Item>
@@ -100,7 +100,7 @@ export default function BootstrapCarousel() {
   
       <Carousel.Caption>
         <h3>Sniper Rifle</h3>
-        <p>Modeled in Maya, Sculpted in Zbrush. Used Xnormal for normal mapping.</p>
+        <p>Modeled in Maya, Sculpted in Zbrush. Used Xnormal for normal mapping</p>
       </Carousel.Caption>
     </Carousel.Item>
     
@@ -114,7 +114,7 @@ export default function BootstrapCarousel() {
       <Carousel.Caption>
       <h3>Tactical Knife</h3>
       <p>Modeled in Maya and sculpted in Zbrush. Xnormal was used to bake
-      the normal maps.</p>
+      the normal maps</p>
     </Carousel.Caption>
   </Carousel.Item>
   <Carousel.Item>
@@ -127,7 +127,7 @@ export default function BootstrapCarousel() {
       <Carousel.Caption>
       <h3>Shotgun</h3>
       <p>Modeled in Maya and sculpted in Zbrush. Xnormal was used to bake
-      the normal maps.</p>
+      the normal maps</p>
     </Carousel.Caption>
   </Carousel.Item>
   
@@ -142,7 +142,7 @@ export default function BootstrapCarousel() {
       <Carousel.Caption>
         <h3>M16 A2 Rifle</h3>
         <p>Modeled in Maya and sculpted in Zbrush. Xnormal was used to bake
-        the normal maps.</p>
+        the normal maps</p>
       </Carousel.Caption>
     </Carousel.Item>
 
