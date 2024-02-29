@@ -103,7 +103,7 @@ function Artwork() {
       <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto" }}>
         <Card.Img variant="top" src={img1} className="rounded" alt="Card image" />
         <Card.Body>
-          <Card.Title>Five Minute Pose </Card.Title>
+          <Card.Title className="ti-tle">Five Minute Pose </Card.Title>
           <Card.Text>
           Five minute pose with a live model 
           Five minutes to capture as many details as possible
@@ -113,11 +113,12 @@ function Artwork() {
           <Button variant="outline-warning" size="sm" onClick={() => setLgShow(true)}>View here</Button>{' '}
           
         </Card.Footer>
+        <br/>
       </Card>
       <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto" }}>
         <Card.Img variant="top" src={img2} className="rounded" alt="Card image" />
         <Card.Body>
-          <Card.Title>One Minute Pose</Card.Title>
+          <Card.Title className="ti-tle">One Minute Pose</Card.Title>
           <Card.Text>
             One minute pose with live model. The pose changes every minute 
             {' '}
@@ -127,11 +128,12 @@ function Artwork() {
         <Button variant="outline-warning" size="sm" onClick={() => setLgShow1(true)}>View Here</Button>{' '}
           
         </Card.Footer>
+        <br/>
       </Card>
       <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto" }}>
         <Card.Img variant="top" src={img3} className="rounded" alt="Card image" />
         <Card.Body>
-          <Card.Title>One Minute Pose</Card.Title>
+          <Card.Title className="ti-tle">One Minute Pose</Card.Title>
           <Card.Text>
             One minute pose with a live model. 
             Capture as many details as possible within a minute
@@ -142,6 +144,7 @@ function Artwork() {
         <Button variant="outline-warning" size="sm" onClick={() => setLgShow2(true)}>View here</Button>{' '}
           
         </Card.Footer>
+        <br/>
       </Card>
     </CardGroup>
         </Col>

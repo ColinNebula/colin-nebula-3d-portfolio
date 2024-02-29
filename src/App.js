@@ -12,7 +12,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 // import Footer from './components/Footer';
 
 import BootstrapCarousel from './components/BootstrapCarousel';
-import LandingPage from './components/LandingPage';
+import LandingPage from "./components/LandingPage";
 
 
 

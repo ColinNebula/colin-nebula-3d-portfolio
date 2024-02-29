@@ -2,6 +2,7 @@
 import React, {useState} from "react";
 // import OldBar from '../../assets/images/ACL_Bar_Dis4.jpeg';
 import logoD from '../../assets/images/logoD.png';
+import nbg from '../../assets/images/nbg.png';
 import byte3 from '../../assets/images/byte3.png';
 import { Card, Container, Button, Col, Row, CardGroup, NavDropdown, Modal } from 'react-bootstrap';
 import { SocialIcon } from 'react-social-icons';
@@ -9,6 +10,7 @@ import { SocialIcon } from 'react-social-icons';
 function VfxVideoEditing() {
   const [lgShow, setLgShow] = useState(false);
   const [lgShow1, setLgShow1] = useState(false);
+  const [lgShow2, setLgShow2] = useState(false);
  
 
     return (
@@ -37,7 +39,7 @@ function VfxVideoEditing() {
           <br />
 
           </p>
-          <div className="iframe">
+          <div className="ratio ratio-16x9">
           <iframe 
           width="640" 
           height="360" 
@@ -48,6 +50,51 @@ function VfxVideoEditing() {
           allowfullscreen>
           </iframe>
           </div>
+          <br />
+          <br />
+        <p>
+            Second in the reel is the pilot for the 'Alphas' which is a SYFY TV show and hit series.
+            My job was to very precisely rotoscope the actor Bryant Cartwright, who plays Gary Bell, out of the green screen and into specific environments. 
+            This was accomplished utilizing Nuke primarily.
+        </p>
+        </Modal.Body>
+      </Modal>
+    </>
+        </div>
+
+        <div>
+        <>
+        <Modal
+        size="lg"
+        show={lgShow2}
+        onHide={() => setLgShow2(false)}
+        aria-labelledby="example-modal-sizes-title-lg"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="example-modal-sizes-title-lg">
+          VFX Reel
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>
+          This VFX demo reel displays the work I participated in during my internship. First, the reel shows a 'Gomu' eraser TV commercial, which was a fun project preparing 2D and 3D product placement. I researched the types of products used, created concept art of the positioning of the items, 3D bubbles, 
+          and other aspects to help complete the project. 
+          Photoshop and Maya were used predominantly.
+          <br />
+          <br />
+
+          </p>
+          <div className="ratio ratio-16x9">
+      <iframe 
+      width="560" 
+      height="315" 
+      src="https://www.youtube.com/embed/mPxmNbMpO7A?si=akRyOXO_rVHT5zDC" 
+      title="YouTube video player" 
+      frameborder="0" 
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+      allowfullscreen>
+      </iframe>
+      </div>
           <br />
           <br />
         <p>
@@ -79,7 +126,7 @@ function VfxVideoEditing() {
               Raw footage was provided by the client and the finished product is a result of VFX and video editing as well as, 
               sound incorporation with effects 
               </p>
-              <div className="iframe">
+              <div className="ratio ratio-16x9">
                 <iframe
                   width="560"
                   height="315"
@@ -118,6 +165,23 @@ function VfxVideoEditing() {
             <p class="top-p">Videos are rendered though a 3D software and worked on in post production for added effects</p>
             <NavDropdown.Divider />
                 <Col ms={"auto"}>
+                <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto"}}>
+                  <Card.Img variant="top" src={nbg} className="rounded" 
+                  alt="Card image" />
+                  <Card.Body>
+                  <br/>
+                    <Card.Title>Colin Nebula 2024 VFX Reel</Card.Title>
+                    <Card.Text>
+                    Visual effects demo of some projects I have worked on in the film industry 
+                    
+                    </Card.Text>
+                  </Card.Body>
+                  <Card.Footer>
+                  <Button variant="outline-warning" size="sm" onClick={() => setLgShow2(true)}>View video here</Button>{' '}
+                    
+                  </Card.Footer>
+                  <br/>
+                </Card>
                 <CardGroup>
                 <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto"}}>
                   <Card.Img variant="top" src={logoD} className="rounded" 
@@ -133,6 +197,7 @@ function VfxVideoEditing() {
                   <Button variant="outline-warning" size="sm" onClick={() => setLgShow(true)}>View video here</Button>{' '}
                     
                   </Card.Footer>
+                  <br/>
                 </Card>
                 <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto"}}>
                   <Card.Img variant="top" src={byte3} className="rounded" 
@@ -149,10 +214,13 @@ function VfxVideoEditing() {
                   <Button variant="outline-warning" size="sm"onClick={() => setLgShow1(true)}>View video here</Button>{' '}
                     
                   </Card.Footer>
+                  <br/>
                 </Card>
                 
               </CardGroup>
-        
+              <br/>
+              
+                
         </Col>
       </Row>
       <br />

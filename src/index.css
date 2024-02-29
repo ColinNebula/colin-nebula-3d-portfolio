@@ -1,61 +1,64 @@
 * {
 	box-sizing: border-box;
-  }
-  
-  main {
-	background: linear-gradient(90deg,
-		#1a1523,
-		#39393d);
+}
+
+main {
+	background: linear-gradient(45deg,
+			#1a1523,
+			#39393d);
 	padding-bottom: 24px;
-  }
-  
-  .carousel-item {
+}
+
+.carousel-item {
 	height: 25rem;
 	transition: 0.5s;
-  }
+	animation-name: fade;
+  	animation-duration: 4s;
+}
 
-  .line {
+.line {
 	text-decoration: none;
-  }
+}
 
-  h1 {
+h1 {
 	display: inline-block;
 	font-size: .6em;
 	text-decoration: none;
-	color:#358ed3;
+	color: #358ed3;
 	font-weight: 600;
 	line-height: 1.1;
 	letter-spacing: -2px;
 	transition: 2s;
 	font-family: "Oswald", sans-serif;
-  }
+}
 
-  .lastly {
-	font-size: 3.4em
-  }
+.lastly {
+	font-size: 3.4em;
+	animation-name: fade;
+  	animation-duration: 4s;
+}
 
-  .logo {
+.logo {
 	width: 800px;
 	margin-bottom: -1px;
 	transition: 0.6s;
-  } 
+}
 
-  .welcome {
+.welcome {
 	color: white;
-  }
+	animation-name: fade;
+  	animation-duration: 4s;
+}
 
-  .landing {
-	height: 100vh;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	margin-top: 0px;
-	transition: 0.6s;
-	align-items: center;
-  }
+.ti-tle {
+	animation-name: fade;
+  	animation-duration: 4s;
+}
+
+
 
 /* Card */
-  .card {
+.card {
 	flex: 40%;
 	width: 50%;
 	margin: 15px;
@@ -66,12 +69,12 @@
 }
 
 .card:hover {
-	box-shadow: 5px 10px 20px 1px rgba(0,0,0,0.253)!important;
+	box-shadow: 5px 10px 20px 1px rgba(0, 0, 0, 0.253) !important;
 }
 
 .rounded {
 	transform: scale(1);
-	transition:transform 0.6s ease;
+	transition: transform 0.6s ease;
 }
 
 .overflow-bg-dark-text-white-shadow-lg {
@@ -79,7 +82,7 @@
 }
 
 .rounded:hover {
-	transform:scale(1.1);
+	transform: scale(1.1);
 }
 
 /* Text elements */
@@ -88,6 +91,8 @@
 	color: white;
 	padding: 20px;
 	transition: 0.5s;
+	animation-name: fade;
+  	animation-duration: 4s;
 }
 
 .top-p {
@@ -95,6 +100,8 @@
 	color: white;
 	padding: 5px;
 	transition: 0.6s;
+	animation-name: fade;
+  	animation-duration: 4s;
 }
 
 .mid-p {
@@ -102,15 +109,11 @@
 	color: white;
 	padding: 5px;
 	transition: 0.6s;
+	animation-name: fade;
+  	animation-duration: 4s;
 }
 
-/* iframe elements*/
-.iframe {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	transition: 0.5s;
-}
+
 
 .bottom {
 	display: flex;
@@ -123,30 +126,32 @@
 	padding: 5px;
 	transition: 0.6s;
 	transform: scale(1);
-	transition:transform 0.6s ease;
+	transition: transform 0.6s ease;
 }
-  
+
 /* middle texts elements*/
 .middle_text {
 	text-align: center;
 	color: white;
 	padding: 10px;
 	transition: 0.5s;
+	animation-name: fade;
+  	animation-duration: 4s;
 }
 
 html,
 body {
-  min-height: 100%;
+	min-height: 100%;
 }
 
 /* body section */
 body {
-  margin: 0;
-  padding: 0;
-  font-weight: 600;
-  line-height: 1.5;
-  font-size: 18px;
-  letter-spacing: .1em;
+	margin: 0;
+	padding: 0;
+	font-weight: 600;
+	line-height: 1.5;
+	font-size: 18px;
+	letter-spacing: .1em;
 }
 
 
@@ -161,49 +166,49 @@ button {
 	cursor: pointer;
 	margin: 0 1px;
 	background-color: var(--secondary);
-  }
+}
 
-  button:hover {
+button:hover {
 	background-color: #eb9c34;
 	transform: 0.4s ease-in-out transform;
 	transform: translateY(5px);
-  }
-  
-  button[disabled] {
+}
+
+button[disabled] {
 	cursor: default;
 	opacity: .8;
-  }
-  
-  img {
+}
+
+img {
 	max-width: 100%;
-  }
-  
-  span[role="img"] {
+}
+
+span[role="img"] {
 	cursor: default;
-  }
-  
-  .form {
+}
+
+.form {
 	width: 40%;
 	align-items: center;
 	position: center;
-  }
-  
-  /* Input element */
-  input {
+}
+
+/* Input element */
+input {
 	font-size: 1rem;
 	padding: 0.25rem;
 	border: 1px solid var(--dark);
 	outline: none;
 	border-radius: 3px;
 	transition: box-shadow 0.2s;
-  }
-  
-  input:focus {
+}
+
+input:focus {
 	border: 1px solid var(--secondary);
 	box-shadow: 0 0 .25rem rgba(0, 0, 0, .5);
-  }
-  
-  textarea {
+}
+
+textarea {
 	width: 600px;
 	height: 120px;
 	border: 1px solid var(--dark);
@@ -211,13 +216,13 @@ button {
 	border-radius: 3px;
 	transition: box-shadow 0.2s;
 	padding: 5px;
-  }
-  
-  li {
+}
+
+li {
 	list-style: none;
 }
-  
-  .container {
+
+.container {
 	width: 100%;
 	max-width: 1300px;
 	margin-left: auto;
@@ -226,49 +231,49 @@ button {
 
 .navActive {
 	color: var(--primary);
-  }
+}
 
 .flex-row {
 	display: flex;
 	flex-wrap: wrap;
-  }
-  
-  .space-between {
-	justify-content: space-between;
-  }
-  
-  .flex-end {
-	justify-content: flex-end;
-  }
-  
+}
 
-  
-  .card {
+.space-between {
+	justify-content: space-between;
+}
+
+.flex-end {
+	justify-content: flex-end;
+}
+
+
+
+.card {
 	width: 25%;
 	text-align: center;
-  }
+}
 
 .icons {
 	display: inline-block;
 	transition: 0.5s;
 	transform: scale(1);
-	transition:transform 0.6s ease;
+	transition: transform 0.6s ease;
 }
 
 .icons:hover {
 	transform: 0.4s ease-in-out transform;
 	transform: translateY(5px);
 }
-  
-  .img-thumbnail {
+
+.img-thumbnail {
 	width: auto;
 	height: 300px;
 	margin-bottom: 50px;
 	cursor: pointer;
-  }
-  
-  /* modal section */
-  .modalBackdrop {
+}
+
+/* modal section */
+.modalBackdrop {
 	background: rgba(68, 64, 64, 0.65);
 	bottom: 0;
 	left: 0;
@@ -277,22 +282,22 @@ button {
 	right: 0;
 	top: 0;
 	z-index: 1;
-  }
-  
-  .modalContainer {
+}
+
+.modalContainer {
 	background: var(--darker);
 	border-radius: 5px;
 	max-width: 100%;
 	margin: 50px auto;
 	padding: 15px;
 	width: 960px;
-  }
-  
-  .modalTitle {
+}
+
+.modalTitle {
 	font-size: 18px;
 	font-weight: 600;
 	margin-bottom: 25px;
-  }
+}
 
 /* ------------------------- LandingPage elements -------------------------- */
 
@@ -307,30 +312,30 @@ button {
 	position: relative;
 	transition: 0.5s;
 	font-family: serif;
-  } 
-  
-  .video-bg {
+}
+
+.video-bg {
 	width: 100%;
 	height: 100vh;
 	position: absolute;
 	top: 0;
 	z-index: -1;
 	object-fit: cover;
-  }
-  
-  .bg-overlay {
+}
+
+.bg-overlay {
 	height: 100%;
 	width: 100%;
-	background-color: rgba(0,0,0,0.5);
+	background-color: rgba(0, 0, 0, 0.5);
 	position: absolute;
 	top: 0;
 	z-index: 0;
-  }
-  
-  
-  .bar-over {
+}
+
+
+.bar-over {
 	width: 100%;
-	height:1em;
+	height: 1em;
 	border-bottom: 2px solid white;
 	position: absolute;
 	top: 0;
@@ -339,25 +344,25 @@ button {
 	justify-content: flex-start;
 	align-items: center;
 	z-index: 1;
-  }
+}
 
-  .landing-h1 {
+.landing-h1 {
 	font-size: 7em;
 	animation-name: fade;
 	animation-duration: 4s;
 	text-shadow: #242627;
 	color: white;
-  }
-  
-  .landing-p {
+}
+
+.landing-p {
 	justify-self: flex-end;
 	font-size: 2em;
 	animation-name: fade;
 	animation-duration: 6s;
 	color: white;
-  }
-  
-  .home-text {
+}
+
+.home-text {
 	height: 60%;
 	width: 70%;
 	display: flex;
@@ -366,9 +371,9 @@ button {
 	justify-content: space-around;
 	z-index: 2;
 	/* font-family: "Cavergiz"; */
-  }
-  
-  .home-btn {
+}
+
+.home-btn {
 	height: 2em;
 	width: 6em;
 	border: 2px solid white;
@@ -382,22 +387,25 @@ button {
 	z-index: 1;
 	align-items: center;
 	cursor: pointer;
-	
-  }
-  
-  .home-btn:hover {
+
+}
+
+.home-btn:hover {
 	background-color: #7eb8dc;
 	transform: 0.4s ease-in-out transform;
-	  transform: translateY(2px);
-  
-  }
-  /* Animation */
-  @keyframes fade {
+	transform: translateY(2px);
+
+}
+
+/* Animation */
+@keyframes fade {
 	0% {
-	  opacity: 0;
-	  margin-left: 3em;
+		opacity: 0;
+		margin-left: 3em;
 	}
+
 	100% {
-	  opacity: 1;
+		opacity: 1;
 	}
-  }
+}
+

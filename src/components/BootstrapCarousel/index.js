@@ -5,7 +5,7 @@ import shield1 from '../../assets/images/shield1.png';
 import sword from '../../assets/images/sword.png';
 import m16Close from '../../assets/images/m16Close.png';
 import rundown from '../../assets/images/rundown.png';
-import maskall from '../../assets/images/maskall.png';
+import contents from '../../assets/images/contents.png';
 export default function BootstrapCarousel() {
   return (
     <div>
@@ -68,14 +68,14 @@ export default function BootstrapCarousel() {
     <Carousel.Item>
       <img
         className="d-block w-100 h-100 carousel-fade" data-bs-interval="10000"
-        src={maskall}
-        alt="Colin Nebula's Mask"
+        src={contents}
+        alt="weapon models"
       />
       
   
       <Carousel.Caption>
-        <h3>Mask of Malice</h3>
-        <p>Modeled in Blender and sculpted in Zbrush </p>
+        <h3>weapons of Malice</h3>
+        <p>All Models were modeled, uv, and textured in Blender  </p>
       </Carousel.Caption>
     </Carousel.Item>
     <Carousel.Item>

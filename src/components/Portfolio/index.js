@@ -62,20 +62,35 @@ function Portfolio() {
       >
         <Modal.Header closeButton>
           <Modal.Title id="example-modal-sizes-title-lg">
-            Old 20th Century bar
+            Old 20th Century Bar
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <p>
           Model of a old 20 Centrury bar at night time. 
           Maya was used to model, uv, and texture the objects. 
-          Painting was done in photoshop. 
+          Painting was done in photoshop 
           
 
           </p>
           <Card.Img src={oldBar} className="rounded" alt="Card image" />
           <a href="https://react-bootstrap.github.io/components/modal/"></a>
         
+        <br />
+        <br />
+
+        <p>
+          Low poly count on all objects 
+        </p>
+
+        <br />
+        <br />
+
+        <Card.Img src={oldBarAo} className="rounded" alt="Card image" />
+          <a href="https://react-bootstrap.github.io/components/modal/"></a>
+
+          <br />
+          <br />
         </Modal.Body>
       </Modal>
     </>
@@ -131,6 +146,7 @@ function Portfolio() {
           
           <br/>
           <br/>
+          <div className="ratio ratio-16x9">
           <iframe width="560" 
           height="315" 
           src="https://www.youtube.com/embed/hLH3htg2GS0?si=y5onQfNbBUpvm-Os" 
@@ -139,6 +155,7 @@ function Portfolio() {
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
           allowfullscreen>
           </iframe>
+          </div>
 
           </p>
           <br/>
@@ -169,7 +186,7 @@ function Portfolio() {
           <Card.Img  variant="top" src={maskm} className="rounded"
           alt="Card image" />
           <Card.Body>
-            <Card.Title>Mask of Malice</Card.Title>
+            <Card.Title className="ti-tle">Mask of Malice</Card.Title>
             <Card.Text>
             This mask was modeled in Blender. Zbrush was used to add more details {' '}
             </Card.Text>
@@ -178,6 +195,7 @@ function Portfolio() {
             <Button variant="outline-warning" size="sm" onClick={() => setLgShow(true)}>View here</Button>{' '}
             
             </Card.Footer>
+            <br/>
         
         </Card>
 
@@ -185,7 +203,7 @@ function Portfolio() {
           <Card.Img  src={oldBarAo} className="rounded"
           alt="Card image"/>
           <Card.Body>
-            <Card.Title>Old Bar</Card.Title>
+            <Card.Title className="ti-tle">Old Bar</Card.Title>
             <Card.Text>
             Utilizing my 3D knowledge to build complicated scenes
            
@@ -196,13 +214,14 @@ function Portfolio() {
             <Button variant="outline-warning" size="sm" onClick={() => setLgShow1(true)}>View here</Button>{' '}
             
           </Card.Footer>
+          <br/>
         </Card>
 
         <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto" }}>
           <Card.Img src={shield} className="rounded" 
           alt="Card image" />
           <Card.Body>
-            <Card.Title>Riot Shield</Card.Title>
+            <Card.Title className="ti-tle">Riot Shield</Card.Title>
             <Card.Text>
               A shield modeled in Blender
               
@@ -212,6 +231,7 @@ function Portfolio() {
           <Button variant="outline-warning" size="sm" onClick={() => setLgShow2(true)}>View here</Button>{' '}
           
         </Card.Footer>
+        <br/>
         </Card>
       </CardGroup>
       <br />
@@ -225,7 +245,7 @@ function Portfolio() {
           <Card.Img  src={sword} className="rounded"
           alt="Card image" />
           <Card.Body>
-            <Card.Title>Sword</Card.Title>
+            <Card.Title className="ti-tle">Sword</Card.Title>
             <Card.Text>
             This sword is a 3D model. 
             It was designed, modeled, textured using Blender 
@@ -236,6 +256,7 @@ function Portfolio() {
             <Button variant="outline-warning" size="sm" onClick={() => setLgShow3(true)}>View here</Button>{' '}
             
             </Card.Footer>
+            <br/>
         
         </Card>
 
@@ -243,7 +264,7 @@ function Portfolio() {
           <Card.Img  src={maskSide} className="rounded"
           alt="Card image"/>
           <Card.Body>
-            <Card.Title>3D Model</Card.Title>
+            <Card.Title className="ti-tle">3D Model</Card.Title>
             <Card.Text>
             3D face mask
             modeled, UV, and textured in Blender.
@@ -254,13 +275,14 @@ function Portfolio() {
             <Button variant="outline-warning" size="sm">View here</Button>{' '}
             
           </Card.Footer>
+          <br/>
         </Card>
 
         <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto" }}>
           <Card.Img src={tacticalK} className="rounded" 
           alt="Card image" />
           <Card.Body>
-            <Card.Title>Tactical Knife </Card.Title>
+            <Card.Title className="ti-tle">Tactical Knife </Card.Title>
             <Card.Text>
               Tactical knife 3D model. Modeled, UV, and textured using Maya 3D software
  
@@ -270,6 +292,7 @@ function Portfolio() {
           <Button variant="outline-warning" size="sm">View here</Button>{' '}
           
         </Card.Footer>
+        <br/>
         </Card>
       </CardGroup>
       </Col>

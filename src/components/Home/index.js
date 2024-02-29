@@ -2,13 +2,18 @@ import React, { useState } from 'react'
 import { Card, Container, Row, Col, CardGroup, NavDropdown, Modal, Button } from 'react-bootstrap';
 // import maskm from '../../assets/images/maskm.png';
 import sword from '../../assets/images/sword.png';
+
 import rundown from '../../assets/images/rundown.png';
 import demoR from '../../assets/images/3dModels.png';
+
 // import { FaGithub, FaLinkedin, FaYoutube } from "react-icons/fa";
 import { SocialIcon } from 'react-social-icons';
 export const Home = () => {
   const [lgShow, setLgShow] = useState(false);
   const [lgShow1, setLgShow1] = useState(false);
+  
+  
+  
   return (
     <Container fluid>
       <Row>
@@ -21,7 +26,7 @@ export const Home = () => {
         aria-labelledby="example-modal-sizes-title-lg"
       >
         <Modal.Header closeButton>
-          <Modal.Title id="example-modal-sizes-title-lg">
+          <Modal.Title className="ti-tle" id="example-modal-sizes-title-lg">
             2014 Demo Reel
           </Modal.Title>
         </Modal.Header>
@@ -32,7 +37,7 @@ export const Home = () => {
           Post effects were done using fusion.
 
           </p>
-          <div className="iframe">
+          <div className="ratio ratio-16x9">
           <iframe width="640" 
           height="360" class="iframe" 
           src="https://www.youtube.com/embed/1BP8ezuSDT4" 
@@ -57,13 +62,36 @@ export const Home = () => {
         aria-labelledby="example-modal-sizes-title-lg"
       >
         <Modal.Header closeButton>
-          <Modal.Title id="example-modal-sizes-title-lg">
-          VFX Demo Reel
+          <Modal.Title className="ti-tle" id="example-modal-sizes-title-lg">
+          VFX Reel 2024
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
+        
+        <br />
+        <p>
+          Thank you for viewing my most recent reel. All objects were created in Blender.
+          After Effects was used for camera and motion tracking of the raw footage.
+        </p>
+        <div className="ratio ratio-16x9">
+          <iframe 
+        width="560" 
+        height="315" src="https://www.youtube.com/embed/mPxmNbMpO7A?si=Akv33m0cXFxl7nhV" 
+        title="YouTube video player" 
+        frameborder="0" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+        allowfullscreen>
+          </iframe>
+        </div>
+
+        <br />
+        <br />
+        <Modal.Title className="ti-tle" id="example-modal-sizes-title-lg">
+          Past VFX Projects
+          </Modal.Title>
+          <br />
           <p>
-          This VFX demo reel displays the work I participated in during my internship. First, the reel shows a 'Gomu' eraser TV commercial, which was a fun project preparing 2D and 3D product placement. I researched the types of products used, created concept art of the positioning of the items, 3D bubbles, 
+          This VFX reel displays the work I participated in during my internship. First, the reel shows a 'Gomu' eraser TV commercial, which was a fun project preparing 2D and 3D product placement. I researched the types of products used, created concept art of the positioning of the items, 3D bubbles, 
           and other aspects to help complete the project. 
           Photoshop and Maya were used predominantly.
           <br />
@@ -73,11 +101,16 @@ export const Home = () => {
           This was accomplished utilizing Nuke primarily.
 
           </p>
-          <div className="iframe">
-          <iframe width="640" height="360" src="https://www.youtube.com/embed/tFwtXZw_VzM" 
-          title="YouTube video player" frameborder="0" 
+          <div className="ratio ratio-16x9">
+          <iframe 
+          width="640" 
+          height="360" 
+          src="https://www.youtube.com/embed/tFwtXZw_VzM" 
+          title="YouTube video player" 
+          frameborder="0" 
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-          allowfullscreen></iframe>
+          allowfullscreen>
+          </iframe>
           </div>
         
         </Modal.Body>
@@ -85,13 +118,23 @@ export const Home = () => {
     </>
         </div>  
       <h2 class="top_text"> Welcome to Nebula 3D</h2>
-      <p class="top-p"> My name is Colin Nebula and I am a 3D Artist and a computer enthusiast. Thank you for visiting.</p>
+      <p class="top-p"> My name is Colin Nebula and I am a 3D Artist and a computer enthusiast. Thank you for visiting</p>
       <NavDropdown.Divider />
 
     <Col ms={'auto'}>
-    <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto" }}>
-      <Card.Img src={rundown} className="card-image rounded" 
-      alt="Card image" />
+    <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto", height: "auto" }}>
+    
+      <div className="ratio ratio-16x9">
+      <iframe 
+      width="560" 
+      height="315" 
+      src="https://www.youtube.com/embed/mPxmNbMpO7A?si=akRyOXO_rVHT5zDC" 
+      title="YouTube video player" 
+      frameborder="0" 
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+      allowfullscreen>
+      </iframe>
+      </div>
       <Card.ImgOverlay>
         <Card.Title></Card.Title>
         <Card.Text>
@@ -122,6 +165,7 @@ export const Home = () => {
       <Button variant="outline-warning" onClick={() => setLgShow(true)}>View reel here</Button>{' '}
         
       </Card.Footer>
+      <br/>
     </Card>
     <Card className="overflow bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto" }}>
       <Card.Img variant="top" src={sword} className="card-image rounded" 
@@ -138,6 +182,7 @@ export const Home = () => {
       <Button variant="outline-warning" onClick={() => setLgShow1(true)}>View reel here</Button>{' '}
         
       </Card.Footer>
+      <br/>
     </Card>
     </CardGroup>
     </Col>

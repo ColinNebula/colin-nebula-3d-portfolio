@@ -31,9 +31,11 @@ function Animation() {
         </Modal.Header>
         <Modal.Body>
           <p>
-          A short low budget animated film made completely in blender.
-
+          A short low budget animated film made completely in blender. Very low polygon count for the whole project. 
+          Objects were placed in the scene using Blenders particle engine
           </p>
+
+          <div className="ratio ratio-16x9">
           <iframe 
           width="560" 
           height="315" 
@@ -43,6 +45,7 @@ function Animation() {
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
           allowfullscreen>
           </iframe>
+          </div>
         
         </Modal.Body>
       </Modal>
@@ -69,13 +72,17 @@ function Animation() {
           Xnormal was used to extract the normal map.
 
           </p>
-          <iframe width="640" height="360" 
+          <div className="ratio ratio-16x9">
+          <iframe 
+          width="640" 
+          height="360" 
           src="https://www.youtube.com/embed/lIrnDytiNxA" 
           title="YouTube video player" 
           frameborder="0" 
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
           allowfullscreen>
           </iframe>
+          </div>
         
         </Modal.Body>
       </Modal>
@@ -103,6 +110,7 @@ function Animation() {
           
 
           </p>
+          <div className="ratio ratio-16x9">
           <iframe width="560" height="315" 
           src="https://www.youtube.com/embed/FVVFcjpg5eA" 
           title="YouTube video player" 
@@ -110,6 +118,7 @@ function Animation() {
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
           allowfullscreen>
           </iframe>
+          </div>
         
         </Modal.Body>
       </Modal>
@@ -124,22 +133,23 @@ function Animation() {
                   <Card.Img variant="top" src={rundown} className="rounded" 
                   alt="Card image" />
                   <Card.Body>
-                    <Card.Title>Short Film</Card.Title>
+                    <Card.Title className="ti-tle">Short Film</Card.Title>
                     <Card.Text>
                     A short film created using only Blender 
                     
                     </Card.Text>
                   </Card.Body>
                   <Card.Footer>
-                  <Button variant="outline-primary" size="sm" onClick={() => setLgShow(true)}>View video here</Button>{' '}
+                  <Button variant="outline-warning" size="sm" onClick={() => setLgShow(true)}>View video here</Button>{' '}
                     
                   </Card.Footer>
+                  <br/>
                 </Card>
                 <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto"}}>
                   <Card.Img variant="top" src={rigging} className="rounded" 
                   alt="Card image" />
                   <Card.Body>
-                    <Card.Title>Lip Sync and Rigging</Card.Title>
+                    <Card.Title className="ti-tle">Lip Sync and Rigging</Card.Title>
                     <Card.Text>
                     Facial Rigging demo 
                     using Maya to model, UV, texture, and rig the character
@@ -147,24 +157,26 @@ function Animation() {
                     </Card.Text>
                   </Card.Body>
                   <Card.Footer>
-                  <Button variant="outline-primary" size="sm"onClick={() => setLgShow1(true)}>View video here</Button>{' '}
+                  <Button variant="outline-warning" size="sm"onClick={() => setLgShow1(true)}>View video here</Button>{' '}
                     
                   </Card.Footer>
+                  <br/>
                 </Card>
                 <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto" }}>
                   <Card.Img variant="top" src={shapeAnimation} className="rounded" 
                   alt="Card image" />
                   <Card.Body>
-                    <Card.Title>2D Shape Animation</Card.Title>
+                    <Card.Title className="ti-tle">2D Shape Animation</Card.Title>
                     <Card.Text>
                       Simple shapes and lines animation in After Effects
                       
                     </Card.Text>
                   </Card.Body>
                   <Card.Footer>
-                  <Button variant="outline-primary" size="sm" onClick={() => setLgShow2(true)}>View video here</Button>{' '}
+                  <Button variant="outline-warning" size="sm" onClick={() => setLgShow2(true)}>View video here</Button>{' '}
                     
                   </Card.Footer>
+                  <br/>
                 </Card>
               </CardGroup>
         
