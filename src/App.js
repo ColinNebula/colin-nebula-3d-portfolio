@@ -50,13 +50,16 @@ function App() {
   return (
     
     <div>
+    
     <div>
-      
+    
+    
 				<Header currentTab={currentTab} setCurrentTab={setCurrentTab}></Header>
         
 			</div>
 
     <BootstrapCarousel />
+    <div className="scroll-watcher"></div> 
   
       <div>
       <main>{renderTab()}</main>

@@ -41,7 +41,58 @@ h1 {
 .logo {
 	width: 800px;
 	margin-bottom: -1px;
-	transition: 0.6s;
+	transition: 0.9s cubic-bezier(0.42, 0, 0.39, 1.39);
+	scale: 1.8;
+	animation-name: fade;
+	animation-duration: 6s;
+	animation: fade-in linear;
+	animation-timeline: view();
+  	
+}
+
+
+
+.card {
+	animation: fade-in linear forwards;
+	animation-timeline: view();
+	scale: 0.8; opacity: 0;
+	animation-range: entry;
+}
+
+
+
+.scroll-watcher {
+	height: 10px;
+	position: fixed;
+	top: 0;
+	z-index: 1000;
+	background-color: #fffb01;
+	width: 1000%;
+	scale: .5 1;
+	transform-origin: left;
+	animation: scroll-watcher linear;
+	animation-timeline: scroll();
+	animation-range-start: contain;
+	animation-range-end: contain;
+}
+@keyframes scroll-watcher {
+	to { scale: 1 1;}
+}
+
+@keyframes fade-in {
+	
+	to {scale: 1; opacity: 1;}
+}
+
+@keyframes fade-out {
+	
+	to { opacity: 0;}
+}
+
+.logo:hover {
+	transform: translateX(10%);
+	transform: rotate(3.142rad);
+	animation-name: fade;
 }
 
 .welcome {
@@ -66,6 +117,7 @@ h1 {
 	justify-content: center;
 	align-items: center;
 	transition: 0.5s;
+	
 }
 
 .card:hover {
@@ -93,6 +145,9 @@ h1 {
 	transition: 0.5s;
 	animation-name: fade;
   	animation-duration: 4s;
+	animation: fade-out linear;
+	animation-timeline: view();
+	animation-range: exit -200px;
 }
 
 .top-p {

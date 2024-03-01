@@ -115,6 +115,7 @@ export const Home = () => {
         
         </Modal.Body>
       </Modal>
+      <div> className="scroll-watcher"</div>
     </>
         </div>  
       <h2 class="top_text"> Welcome to Nebula 3D</h2>
@@ -122,7 +123,7 @@ export const Home = () => {
       <NavDropdown.Divider />
 
     <Col ms={'auto'}>
-    <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto", height: "auto" }}>
+    <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto" }}>
     
       <div className="ratio ratio-21x9">
       <iframe 
