@@ -26,7 +26,7 @@ function Animation() {
       >
         <Modal.Header closeButton>
           <Modal.Title id="example-modal-sizes-title-lg">
-            Free Rider Animation Demo
+            Free Rider Animation
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>

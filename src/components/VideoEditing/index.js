@@ -77,9 +77,7 @@ function VfxVideoEditing() {
         </Modal.Header>
         <Modal.Body>
           <p>
-          This VFX demo reel displays the work I participated in during my internship. First, the reel shows a 'Gomu' eraser TV commercial, which was a fun project preparing 2D and 3D product placement. I researched the types of products used, created concept art of the positioning of the items, 3D bubbles, 
-          and other aspects to help complete the project. 
-          Photoshop and Maya were used predominantly.
+          This VFX reel represents my recent work in the visual effects field
           <br />
           <br />
 
@@ -98,9 +96,9 @@ function VfxVideoEditing() {
           <br />
           <br />
         <p>
-            Second in the reel is the pilot for the 'Alphas' which is a SYFY TV show and hit series.
-            My job was to very precisely rotoscope the actor Bryant Cartwright, who plays Gary Bell, out of the green screen and into specific environments. 
-            This was accomplished utilizing Nuke primarily.
+            The raw footage was camera and motion tracked using Adobe After effects
+            3D elements were modeled and rendered from Blender, 
+            exported into After Effects for the application of 2D effects and compositing 
         </p>
         </Modal.Body>
       </Modal>
@@ -165,23 +163,30 @@ function VfxVideoEditing() {
             <p class="top-p">Videos are rendered though a 3D software and worked on in post production for added effects</p>
             <NavDropdown.Divider />
                 <Col ms={"auto"}>
+                
                 <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto"}}>
+                <div className="ratio ratio-21x9">
                   <Card.Img variant="top" src={nbg} className="rounded" 
                   alt="Card image" />
+                  </div>
                   <Card.Body>
                   <br/>
                     <Card.Title>Colin Nebula 2024 VFX Reel</Card.Title>
                     <Card.Text>
-                    Visual effects demo of some projects I have worked on in the film industry 
-                    
+                    Take a view at my VFX Reel, 
+                    made with Blender and After Effects
                     </Card.Text>
                   </Card.Body>
                   <Card.Footer>
                   <Button variant="outline-warning" size="sm" onClick={() => setLgShow2(true)}>View video here</Button>{' '}
                     
                   </Card.Footer>
+                  
                   <br/>
                 </Card>
+
+                <h2 class="top_text"> Blender and After Effects</h2>
+            <p class="top-p">Using 2D tools in conjunction with 3D tools to produce amazing artwork</p>
                 <CardGroup>
                 <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto"}}>
                   <Card.Img variant="top" src={logoD} className="rounded" 
