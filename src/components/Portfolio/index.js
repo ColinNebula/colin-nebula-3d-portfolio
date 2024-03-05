@@ -7,9 +7,10 @@ import sword from '../../assets/images/sword.png';
 import swordd from '../../assets/images/swordd.png';
 
 import swordInfo from '../../assets/images/swordInfo.png';
-import maskm from '../../assets/images/maskm.png';
+import cover1 from '../../assets/images/cover1.png';
 import maskSide from '../../assets/images/maskSide.png';
-import maskall from '../../assets/images/maskall.png';
+import maskO from '../../assets/images/maskO.png';
+import wireM from '../../assets/images/wireM.png';
 import shield from '../../assets/images/shield.png';
 import { Container, Row, Col, Card, Button, NavDropdown, Modal } from 'react-bootstrap';
 import CardGroup from 'react-bootstrap/CardGroup';
@@ -39,15 +40,34 @@ function Portfolio() {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p>
-          Model of a mask. 
-          Blender was used to model, uv, and texture the objects. 
-          Painting was done in photoshop.
-
-          </p>
-          <Card.Img src={maskall} className="rounded" alt="Card image" />
-          <a href="https://react-bootstrap.github.io/components/modal/"></a>
+        <p>
+         
+        Mask of malice is an original concept for a project currently in progress.
+        Blender was used to model, uv, and texture the objects. 
+        Painting was done in photoshop
+        <br/>
         
+        </p>
+        <br/>
+        <Card.Img src={maskO} className="rounded" alt="Card image" />
+        <a href="https://react-bootstrap.github.io/components/modal/"></a>
+        <br/>
+        <br/>
+        <br/>
+        <Modal.Title id="example-modal-sizes-title-lg">
+            Mask of Malice
+          </Modal.Title>
+          <p>
+          Some of the 2D maps used were generated using Adobe Photoshop, 
+          Blender was used to model, uv, and texture the objects.
+          Sculpting was done in Zbrush, and normal maps were extracted using Xnormal 
+        
+        
+          </p>
+          <br/>
+          <Card.Img src={wireM} className="rounded" alt="Card image" />
+          <a href="https://react-bootstrap.github.io/components/modal/"></a>
+          <br/>
         </Modal.Body>
       </Modal>
     </>
@@ -183,7 +203,7 @@ function Portfolio() {
         <Col>
       <CardGroup>
         <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto"}}>
-          <Card.Img  variant="top" src={maskm} className="rounded"
+          <Card.Img  variant="top" src={cover1} className="rounded"
           alt="Card image" />
           <Card.Body>
             <Card.Title className="ti-tle">Mask of Malice</Card.Title>

@@ -115,7 +115,7 @@ export const Home = () => {
         
         </Modal.Body>
       </Modal>
-      <div> className="scroll-watcher"</div>
+      
     </>
         </div>  
       <h2 class="top_text"> Welcome to Nebula 3D</h2>

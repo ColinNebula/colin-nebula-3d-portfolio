@@ -1,7 +1,7 @@
 import React from "react";
 import { Container } from 'react-bootstrap';
 import Nav from 'react-bootstrap/Nav';
-import logo from '../../assets/images/logo.png';
+import logoM from '../../assets/images/logoM.png';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 
@@ -11,7 +11,7 @@ function Navigation(props) {
     <Navbar bg="dark" expand="md" variant="dark" sticky="top" collapseOnSelect>
       <Container>
         <Navbar.Brand href="home">
-        <img src={logo} width="90px" height="40px" alt="logo" />
+        <img src={logoM} width="90px" height="40px" alt="logo" />
         Colin Nebula 3D 
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />

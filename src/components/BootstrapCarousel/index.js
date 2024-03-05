@@ -6,11 +6,25 @@ import sword from '../../assets/images/sword.png';
 import m16Close from '../../assets/images/m16Close.png';
 import rundown from '../../assets/images/rundown.png';
 import nbg from '../../assets/images/nbg.png';
+import maskO from '../../assets/images/maskO.png';
 import contents from '../../assets/images/contents.png';
 export default function BootstrapCarousel() {
   return (
     <div>
     <Carousel>
+
+    <Carousel.Item>
+      <img
+        className="d-block w-100 h-100 carousel-fade" data-bs-interval="10000"
+        src={maskO}
+        alt="broken car"
+      />
+
+      <Carousel.Caption className="text-light">
+      <h3>Mask of Malice </h3>
+      <p> View Mask of Malice in the Portfolio tab</p>
+    </Carousel.Caption>
+  </Carousel.Item>
 
     <Carousel.Item>
       <img

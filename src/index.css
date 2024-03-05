@@ -42,7 +42,7 @@ h1 {
 	width: 800px;
 	margin-bottom: -1px;
 	transition: 0.9s cubic-bezier(0.42, 0, 0.39, 1.39);
-	scale: 1.8;
+	scale: 1.2;
 	animation-name: fade;
 	animation-duration: 6s;
 	animation: fade-in linear;
