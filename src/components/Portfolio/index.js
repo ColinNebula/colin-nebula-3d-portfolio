@@ -46,7 +46,18 @@ function Portfolio() {
         Blender was used to model, uv, and texture the objects. 
         Painting was done in photoshop
         <br/>
-        
+        <br/>
+        <div className="ratio ratio-21x9">
+        <iframe 
+        width="560" 
+        height="315" 
+        src="https://www.youtube.com/embed/ZsZYqn04yNQ?si=cWqpjx-rp3cAtGTD" 
+        title="YouTube video player" 
+        frameborder="0" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+        allowfullscreen>
+        </iframe>
+        </div>
         </p>
         <br/>
         <Card.Img src={maskO} className="rounded" alt="Card image" />
