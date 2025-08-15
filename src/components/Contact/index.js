@@ -1,17 +1,15 @@
 import React, { useState } from 'react';
-
+import './Contact.css'; // Import the CSS file
 import { validateEmail } from '../../utils/helpers';
 
 function ContactForm() {
   const [formState, setFormState] = useState({ name: '', email: '', message: '' });
-
   const [errorMessage, setErrorMessage] = useState('');
   const { name, email, message } = formState;
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!errorMessage) {
-      setFormState({ [e.target.name]: e.target.value });
       console.log('Form', formState);
     }
   };
@@ -31,13 +29,16 @@ function ContactForm() {
         setErrorMessage('');
       }
     }
-    console.log('errorMessage', errorMessage);
+
+    if (!errorMessage) {
+      setFormState({ ...formState, [e.target.name]: e.target.value });
+    }
   };
 
   return (
     <section>
       <h1 data-testid="h1tag">Contact me</h1>
-      <form id="contact-form" onSubmit={handleSubmit}>
+      <form id="contact-form" className="contact-form" onSubmit={handleSubmit}>
         <div>
           <label htmlFor="name">Name:</label>
           <input type="text" name="name" defaultValue={name} onBlur={handleChange} />

@@ -1,0 +1,36 @@
+.landing-container {
+    background-image: url('../../assets/images/mbg.png');
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+}
+
+.landing-container h1 {
+    font-size: 3em;
+    margin-bottom: 20px;
+}
+
+.landing-container .logo {
+    width: 100px; /* Adjust as needed */
+    height: auto;
+    vertical-align: middle;
+}
+
+.landing-container .welcome {
+    color: #007bff; /* Example color */
+}
+
+.landing-container .lastly {
+    font-weight: bold;
+}
+
+.landing-container .btn {
+    padding: 10px 20px;
+    font-size: 1.2em;
+}

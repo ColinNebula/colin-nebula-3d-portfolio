@@ -1,0 +1,152 @@
+.home-container {
+    padding: 20px;
+    background-color: #f8fafc; /* lighter background */
+    color: #102a43; /* dark slate text */
+  }
+  
+  .intro-section {
+    margin-bottom: 20px;
+  }
+  
+  .top_text {
+    font-size: 2.5em; /* Increased font size */
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(16, 42, 67, 0.06); /* Added text shadow */
+    color: #102a43;
+  }
+  
+  .top-p {
+    font-size: 1.3em; /* Increased font size */
+    line-height: 1.6; /* Improved readability */
+    color: #334155; /* readable dark gray for body copy */
+  }
+  
+  .portfolio-overview {
+    margin-top: 30px;
+    margin-bottom: 20px;
+  }
+  
+  .middle_text {
+    font-size: 1.8em; /* Increased font size */
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(16, 42, 67, 0.06); /* Added text shadow */
+    color: #102a43;
+  }
+  
+  .mid-p {
+    font-size: 1.2em; /* Increased font size */
+    line-height: 1.6; /* Improved readability */
+    color: #334155; /* readable dark gray for body copy */
+  }
+  
+  .card-image {
+    object-fit: cover;
+    height: 200px; /* Adjusted height for lighter layout */
+    transition: transform 0.3s ease; /* Added transition for hover effect */
+  }
+  
+  .card-image:hover {
+    transform: scale(1.05); /* Slight scale on hover */
+  }
+  
+  .card {
+    background-color: #ffffff !important; /* White background for cards */
+    color: #102a43 !important; /* Dark text color */
+    box-shadow: 0 6px 18px rgba(16, 42, 67, 0.06); /* Softer shadow */
+    transition: box-shadow 0.3s ease, transform 0.2s ease;
+    border: 1px solid #e6eef6; /* Subtle border */
+  }
+  
+  .card:hover {
+    box-shadow: 0 10px 30px rgba(16, 42, 67, 0.09); /* Increased shadow on hover */
+    transform: translateY(-4px); /* Lift effect on hover */
+  }
+  
+  .footer {
+    margin-top: 40px;
+    padding: 20px;
+    text-align: center;
+    border-top: 1px solid #e6eef6; /* Subtle border */
+    background: transparent;
+    color: #334155;
+  }
+  
+  .rights {
+    font-size: 1.1em; /* Increased font size */
+    color: #334155; /* readable dark gray for body copy */
+  }
+  
+  .icons {
+    margin-top: 10px;
+    color: #334155; /* Icon color to match text */
+  }
+  
+  /* Custom Modal Styling */
+.custom-modal .modal-dialog {
+  max-width: 90%; /* Adjust as needed */
+  margin: 1.75rem auto;
+}
+
+.custom-modal .modal-content {
+  background-color: #ffffff; /* light modal */
+  color: #102a43;
+  border: 1px solid #e6eef6;
+}
+
+.custom-modal .modal-header {
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.custom-modal .modal-title {
+  color: #102a43;
+}
+
+.custom-modal .modal-body {
+  padding: 20px;
+  color: #334155;
+}
+  
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  
+  .modal-title {
+    font-size: 1.8em;
+    color: #f0f0f0;
+  }
+  
+  .modal-close {
+    cursor: pointer;
+    font-size: 1.2em;
+    color: #f0f0f0;
+  }
+  
+  .modal-body {
+    font-size: 1.1em;
+    line-height: 1.6;
+    color: #e0e0e0;
+  }
+  
+  .modal-footer {
+    margin-top: 15px;
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .modal-button {
+    background-color: #0ea5e9; /* sky blue */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.12s ease;
+  }
+  
+  .modal-button:hover {
+    background-color: #0b84c7; /* darker blue on hover */
+    transform: translateY(-2px);
+  }

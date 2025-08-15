@@ -5,7 +5,8 @@ import logoD from '../../assets/images/logoD.png';
 import nbg from '../../assets/images/nbg.png';
 import byte3 from '../../assets/images/byte3.png';
 import { Card, Container, Button, Col, Row, CardGroup, NavDropdown, Modal } from 'react-bootstrap';
-import { SocialIcon } from 'react-social-icons';
+
+import SocialIcons from '../SocialIcons';
 
 function VfxVideoEditing() {
   const [lgShow, setLgShow] = useState(false);
@@ -231,29 +232,21 @@ function VfxVideoEditing() {
       <br />
       <NavDropdown.Divider />
 
-      <Container fluid>
-      <Row>
-      <div class="col-md-12">
-    <div class="rights">
-    Colin Nebula 
-    </div>
-    </div>
-    <br />
-    <br />
-    <Col className="icons">
-    <div className="bottom">
-    <SocialIcon url="https://github.com/ColinNebula" network="github" bgColor="#2a9d8f" />
-
-    <SocialIcon url="https://www.linkedin.com/in/colin-nebula-07176022/" network="linkedin" />
-
-    <SocialIcon url="mailto:colinnebula@gmail.com" network="mailto" bgColor="#e63946" />
-    </div>
-    
-    </Col>
-    </Row>
-
-    </Container>
-    </Container>
+      {/* Footer Section */}
+            <Container fluid className="footer">
+              <Row>
+                <Col md={12} className="text-center">
+                  <div className="rights">
+                    Colin Nebula
+                  </div>
+                </Col>
+      
+                <Col xs={12} className="icons text-center">
+                  <SocialIcons />
+                </Col>
+              </Row>
+            </Container>
+          </Container>
     )
 }
 

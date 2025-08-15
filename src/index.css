@@ -1,11 +1,21 @@
+/* Define CSS variables for colors and transitions */
+:root {
+	--primary: #0ea5e9;     /* bright sky blue (accent) */
+	--secondary: #ffb347;   /* warm orange (accent) */
+	--dark: #f6f9fc;        /* very light background */
+	--darker: #edf6fb;      /* soft blue tint */
+	--text: #0b2335;        /* darker slate for improved contrast on light bg */
+	--light: #ffffff;
+	--transition-duration: 0.5s;
+	--hover-transform: translateY(5px);
+}
+
 * {
 	box-sizing: border-box;
 }
 
 main {
-	background: linear-gradient(45deg,
-			#1a1523,
-			#39393d);
+	background: linear-gradient(45deg, var(--dark), var(--darker));
 	padding-bottom: 24px;
 }
 
@@ -13,18 +23,24 @@ main {
 	height: 25rem;
 	transition: 0.5s;
 	animation-name: fade;
-  	animation-duration: 4s;
+	animation-duration: 4s;
 }
 
 .line {
 	text-decoration: none;
+	color: var(--primary);
+	transition: color var(--transition-duration);
+}
+
+.line:hover, .line:focus {
+	color: var(--secondary);
 }
 
 h1 {
 	display: inline-block;
 	font-size: .6em;
 	text-decoration: none;
-	color: #358ed3;
+	color: var(--primary);
 	font-weight: 600;
 	line-height: 1.1;
 	letter-spacing: -2px;
@@ -35,7 +51,7 @@ h1 {
 .lastly {
 	font-size: 3.4em;
 	animation-name: fade;
-  	animation-duration: 4s;
+	animation-duration: 4s;
 }
 
 .logo {
@@ -47,19 +63,34 @@ h1 {
 	animation-duration: 6s;
 	animation: fade-in linear;
 	animation-timeline: view();
-  	
 }
 
-
+.logo:hover {
+	transform: translate(10px, 13px);
+	animation-fill-mode: forwards;
+	animation: move 5s;
+	animation-name: fade;
+}
 
 .card {
 	animation: fade-in linear forwards;
 	animation-timeline: view();
-	scale: 0.8; opacity: 0;
+	scale: 0.8;
+	opacity: 0;
 	animation-range: entry;
+	flex: 40%;
+	width: 50%;
+	margin: 15px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	transition: 0.5s;
 }
 
-
+.card:hover {
+	box-shadow: 5px 10px 20px 1px rgba(0, 0, 0, 0.25) !important;
+	transform: scale(1.05);
+}
 
 /* .scroll-watcher {
 	height: 10px;
@@ -76,128 +107,106 @@ h1 {
 	animation-range-end: contain;
 } */
 @keyframes scroll-watcher {
-	to { scale: 1 1;}
+	to {
+		scale: 1 1;
+	}
 }
 
 @keyframes fade-in {
-	
-	to {scale: 1; opacity: 1;}
+
+	to {
+		scale: 1;
+		opacity: 1;
+	}
 }
 
 @keyframes fade-out {
-	
-	to { opacity: 0;}
+
+	to {
+		opacity: 0;
+	}
 }
 
 @keyframes move {
-	from {left: 0px}
-	to { opacity: 0;}
-}
+	from {
+		left: 0px
+	}
 
-.logo:hover {
-	transform: translate(10px, 13px);
-	animation-fill-mode: forwards;
-	animation: move 5s;
-	
-	animation-name: fade;
+	to {
+		opacity: 0;
+	}
 }
 
 .welcome {
 	color: white;
 	animation-name: fade;
-  	animation-duration: 4s;
+	animation-duration: 4s;
 }
 
 .ti-tle {
 	animation-name: fade;
-  	animation-duration: 4s;
-}
-
-
-
-/* Card */
-.card {
-	flex: 40%;
-	width: 50%;
-	margin: 15px;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	transition: 0.5s;
-	
-}
-
-.card:hover {
-	box-shadow: 5px 10px 20px 1px rgba(0, 0, 0, 0.253) !important;
-}
-
-.rounded {
-	transform: scale(1);
-	transition: transform 0.6s ease;
-}
-
-.overflow-bg-dark-text-white-shadow-lg {
-	overflow: hidden;
-}
-
-.rounded:hover {
-	transform: scale(1.1);
+	animation-duration: 4s;
 }
 
 /* Text elements */
 .top_text {
 	text-align: center;
-	color: white;
-	padding: 20px;
-	transition: 0.5s;
+	margin-top: 20px;
+	font-size: 2rem;
+	font-weight: bold;
+	transition: color var(--transition-duration), transform var(--transition-duration);
 	animation-name: fade;
-  	animation-duration: 4s;
-	
+	animation-duration: 4s;
+	color: var(--text);
+}
+
+.top_text:hover {
+	color: var(--secondary);
 	
 }
 
 .top-p {
 	text-align: center;
-	color: white;
+	font-size: 1.2rem;
+	margin-bottom: 20px;
+	color: var(--text);
 	padding: 5px;
-	transition: 0.6s;
+	transition: color var(--transition-duration), transform var(--transition-duration);
 	animation-name: fade;
-  	animation-duration: 4s;
+	animation-duration: 4s;
+}
+
+.top-p:hover {
+	color: var(--secondary);
+	
 }
 
 .mid-p {
 	text-align: center;
-	color: white;
+	color: var(--text);
 	padding: 5px;
-	transition: 0.6s;
+	transition: color var(--transition-duration), transform var(--transition-duration);
 	animation-name: fade;
-  	animation-duration: 4s;
+	
 }
 
-
-
-.bottom {
-	display: flex;
-	justify-content: space-around;
+.mid-p:hover {
+	color: var(--secondary);
+	
 }
 
-.rights {
-	text-align: center;
-	color: white;
-	padding: 5px;
-	transition: 0.6s;
-	transform: scale(1);
-	transition: transform 0.6s ease;
-}
-
-/* middle texts elements*/
 .middle_text {
 	text-align: center;
-	color: white;
+	color: var(--text);
 	padding: 10px;
-	transition: 0.5s;
+	transition: color var(--transition-duration), transform var(--transition-duration);
 	animation-name: fade;
-  	animation-duration: 4s;
+	animation-duration: 4s;
+}
+
+.middle_text:hover {
+	color: var(--secondary);
+
 }
 
 html,
@@ -213,8 +222,8 @@ body {
 	line-height: 1.5;
 	font-size: 18px;
 	letter-spacing: .1em;
+	color: var(--text);
 }
-
 
 /* button */
 button {
@@ -227,12 +236,17 @@ button {
 	cursor: pointer;
 	margin: 0 1px;
 	background-color: var(--secondary);
+	transition: var(--transition-duration);
 }
 
 button:hover {
-	background-color: #eb9c34;
-	transform: 0.4s ease-in-out transform;
-	transform: translateY(5px);
+	background-color: var(--secondary);
+	transform: var(--hover-transform);
+}
+
+button:focus {
+	outline: 2px solid var(--primary);
+	outline-offset: 2px;
 }
 
 button[disabled] {
@@ -267,6 +281,8 @@ input {
 input:focus {
 	border: 1px solid var(--secondary);
 	box-shadow: 0 0 .25rem rgba(0, 0, 0, .5);
+	outline: 2px solid var(--primary);
+	outline-offset: 2px;
 }
 
 textarea {
@@ -307,23 +323,19 @@ li {
 	justify-content: flex-end;
 }
 
-
-
-.card {
-	width: 25%;
-	text-align: center;
-}
-
 .icons {
-	display: inline-block;
+	display: block;
 	transition: 0.5s;
 	transform: scale(1);
 	transition: transform 0.6s ease;
+	text-align: center;
+	margin-top: 20px;
+	color: var(--text);
 }
 
 .icons:hover {
 	transform: 0.4s ease-in-out transform;
-	transform: translateY(5px);
+	transform: translateY(4px);
 }
 
 .img-thumbnail {
@@ -347,6 +359,7 @@ li {
 
 .modalContainer {
 	background: var(--darker);
+	color: var(--light);
 	border-radius: 5px;
 	max-width: 100%;
 	margin: 50px auto;
@@ -361,7 +374,6 @@ li {
 }
 
 /* ------------------------- LandingPage elements -------------------------- */
-
 
 .landing-page {
 	width: 100%;
@@ -387,12 +399,11 @@ li {
 .bg-overlay {
 	height: 100%;
 	width: 100%;
-	background-color: rgba(0, 0, 0, 0.5);
+	background-color: rgba(0, 0, 0, 0.18); /* reduced opacity */
 	position: absolute;
 	top: 0;
 	z-index: 0;
 }
-
 
 .bar-over {
 	width: 100%;
@@ -448,14 +459,17 @@ li {
 	z-index: 1;
 	align-items: center;
 	cursor: pointer;
-
 }
 
 .home-btn:hover {
 	background-color: #7eb8dc;
 	transform: 0.4s ease-in-out transform;
 	transform: translateY(2px);
+}
 
+.home-btn:focus {
+	outline: 2px solid var(--primary);
+	outline-offset: 2px;
 }
 
 /* Animation */
@@ -470,3 +484,16 @@ li {
 	}
 }
 
+.portfolio-card {
+	color: #000;
+	width: auto;
+	margin: 20px;
+}
+
+.portfolio-video {
+	border: none;
+}
+
+.element-class {
+	print-color-adjust: exact; /* Replaces color-adjust */
+}

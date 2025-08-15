@@ -1,14 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { capitalizeFirstLetter } from '../../utils/helpers';
 import { Card, CardGroup, Container, Row, Col, Button, NavDropdown, Modal } from 'react-bootstrap/';
 import img1 from '../../assets/images/LifeDrawingWeb_05.jpg';
 import img2 from '../../assets/images/LifeDrawingWeb_03.jpg';
 import img3 from '../../assets/images/LifeDrawingWeb_06.jpg';
-import { SocialIcon } from 'react-social-icons';
+import SocialIcons from '../SocialIcons';
+
 function Artwork() {
   const [lgShow, setLgShow] = useState(false);
   const [lgShow1, setLgShow1] = useState(false);
   const [lgShow2, setLgShow2] = useState(false);
+  const [showTop, setShowTop] = useState(false);
+  useEffect(() => {
+      const onScroll = () => setShowTop(window.scrollY > 240);
+      window.addEventListener('scroll', onScroll);
+      return () => window.removeEventListener('scroll', onScroll);
+    }, []);
   return (
     <Container fluid>
       <Row>
@@ -16,7 +23,7 @@ function Artwork() {
       <div>
         <>
       <Modal
-        size="lg"
+        fullscreen={true}
         show={lgShow}
         onHide={() => setLgShow(false)}
         aria-labelledby="example-modal-sizes-title-lg"
@@ -32,7 +39,7 @@ function Artwork() {
           Drawing and adding more details of a live model within five minutes.  
           
           </p>
-          <Card.Img src={img1} className="rounded" alt="Card image" />
+          <Card.Img src={img1} className="rounded img-fluid" style={{width: '100%', height: 'auto'}} alt="Five minute pose" />
           <a href="https://react-bootstrap.github.io/components/modal/"></a>
         
         </Modal.Body>
@@ -43,7 +50,7 @@ function Artwork() {
         <div>
         <>
       <Modal
-        size="lg"
+        fullscreen={true}
         show={lgShow1}
         onHide={() => setLgShow1(false)}
         aria-labelledby="example-modal-sizes-title-lg"
@@ -59,7 +66,7 @@ function Artwork() {
           
 
           </p>
-          <Card.Img src={img2} className="rounded" alt="Card image" />
+          <Card.Img src={img2} className="rounded img-fluid" style={{width: '100%', height: 'auto'}} alt="One minute pose" />
           <a href="https://react-bootstrap.github.io/components/modal/"></a>
         
         </Modal.Body>
@@ -70,7 +77,7 @@ function Artwork() {
         <div>
         <>
       <Modal
-        size="lg"
+        fullscreen={true}
         show={lgShow2}
         onHide={() => setLgShow2(false)}
         aria-labelledby="example-modal-sizes-title-lg"
@@ -87,7 +94,7 @@ function Artwork() {
           
 
           </p>
-          <Card.Img src={(img3)} className="rounded" alt="Card image" />
+          <Card.Img src={img3} className="rounded img-fluid" style={{width: '100%', height: 'auto'}} alt="One minute pose" />
           <a href="https://react-bootstrap.github.io/components/modal/"></a>
         
         </Modal.Body>
@@ -154,32 +161,44 @@ function Artwork() {
     <NavDropdown.Divider />  
 
     
-    <Container fluid>
-
-    <Row>
-
-    <div class="col-md-12">
-    <div class="rights">
-    Colin Nebula 
-    </div>
-    </div>
-
-    <br />
-    <br />
-
-    <div class="icons">
-    <Col className="bottom">
-    <SocialIcon url="https://github.com/ColinNebula" network="github" bgColor="#2a9d8f" />
-    <SocialIcon url="https://www.linkedin.com/in/colin-nebula-07176022/" network="linkedin" />
-    <SocialIcon url="mailto:colinnebula@gmail.com" network="mailto" bgColor="#e63946" />
-    </Col>
-
-    </div>
-
-    </Row>
+     {/* Footer Section */}
+          <Container fluid className="footer">
+            <Row>
+              <Col md={12} className="text-center">
+                <div className="rights">
+                  Colin Nebula
+                </div>
+              </Col>
     
-    </Container>
-    </Container>
+              <Col xs={12} className="icons text-center">
+                <SocialIcons />
+              </Col>
+            </Row>
+          </Container>
+          {showTop && (
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          aria-label="Back to top"
+          title="Back to top"
+          style={{
+            position: 'fixed',
+            right: 20,
+            bottom: 30,
+            zIndex: 999,
+            padding: '10px 14px',
+            borderRadius: 6,
+            border: 'none',
+            background: '#0ea5e9',
+            color: '#fff',
+            cursor: 'pointer',
+            boxShadow: '0 6px 18px rgba(0,0,0,0.2)'
+          }}
+        >
+          ↑ Top
+        </button>
+      )}
+        </Container>
   )
 }
 export default Artwork;
+

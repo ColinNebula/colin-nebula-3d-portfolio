@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import oldBar from '../../assets/images/oldBar.png';
 import oldBarAo from '../../assets/images/oldBarAo.png';
 import shield1 from '../../assets/images/shield1.png';
@@ -14,7 +14,11 @@ import wireM from '../../assets/images/wireM.png';
 import shield from '../../assets/images/shield.png';
 import { Container, Row, Col, Card, Button, NavDropdown, Modal } from 'react-bootstrap';
 import CardGroup from 'react-bootstrap/CardGroup';
-import { SocialIcon } from 'react-social-icons';
+import SocialIcons from '../SocialIcons';
+
+
+
+
 
 
 function Portfolio() {
@@ -22,6 +26,13 @@ function Portfolio() {
   const [lgShow1, setLgShow1] = useState(false);
   const [lgShow2, setLgShow2] = useState(false);
   const [lgShow3, setLgShow3] = useState(false);
+  const [showTop, setShowTop] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setShowTop(window.scrollY > 240);
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
     return (
         <Container fluid>
             <Row>
@@ -29,7 +40,7 @@ function Portfolio() {
       <div>
       <>
       <Modal
-        size="lg"
+        fullscreen={true}
         show={lgShow}
         onHide={() => setLgShow(false)}
         aria-labelledby="example-modal-sizes-title-lg"
@@ -49,15 +60,15 @@ function Portfolio() {
         <br/>
         <div className="ratio ratio-21x9">
         <iframe 
-        width="560" 
-        height="315" 
-        src="https://www.youtube.com/embed/ZsZYqn04yNQ?si=cWqpjx-rp3cAtGTD" 
-        title="YouTube video player" 
-        frameborder="0" 
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-        allowfullscreen>
-        </iframe>
-        </div>
+        width="100%" 
+        height="560"
+         src="https://www.youtube.com/embed/ZsZYqn04yNQ?si=cWqpjx-rp3cAtGTD" 
+         title="YouTube video player" 
+         frameborder="0" 
+         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+         allowfullscreen>
+         </iframe>
+         </div>
         </p>
         <br/>
         <Card.Img src={maskO} className="rounded" alt="Card image" />
@@ -86,7 +97,7 @@ function Portfolio() {
         <div>
       <>
       <Modal
-        size="lg"
+        fullscreen={true}
         show={lgShow1}
         onHide={() => setLgShow1(false)}
         aria-labelledby="example-modal-sizes-title-lg"
@@ -130,7 +141,7 @@ function Portfolio() {
         <div>
       <>
       <Modal
-        size="lg"
+        fullscreen={true}
         show={lgShow2}
         onHide={() => setLgShow2(false)}
         aria-labelledby="example-modal-sizes-title-lg"
@@ -158,7 +169,7 @@ function Portfolio() {
         <div>
       <>
       <Modal
-        size="lg"
+        fullscreen={true}
         show={lgShow3}
         onHide={() => setLgShow3(false)}
         aria-labelledby="example-modal-sizes-title-lg"
@@ -178,8 +189,8 @@ function Portfolio() {
           <br/>
           <br/>
           <div className="ratio ratio-16x9">
-          <iframe width="560" 
-          height="315" 
+          <iframe width="100%" 
+          height="560" 
           src="https://www.youtube.com/embed/hLH3htg2GS0?si=y5onQfNbBUpvm-Os" 
           title="YouTube video player" 
           frameborder="0" 
@@ -333,31 +344,45 @@ function Portfolio() {
       
     <NavDropdown.Divider />
    
-    <Container fluid>
+     {/* Footer Section */}
+               <Container fluid className="footer">
+                 <Row>
+                   <Col md={12} className="text-center">
+                     <div className="rights">
+                       Colin Nebula
+                     </div>
+                   </Col>
+         
+                   <Col xs={12} className="icons text-center">
+                     <SocialIcons />
+                   </Col>
+                 </Row>
+               </Container>
+          {showTop && (
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          aria-label="Back to top"
+          title="Back to top"
+          style={{
+            position: 'fixed',
+            right: 20,
+            bottom: 30,
+            zIndex: 999,
+            padding: '10px 14px',
+            borderRadius: 6,
+            border: 'none',
+            background: '#0ea5e9',
+            color: '#fff',
+            cursor: 'pointer',
+            boxShadow: '0 6px 18px rgba(0,0,0,0.2)'
+          }}
+        >
+          ↑ Top
+        </button>
+      )}
+             </Container>
 
-    <Row>
-
-    <div class="col-md-12">
-    <div class="rights">
-    Colin Nebula 
-    </div>
-    </div>
-
-    <br /> 
-    <br />
-    <Col className="icons">
-    <div className="bottom">
-    <SocialIcon url="https://github.com/ColinNebula" network="github" className="icon" bgColor="#2a9d8f" />
-    <SocialIcon url="https://www.linkedin.com/in/colin-nebula-07176022/" network="linkedin" className="icon" />
-    <SocialIcon url="mailto:colinnebula@gmail.com" network="mailto" bgColor="#e63946" />
-    </div>
-
-    </Col>
-
-    </Row>
-
-    </Container>
-    </Container>
+             
 
     );
   }
