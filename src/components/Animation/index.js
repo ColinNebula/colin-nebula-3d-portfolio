@@ -12,6 +12,93 @@ function Animation() {
   const [lgShow2, setLgShow2] = useState(false);
   const [lgShow3, setLgShow3] = useState(false);
 
+  // new features
+  const [autoplay, setAutoplay] = useState(false);
+  const [muted, setMuted] = useState(true);
+  const [showLegend, setShowLegend] = useState(false);
+  const [shareMsg, setShareMsg] = useState('');
+
+  // reduced motion preference
+  const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // canonical reel IDs / URLs
+  const REEL_IDS = {
+    freeRider: 'N2WhwHaicR4',
+    rigging: 'lIrnDytiNxA',
+    shape: 'FVVFcjpg5eA'
+  };
+  const REEL_URLS = {
+    freeRider: `https://www.youtube.com/watch?v=${REEL_IDS.freeRider}`,
+    rigging: `https://www.youtube.com/watch?v=${REEL_IDS.rigging}`,
+    shape: `https://www.youtube.com/watch?v=${REEL_IDS.shape}`
+  };
+
+  // helper: build embed src with autoplay/mute params
+  const getEmbedSrc = (id) => {
+    const p = new URLSearchParams();
+    p.set('rel', '0');
+    if (autoplay) p.set('autoplay', '1');
+    if (muted) p.set('mute', '1');
+    return `https://www.youtube.com/embed/${id}?${p.toString()}`;
+  };
+
+  // copy helper with feedback + analytics
+  const copyToClipboard = async (text, setMsg) => {
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+      setMsg('Copied!');
+      console.info('analytics', 'copy_link', text);
+      setTimeout(() => setMsg(''), 1400);
+    } catch {
+      setMsg('Copy failed');
+      setTimeout(() => setMsg(''), 1400);
+    }
+  };
+
+  // keyboard shortcuts: 1->free rider, 2->rigging, A->autoplay, M->mute, L->legend
+  useEffect(() => {
+    const handler = (e) => {
+      const tag = e.target && e.target.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || e.target.isContentEditable) return;
+      const k = e.key.toLowerCase();
+      if (k === '1') {
+        // Free Rider
+        scrollToTopAndOpen(() => setLgShow(true), 'freeRider');
+      } else if (k === '2') {
+        // Rigging
+        scrollToTopAndOpen(() => setLgShow1(true), 'rigging');
+      } else if (k === 'a') {
+        setAutoplay(v => !v);
+      } else if (k === 'm') {
+        setMuted(v => !v);
+      } else if (k === 'l') {
+        setShowLegend(v => !v);
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [autoplay, muted, prefersReducedMotion]);
+
+  // small helper to scroll then open modal, with analytics label
+  const scrollToTopAndOpen = (openFn, label) => {
+    const behavior = prefersReducedMotion ? 'auto' : 'smooth';
+    if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior });
+    const delay = prefersReducedMotion ? 0 : 150;
+    setTimeout(() => {
+      console.info('analytics', 'open_modal', label);
+      openFn();
+    }, delay);
+  };
+
   const [showTop, setShowTop] = useState(false);
   
     useEffect(() => {
@@ -20,9 +107,33 @@ function Animation() {
       return () => window.removeEventListener('scroll', onScroll);
     }, []);
 
+  // NOTE: reuse existing scrollToTop if present; otherwise use local inline call below
+  const scrollToTop = (behavior = 'smooth') => {
+    const finalBehavior = prefersReducedMotion ? 'auto' : behavior;
+    if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: finalBehavior });
+  };
+
     return (
         <Container fluid>
             <Row>
+        {/* on-screen legend */}
+        {showLegend && (
+          <div style={{
+            position: 'fixed',
+            left: 12,
+            bottom: 12,
+            zIndex: 1200,
+            background: 'var(--card-bg)',
+            color: 'var(--text)',
+            padding: '8px 10px',
+            borderRadius: 6,
+            boxShadow: '0 6px 18px rgba(0,0,0,0.12)'
+          }}>
+            <div style={{ fontSize: 12, marginBottom: 6 }}><strong>Shortcuts</strong></div>
+            <div style={{ fontSize: 12 }}>1: Free Rider • 2: Rigging • A: Autoplay • M: Mute • L: Toggle legend</div>
+            <button className="btn btn-sm btn-link" onClick={() => setShowLegend(false)} aria-label="Close legend">Close</button>
+          </div>
+        )}
 
         <div>
         <>
@@ -46,7 +157,7 @@ function Animation() {
           <div className="ratio ratio-16x9" style={{ minHeight: 360 }}>
             <iframe
               title="Free Rider Animation video"
-              src="https://www.youtube.com/embed/N2WhwHaicR4?si=oH6JWh_VnC-jWj0H"
+              src={getEmbedSrc(REEL_IDS.freeRider)}
               width="100%"
               height="640"
               frameBorder="0"
@@ -54,6 +165,19 @@ function Animation() {
               allowFullScreen
             />
           </div>
+         <div style={{ marginTop: 8, display: 'flex', gap: 8 }}>
+            <a className="btn btn-sm btn-outline-primary" href={REEL_URLS.freeRider} target="_blank" rel="noopener noreferrer">Open on YouTube</a>
+            <button className="btn btn-sm btn-outline-secondary" onClick={() => copyToClipboard(REEL_URLS.freeRider, setShareMsg)}>Copy link</button>
+            <span className="visually-hidden" aria-live="polite">{shareMsg}</span>
+            <div style={{ marginLeft: 'auto' }}>
+              <label style={{ marginRight: 8, fontSize: 12 }}>
+                <input type="checkbox" checked={autoplay} onChange={() => setAutoplay(s => !s)} /> Autoplay
+              </label>
+              <label style={{ fontSize: 12 }}>
+                <input type="checkbox" checked={muted} onChange={() => setMuted(s => !s)} /> Mute
+              </label>
+            </div>
+         </div>
          
          </Modal.Body>
        </Modal>
@@ -172,7 +296,8 @@ function Animation() {
       </Modal>
     </>
         </div>
-
+        <br/>
+          <br/>
             <h2 className="top_text"> Animation and Video Renders</h2>
             <p className="top-p">Videos are rendered through 3D software and worked on in post production for added effects</p>
             <NavDropdown.Divider />
@@ -189,9 +314,13 @@ function Animation() {
                     </Card.Text>
                   </Card.Body>
                   <Card.Footer>
-                  <Button aria-label="Open Short Film modal" variant="outline-warning" size="sm" onClick={() => setLgShow(true)}>View video here</Button>{' '}
-                    
+                  <div style={{display:'flex', gap:8, alignItems:'center'}}>
+                    <Button aria-label="Open Short Film modal" variant="outline-warning" size="sm" onClick={() => scrollToTopAndOpen(() => setLgShow(true), 'freeRider')}>View video here</Button>
+                    <button className="btn btn-sm btn-outline-secondary" onClick={() => copyToClipboard(REEL_URLS.freeRider, setShareMsg)}>Copy</button>
+                    <a className="btn btn-sm btn-outline-primary" href={REEL_URLS.freeRider} target="_blank" rel="noopener noreferrer">Open</a>
+                  </div>
                   </Card.Footer>
+
                   <br/>
                 </Card>
                 <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto"}}>
@@ -206,9 +335,14 @@ function Animation() {
                     </Card.Text>
                   </Card.Body>
                   <Card.Footer>
-                  <Button variant="outline-warning" size="sm"onClick={() => setLgShow1(true)}>View video here</Button>{' '}
+                  <div style={{display:'flex', gap:8, alignItems:'center'}}>
+                    <Button variant="outline-warning" size="sm" onClick={() => scrollToTopAndOpen(() => setLgShow1(true), 'rigging')}>View video here</Button>
+                    <button className="btn btn-sm btn-outline-secondary" onClick={() => copyToClipboard(REEL_URLS.rigging, setShareMsg)}>Copy</button>
+                    <a className="btn btn-sm btn-outline-primary" href={REEL_URLS.rigging} target="_blank" rel="noopener noreferrer">Open</a>
+                  </div>
                     
-                  </Card.Footer>
+                  
+                 </Card.Footer>
                   <br/>
                 </Card>
                 <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto" }}>
@@ -222,9 +356,14 @@ function Animation() {
                     </Card.Text>
                   </Card.Body>
                   <Card.Footer>
-                  <Button variant="outline-warning" size="sm" onClick={() => setLgShow2(true)}>View video here</Button>{' '}
+                  <div style={{display:'flex', gap:8, alignItems:'center'}}>
+                    <Button variant="outline-warning" size="sm" onClick={() => scrollToTopAndOpen(() => setLgShow2(true), 'shape')}>View video here</Button>
+                    <button className="btn btn-sm btn-outline-secondary" onClick={() => copyToClipboard(REEL_URLS.shape, setShareMsg)}>Copy</button>
+                    <a className="btn btn-sm btn-outline-primary" href={REEL_URLS.shape} target="_blank" rel="noopener noreferrer">Open</a>
+                  </div>
                     
-                  </Card.Footer>
+                  
+                 </Card.Footer>
                   <br/>
                 </Card>
                 
@@ -239,12 +378,17 @@ function Animation() {
                   
                 </Card.Text>
               </Card.Body>
-              <Card.Footer>
-              <Button variant="outline-warning" size="sm" onClick={() => setLgShow3(true)}>View video here</Button>{' '}
-                
-              </Card.Footer>
               <br/>
-            </Card>
+              </Card>
+              <Card.Footer>
+              <div style={{display:'flex', gap:8, alignItems:'center'}}>
+                <Button variant="outline-warning" size="sm" onClick={() => scrollToTopAndOpen(() => setLgShow3(true), 'shape')}>View video here</Button>
+                <button className="btn btn-sm btn-outline-secondary" onClick={() => copyToClipboard(REEL_URLS.shape, setShareMsg)}>Copy</button>
+                <a className="btn btn-sm btn-outline-primary" href={REEL_URLS.shape} target="_blank" rel="noopener noreferrer">Open</a>
+              </div>
+                
+              
+             </Card.Footer>
               <CardGroup>
 
               </CardGroup>

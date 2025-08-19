@@ -101,6 +101,8 @@ function Artwork() {
       </Modal>
     </>
         </div>
+        <br/>
+        <br/>
       <h2 class="top_text"> 2D Artwork and Life Drawing </h2>
       <p class="mid-p"> Classical art and life drawing skills are essential as an artist
       </p>

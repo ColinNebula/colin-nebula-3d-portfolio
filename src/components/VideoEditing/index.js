@@ -1,22 +1,105 @@
-
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 // import OldBar from '../../assets/images/ACL_Bar_Dis4.jpeg';
 import logoD from '../../assets/images/logoD.png';
 import nbg from '../../assets/images/nbg.png';
 import byte3 from '../../assets/images/byte3.png';
 import { Card, Container, Button, Col, Row, CardGroup, NavDropdown, Modal } from 'react-bootstrap';
-
 import SocialIcons from '../SocialIcons';
 
 function VfxVideoEditing() {
   const [lgShow, setLgShow] = useState(false);
   const [lgShow1, setLgShow1] = useState(false);
   const [lgShow2, setLgShow2] = useState(false);
- 
+  // new features
+  const [autoplay, setAutoplay] = useState(false);
+  const [muted, setMuted] = useState(true);
+  const [showLegend, setShowLegend] = useState(false);
+  const [shareMsg, setShareMsg] = useState('');
+  // reduced-motion preference
+  const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // canonical reel ids / urls
+  const REEL = {
+    demo: { id: 'tFwtXZw_VzM', url: 'https://www.youtube.com/watch?v=tFwtXZw_VzM' },
+    recent: { id: 'mPxmNbMpO7A', url: 'https://www.youtube.com/watch?v=mPxmNbMpO7A' },
+    byte: { id: '1wI6aDte_1Q', url: 'https://www.youtube.com/watch?v=1wI6aDte_1Q' }
+  };
+
+  const getEmbedSrc = (id) => {
+    const params = new URLSearchParams();
+    params.set('rel', '0');
+    if (autoplay) params.set('autoplay', '1');
+    if (muted) params.set('mute', '1');
+    return `https://www.youtube.com/embed/${id}?${params.toString()}`;
+  };
+
+  const copyToClipboard = async (text, setMsg) => {
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+      setMsg('Copied!');
+      console.info('analytics', 'copy_link', text);
+      setTimeout(() => setMsg(''), 1400);
+    } catch {
+      setMsg('Copy failed');
+      setTimeout(() => setMsg(''), 1400);
+    }
+  };
+
+  const scrollToTop = (behavior = 'smooth') => {
+    const finalBehavior = prefersReducedMotion ? 'auto' : behavior;
+    if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: finalBehavior });
+  };
+
+  const scrollToTopAndOpen = (openFn, label) => {
+    scrollToTop();
+    const delay = prefersReducedMotion ? 0 : 150;
+    setTimeout(() => {
+      console.info('analytics', 'open_modal', label);
+      openFn();
+    }, delay);
+  };
+
+  // keyboard shortcuts: 1 -> demo, 2 -> recent, a -> autoplay, m -> mute, l -> legend
+  useEffect(() => {
+    const handler = (e) => {
+      const tag = e.target && e.target.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || e.target.isContentEditable) return;
+      const k = e.key.toLowerCase();
+      if (k === '1') scrollToTopAndOpen(() => setLgShow(true), 'demo');
+      if (k === '2') scrollToTopAndOpen(() => setLgShow2(true), 'recent');
+      if (k === 'a') setAutoplay(s => !s);
+      if (k === 'm') setMuted(s => !s);
+      if (k === 'l') setShowLegend(s => !s);
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [autoplay, muted, prefersReducedMotion]);
+
 
     return (
         <Container fluid>
             <Row>
+            {/* on-screen legend */}
+            {showLegend && (
+              <div style={{
+                position: 'fixed', left: 12, bottom: 12, zIndex: 1200,
+                background: 'var(--card-bg)', color: 'var(--text)',
+                padding: '8px 10px', borderRadius: 6, boxShadow: '0 6px 18px rgba(0,0,0,0.12)'
+              }}>
+                <div style={{ fontSize: 12, marginBottom: 6 }}><strong>Shortcuts</strong></div>
+                <div style={{ fontSize: 12 }}>1: Demo • 2: Recent VFX • A: Autoplay • M: Mute • L: Toggle legend</div>
+                <button className="btn btn-sm btn-link" onClick={() => setShowLegend(false)} aria-label="Close legend">Close</button>
+              </div>
+            )}
 
         <div>
         <>
@@ -26,41 +109,54 @@ function VfxVideoEditing() {
         onHide={() => setLgShow(false)}
         aria-labelledby="example-modal-sizes-title-lg"
       >
-        <Modal.Header closeButton>
-          <Modal.Title id="example-modal-sizes-title-lg">
-          VFX Demo Reel
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <p>
-          This VFX demo reel displays the work I participated in during my internship. First, the reel shows a 'Gomu' eraser TV commercial, which was a fun project preparing 2D and 3D product placement. I researched the types of products used, created concept art of the positioning of the items, 3D bubbles, 
-          and other aspects to help complete the project. 
-          Photoshop and Maya were used predominantly.
-          <br />
-          <br />
+         <Modal.Header closeButton>
+           <Modal.Title id="example-modal-sizes-title-lg">
+           VFX Demo Reel
+           </Modal.Title>
+         </Modal.Header>
+         <Modal.Body>
+           <p>
+           This VFX demo reel displays the work I participated in during my internship. First, the reel shows a 'Gomu' eraser TV commercial, which was a fun project preparing 2D and 3D product placement. I researched the types of products used, created concept art of the positioning of the items, 3D bubbles, 
+           and other aspects to help complete the project. 
+           Photoshop and Maya were used predominantly.
+           <br />
+           <br />
 
-          </p>
+           </p>
           <div className="ratio ratio-16x9">
-          <iframe 
-          width="640" 
-          height="360" 
-          src="https://www.youtube.com/embed/tFwtXZw_VzM" 
-          title="YouTube video player" 
-          frameborder="0" 
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-          allowfullscreen>
-          </iframe>
+            <iframe
+              width="100%"
+              height="480"
+              src={getEmbedSrc(REEL.demo.id)}
+              title="VFX Demo Reel"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+            />
           </div>
-          <br />
-          <br />
-        <p>
-            Second in the reel is the pilot for the 'Alphas' which is a SYFY TV show and hit series.
-            My job was to very precisely rotoscope the actor Bryant Cartwright, who plays Gary Bell, out of the green screen and into specific environments. 
-            This was accomplished utilizing Nuke primarily.
-        </p>
-        </Modal.Body>
-      </Modal>
-    </>
+          <div style={{ marginTop: 8, display: 'flex', gap: 8 }}>
+            <a className="btn btn-sm btn-outline-primary" href={REEL.demo.url} target="_blank" rel="noopener noreferrer">Open on YouTube</a>
+            <button className="btn btn-sm btn-outline-secondary" onClick={() => copyToClipboard(REEL.demo.url, setShareMsg)}>Copy link</button>
+            <span className="visually-hidden" aria-live="polite">{shareMsg}</span>
+            <div style={{ marginLeft: 'auto' }}>
+              <label style={{ marginRight: 8, fontSize: 12 }}>
+                <input type="checkbox" checked={autoplay} onChange={() => setAutoplay(v => !v)} /> Autoplay
+              </label>
+              <label style={{ fontSize: 12 }}>
+                <input type="checkbox" checked={muted} onChange={() => setMuted(v => !v)} /> Mute
+              </label>
+            </div>
+          </div>
+           <br />
+           <br />
+         <p>
+             Second in the reel is the pilot for the 'Alphas' which is a SYFY TV show and hit series.
+             My job was to very precisely rotoscope the actor Bryant Cartwright, who plays Gary Bell, out of the green screen and into specific environments. 
+             This was accomplished utilizing Nuke primarily.
+         </p>
+         </Modal.Body>
+       </Modal>
+     </>
         </div>
 
         <div>
@@ -160,6 +256,8 @@ function VfxVideoEditing() {
       
     </>
         </div>
+        <br/>
+        <br/>
             <h2 class="top_text"> VFX and Video Editing</h2>
             <p class="top-p">Videos are rendered though a 3D software and worked on in post production for added effects</p>
             <NavDropdown.Divider />
@@ -179,11 +277,14 @@ function VfxVideoEditing() {
                     </Card.Text>
                   </Card.Body>
                   <Card.Footer>
-                  <Button variant="outline-warning" size="sm" onClick={() => setLgShow2(true)}>View video here</Button>{' '}
-                    
-                  </Card.Footer>
+                  <div style={{display:'flex', gap:8, alignItems:'center'}}>
+                    <Button variant="outline-warning" size="sm" onClick={() => scrollToTopAndOpen(() => setLgShow2(true), 'recent')}>View video here</Button>
+                    <button className="btn btn-sm btn-outline-secondary" onClick={() => copyToClipboard(REEL.recent.url, setShareMsg)}>Copy</button>
+                    <a className="btn btn-sm btn-outline-primary" href={REEL.recent.url} target="_blank" rel="noopener noreferrer">Open</a>
+                  </div>
                   
                   <br/>
+                  </Card.Footer>
                 </Card>
 
                 <h2 class="top_text"> Blender and After Effects</h2>
@@ -200,12 +301,17 @@ function VfxVideoEditing() {
                     </Card.Text>
                   </Card.Body>
                   <Card.Footer>
-                  <Button variant="outline-warning" size="sm" onClick={() => setLgShow(true)}>View video here</Button>{' '}
-                    
+                  <div style={{display:'flex', gap:8, alignItems:'center'}}>
+                    <Button variant="outline-warning" size="sm" onClick={() => scrollToTopAndOpen(() => setLgShow(true), 'demo')}>View video here</Button>
+                    <button className="btn btn-sm btn-outline-secondary" onClick={() => copyToClipboard(REEL.demo.url, setShareMsg)}>Copy</button>
+                    <a className="btn btn-sm btn-outline-primary" href={REEL.demo.url} target="_blank" rel="noopener noreferrer">Open</a>
+                  </div>
+                   
+                   <br/>
                   </Card.Footer>
-                  <br/>
-                </Card>
-                <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto"}}>
+                 </Card>
+                 
+                 <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto"}}>
                   <Card.Img variant="top" src={byte3} className="rounded" 
                   alt="Card image" />
                   <Card.Body>
@@ -217,14 +323,18 @@ function VfxVideoEditing() {
                     </Card.Text>
                   </Card.Body>
                   <Card.Footer>
-                  <Button variant="outline-warning" size="sm"onClick={() => setLgShow1(true)}>View video here</Button>{' '}
-                    
-                  </Card.Footer>
-                  <br/>
-                </Card>
-                
-              </CardGroup>
-              <br/>
+                  <div style={{display:'flex', gap:8, alignItems:'center'}}>
+                    <Button variant="outline-warning" size="sm" onClick={() => scrollToTopAndOpen(() => setLgShow1(true), 'byte')}>View video here</Button>
+                    <button className="btn btn-sm btn-outline-secondary" onClick={() => copyToClipboard(REEL.byte.url, setShareMsg)}>Copy</button>
+                    <a className="btn btn-sm btn-outline-primary" href={REEL.byte.url} target="_blank" rel="noopener noreferrer">Open</a>
+                  </div>
+                   
+                   <br/>
+                   </Card.Footer>
+                 </Card>
+                 
+               </CardGroup>
+               <br/>
               
                 
         </Col>

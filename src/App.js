@@ -6,6 +6,7 @@ import About from './components/About';
 import Portfolio from './components/Portfolio';
 import Animation from './components/Animation';
 import Artwork from './components/Artwork';
+import Resume from './components/Resume';
 import VideoEditing from './components/VideoEditing';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -36,6 +37,9 @@ function App() {
 
       case "animation":
           return <Animation />;
+
+      case "resume":
+          return <Resume />;
 
           case "video-editing":
           return <VideoEditing />;

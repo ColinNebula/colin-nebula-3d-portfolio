@@ -195,8 +195,8 @@ export default function BootstrapCarousel() {
           <p>
           Sword Model. 
           Blender was used to model, uv, and texture the objects. 
-          The sculpting details were done in Zbrush.
-          The normal map was baked in Xnormal, and Photoshop was used for painting.
+          The sculpting details were done in ZBrush.
+          The normal map was baked in XNormal, and Photoshop was used for painting.
           
           <br/>
           <br/>
@@ -339,7 +339,7 @@ export default function BootstrapCarousel() {
 
       <Carousel.Caption>
         <h3>Bluetooth Headset</h3>
-        <p>Bluetooth Headset - Modeled in Maya and sculpted in Zbrush. Xnormal was used to bake
+        <p>Bluetooth Headset - Modeled in Maya and sculpted in ZBrush. XNormal was used to bake
         the normal maps</p>
       </Carousel.Caption>
     </Carousel.Item>
@@ -352,7 +352,7 @@ export default function BootstrapCarousel() {
   
       <Carousel.Caption>
         <h3>Sniper Rifle</h3>
-        <p>Modeled in Maya, Sculpted in Zbrush. Used Xnormal for normal mapping</p>
+        <p>Modeled in Maya, Sculpted in ZBrush. Used XNormal for normal mapping</p>
       </Carousel.Caption>
     </Carousel.Item>
     
@@ -365,7 +365,7 @@ export default function BootstrapCarousel() {
 
       <Carousel.Caption>
       <h3>Tactical Knife</h3>
-      <p>Modeled in Maya and sculpted in Zbrush. Xnormal was used to bake
+      <p>Modeled in Maya and sculpted in ZBrush. XNormal was used to bake
       the normal maps</p>
     </Carousel.Caption>
   </Carousel.Item>
@@ -378,7 +378,7 @@ export default function BootstrapCarousel() {
 
       <Carousel.Caption>
       <h3>Shotgun</h3>
-      <p>Modeled in Maya and sculpted in Zbrush. Xnormal was used to bake
+      <p>Modeled in Maya and sculpted in ZNrush. XNormal was used to bake
       the normal maps</p>
     </Carousel.Caption>
   </Carousel.Item>
@@ -393,7 +393,7 @@ export default function BootstrapCarousel() {
   
       <Carousel.Caption>
         <h3>M16 A2 Rifle</h3>
-        <p>Modeled in Maya and sculpted in Zbrush. Xnormal was used to bake
+        <p>Modeled in Maya and sculpted in ZBrush. XNormal was used to bake
         the normal maps</p>
       </Carousel.Caption>
     </Carousel.Item>
@@ -408,7 +408,7 @@ export default function BootstrapCarousel() {
   
       <Carousel.Caption>
         <h3>Riot Shield</h3>
-        <p>Modeled in Blender and sculpted in Zbrush. </p>
+        <p>Modeled in Blender and sculpted in ZBrush. </p>
       </Carousel.Caption>
     </Carousel.Item>
 

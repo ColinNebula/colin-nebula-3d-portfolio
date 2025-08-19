@@ -8,6 +8,13 @@
 	--light: #ffffff;
 	--transition-duration: 0.5s;
 	--hover-transform: translateY(5px);
+
+	/* Enhanced theme variables for UI surfaces, cards, nav, and focus */
+	--surface: var(--dark);        /* page surface / background */
+	--card-bg: #ffffff;           /* default card background */
+	--nav-bg: #ffffff;            /* nav background */
+	--muted: #64748b;             /* secondary text */
+	--focus: #0ea5e9;             /* focus outline */
 }
 
 * {
@@ -160,10 +167,10 @@ h1 {
 	color: var(--text);
 }
 
-.top_text:hover {
+/* .top_text:hover {
 	color: var(--secondary);
 	
-}
+} */
 
 .top-p {
 	text-align: center;
@@ -176,10 +183,10 @@ h1 {
 	animation-duration: 4s;
 }
 
-.top-p:hover {
+/* .top-p:hover {
 	color: var(--secondary);
 	
-}
+} */
 
 .mid-p {
 	text-align: center;
@@ -190,10 +197,10 @@ h1 {
 	
 }
 
-.mid-p:hover {
+/* .mid-p:hover {
 	color: var(--secondary);
 	
-}
+} */
 
 .middle_text {
 	text-align: center;
@@ -204,10 +211,10 @@ h1 {
 	animation-duration: 4s;
 }
 
-.middle_text:hover {
+/* .middle_text:hover {
 	color: var(--secondary);
 
-}
+} */
 
 html,
 body {
@@ -223,6 +230,7 @@ body {
 	font-size: 18px;
 	letter-spacing: .1em;
 	color: var(--text);
+	background: var(--surface);
 }
 
 /* button */
@@ -496,4 +504,164 @@ li {
 
 .element-class {
 	print-color-adjust: exact; /* Replaces color-adjust */
+}
+
+/* Theme variants (overrides applied when body has .theme-dark or .theme-light
+   or when html[data-theme="..."] is set) */
+.theme-dark,
+html[data-theme="dark"] {
+	--primary: #5aa8ff;
+	--secondary: #ff9b4a;
+	--dark: #0b1220;
+	--darker: #05060a;
+	--text: #e6eef6;
+	--light: #ffffff;
+
+	/* enhanced */
+	--surface: linear-gradient(180deg,#0b1220, #05060a);
+	--card-bg: #0f1724;
+	--nav-bg: rgba(6,8,12,0.95);
+	--muted: #94a3b8;
+	--focus: #70aef6;
+}
+
+.theme-light,
+html[data-theme="light"] {
+	--primary: #0ea5e9;
+	--secondary: #ffb347;
+	--dark: #f6f9fc;
+	--darker: #edf6fb;
+	--text: #0b2335;
+	--light: #ffffff;
+
+	/* enhanced */
+	--surface: linear-gradient(180deg,#f6f9fc, #edf6fb);
+	--card-bg: #ffffff;
+	--nav-bg: rgba(255,255,255,0.98);
+	--muted: #909bac;
+	--focus: #9bd3ee;
+}
+
+/* System preference fallback (when no explicit data-theme set on html) */
+@media (prefers-color-scheme: dark) {
+	html:not([data-theme]) {
+		--primary: #5aa8ff;
+		--secondary: #ff9b4a;
+		--dark: #0b1220;
+		--darker: #05060a;
+		--text: #e6eef6;
+		--light: #ffffff;
+		--surface: linear-gradient(180deg,#0b1220, #05060a);
+		--card-bg: #0f1724;
+		--nav-bg: rgba(6,8,12,0.95);
+		--muted: #94a3b8;
+		--focus: #5aa8ff;
+	}
+}
+@media (prefers-color-scheme: light) {
+	html:not([data-theme]) {
+		--primary: #0ea5e9;
+		--secondary: #ffb347;
+		--dark: #f6f9fc;
+		--darker: #edf6fb;
+		--text: #0b2335;
+		--light: #ffffff;
+		--surface: linear-gradient(180deg,#f6f9fc, #edf6fb);
+		--card-bg: #ffffff;
+		--nav-bg: rgba(255,255,255,0.98);
+		--muted: #64748b;
+		--focus: #0ea5e9;
+	}
+}
+
+/* Smooth color transitions when theme changes */
+:root, html[data-theme], .theme-dark, .theme-light {
+	transition: color 220ms ease, background-color 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+}
+
+/* Use new variables for core elements so theme controls them consistently */
+body {
+	/* ...existing properties... */
+	background: var(--surface);
+	color: var(--text);
+}
+
+/* Main background gradient (falls back to previous vars) */
+main {
+	background: linear-gradient(45deg, var(--dark), var(--darker));
+	padding-bottom: 24px;
+}
+
+/* Make cards and modal surfaces use the theme card background */
+.card, .modal-content, .modalContainer {
+	background: var(--card-bg) !important;
+	color: var(--text) !important;
+	border-color: rgba(0,0,0,0.06);
+}
+
+/* Navbar / header surface */
+.navbar, .navbar-dark, .navbar-light, .bar-over {
+	background: var(--nav-bg) !important;
+	color: var(--text) !important;
+}
+
+/* Muted text helper */
+.muted, .text-muted {
+	color: var(--muted) !important;
+}
+
+/* Focus outline using theme focus color and accessible offset */
+:focus {
+	outline: 3px solid var(--focus);
+	outline-offset: 2px;
+}
+
+/* Ensure the theme toggle button uses accent colors */
+.nav-button[aria-pressed="true"] {
+	background: var(--primary);
+	color: var(--light);
+	border-color: rgba(0,0,0,0.06);
+}
+
+/* Utility: slightly darker box-shadow for dark theme for depth */
+.theme-dark .card {
+	box-shadow: 0 8px 24px rgba(0,0,0,0.55) !important;
+}
+
+/* Utility: subtle elevation in light theme */
+.theme-light .card {
+	box-shadow: 0 8px 24px rgba(15,23,42,0.06) !important;
+}
+
+/* Enhanced focus styles for better accessibility */
+:focus-visible {
+	outline: 3px solid var(--focus);
+	outline-offset: 2px;
+}
+
+:focus:not(:focus-visible) {
+	outline: none;
+}
+
+/* Small helper for visually hidden text (for announcements) */
+.visually-hidden {
+	position: absolute !important;
+	height: 1px; width: 1px;
+	overflow: hidden;
+	clip: rect(1px, 1px, 1px, 1px);
+	white-space: nowrap;
+}
+
+/* Style for nav toggle button to match theme */
+.nav-button {
+	background: transparent;
+	color: var(--text);
+	border: 1px solid transparent;
+	padding: 6px 10px;
+	border-radius: 4px;
+}
+
+.nav-button:focus {
+	outline: 2px solid var(--primary);
+	outline-offset: 2px;
 }
