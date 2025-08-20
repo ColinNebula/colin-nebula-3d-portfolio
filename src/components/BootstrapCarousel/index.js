@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 
 import { Carousel } from "react-bootstrap"
 import shield1 from '../../assets/images/shield1.png';
@@ -19,17 +19,96 @@ export default function BootstrapCarousel() {
   const [lgShow1, setLgShow1] = useState(false);
   const [lgShow2, setLgShow2] = useState(false);
   const [lgShow3, setLgShow3] = useState(false);
-  return (
+  // last active opener to restore focus when modal closes
+  const lastActiveRef = useRef(null);
+  const [modalAnnounce, setModalAnnounce] = useState('');
+  // iframe refs for modals so we can pause them
+  const maskIframeRef = useRef(null);
+  const vfxIframeRef = useRef(null);
+  const freeIframeRef = useRef(null);
+  const swordIframeRef = useRef(null);
+  const [shareMsg, setShareMsg] = useState('');
+  const ytPrefetched = useRef(false);
 
-    
+  // canonical ids used for embeds
+  const REELS = {
+    mask: 'ZsZYqn04yNQ',
+    vfx: 'mPxmNbMpO7A',
+    freeRider: 'N2WhwHaicR4',
+    sword: 'hLH3htg2GS0'
+  };
+
+  const getEmbedSrc = (id, { autoplay = false, muted = true } = {}) => {
+    const p = new URLSearchParams();
+    p.set('rel', '0');
+    p.set('modestbranding', '1');
+    p.set('playsinline', '1');
+    p.set('enablejsapi', '1'); // required to pause via postMessage
+    try { if (typeof window !== 'undefined' && window.location && window.location.origin) p.set('origin', window.location.origin); } catch(e){}
+    if (autoplay) p.set('autoplay', '1');
+    if (muted) p.set('mute', '1');
+    return `https://www.youtube.com/embed/${id}?${p.toString()}`;
+  };
+
+  const preconnectYouTube = () => {
+    try {
+      if (ytPrefetched.current || typeof document === 'undefined') return;
+      const add = (rel, href) => {
+        if (!document.querySelector(`link[rel="${rel}"][href="${href}"]`)) {
+          const l = document.createElement('link'); l.rel = rel; l.href = href; l.crossOrigin = 'anonymous'; document.head.appendChild(l);
+        }
+      };
+      add('preconnect', 'https://www.youtube.com');
+      add('preconnect', 'https://www.google.com');
+      ytPrefetched.current = true;
+    } catch (e) {}
+  };
+
+  const pauseYouTube = (ref) => {
+    try {
+      const f = ref && ref.current;
+      if (!f || !f.contentWindow) return;
+      const msg = JSON.stringify({ event: 'command', func: 'pauseVideo', args: [] });
+      f.contentWindow.postMessage(msg, '*');
+    } catch (e) {}
+  };
+
+  const noteOpen = (label) => { try { console.info('analytics','open_link', label); } catch(e){} };
+
+  const copyToClipboard = async (text) => {
+    try {
+      if (navigator.clipboard?.writeText) await navigator.clipboard.writeText(text);
+      else { const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); }
+      setShareMsg('Copied!');
+      setTimeout(() => setShareMsg(''), 1400);
+    } catch { setShareMsg('Copy failed'); setTimeout(() => setShareMsg(''), 1400); }
+  };
+
+  // keyboard shortcuts: 1..4 open respective modals (ignore typing in inputs)
+  useEffect(() => {
+    const handler = (e) => {
+      if (!e.key) return;
+      const tag = e.target && e.target.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || e.target.isContentEditable) return;
+      const k = e.key.toLowerCase();
+      if (k === '1') { noteOpen(REELS.mask); setModalAnnounce('Opening Mask of Malice'); setLgShow(true); setTimeout(() => setModalAnnounce(''), 1200); }
+      if (k === '2') { noteOpen(REELS.vfx); setModalAnnounce('Opening VFX Reel'); setLgShow1(true); setTimeout(() => setModalAnnounce(''), 1200); }
+      if (k === '3') { noteOpen(REELS.freeRider); setModalAnnounce('Opening Free Rider'); setLgShow2(true); setTimeout(() => setModalAnnounce(''), 1200); }
+      if (k === '4') { noteOpen(REELS.sword); setModalAnnounce('Opening Sword'); setLgShow3(true); setTimeout(() => setModalAnnounce(''), 1200); }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, []);
+
+  return (
 
     <div>
 
     <>
       <Modal
-        size="lg"
+        fullscreen={true}
         show={lgShow}
-        onHide={() => setLgShow(false)}
+        onHide={() => { setLgShow(false); pauseYouTube(maskIframeRef); try { lastActiveRef.current && lastActiveRef.current.focus && lastActiveRef.current.focus(); } catch(e){} }}
         aria-labelledby="example-modal-sizes-title-lg"
       >
         <Modal.Header closeButton>
@@ -46,19 +125,21 @@ export default function BootstrapCarousel() {
         <br/>
         <br/>
         <div className="ratio ratio-21x9">
-        <iframe 
-        width="560" 
-        height="315" 
-        src="https://www.youtube.com/embed/ZsZYqn04yNQ?si=cWqpjx-rp3cAtGTD" 
-        title="YouTube video player" 
-        frameborder="0" 
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-        allowfullscreen>
-        </iframe>
+        <iframe
+          ref={maskIframeRef}
+          loading="lazy"
+          width="100%"
+          height="560"
+          src={getEmbedSrc(REELS.mask)}
+          title="Mask of Malice video"
+          frameBorder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+          allowFullScreen
+        />
         </div>
         </p>
         <br/>
-        <Card.Img src={maskO} className="rounded" alt="Card image" />
+        <Card.Img loading="lazy" src={maskO} className="rounded" alt="Card image" />
         <a href="https://react-bootstrap.github.io/components/modal/"></a>
         <br/>
         <br/>
@@ -74,7 +155,7 @@ export default function BootstrapCarousel() {
         
           </p>
           <br/>
-          <Card.Img src={wireM} className="rounded" alt="Card image" />
+          <Card.Img loading="lazy" src={wireM} className="rounded" alt="Card image" />
           <a href="https://react-bootstrap.github.io/components/modal/"></a>
           <br/>
         </Modal.Body>
@@ -83,9 +164,9 @@ export default function BootstrapCarousel() {
 
     <>
       <Modal
-        size="lg"
+        fullscreen={true}
         show={lgShow1}
-        onHide={() => setLgShow1(false)}
+        onHide={() => { setLgShow1(false); pauseYouTube(vfxIframeRef); try { lastActiveRef.current && lastActiveRef.current.focus && lastActiveRef.current.focus(); } catch(e){} }}
         aria-labelledby="example-modal-sizes-title-lg"
       >
         <Modal.Header closeButton>
@@ -101,14 +182,17 @@ export default function BootstrapCarousel() {
           After Effects was used for camera and motion tracking of the raw footage.
         </p>
         <div className="ratio ratio-16x9">
-          <iframe 
-        width="560" 
-        height="315" src="https://www.youtube.com/embed/mPxmNbMpO7A?si=Akv33m0cXFxl7nhV" 
-        title="YouTube video player" 
-        frameborder="0" 
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-        allowfullscreen>
-          </iframe>
+          <iframe
+            ref={vfxIframeRef}
+            loading="lazy"
+            width="100%"
+            height="560"
+            src={getEmbedSrc(REELS.vfx)}
+            title="VFX Reel video"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+            allowFullScreen
+          />
         </div>
 
         <br />
@@ -147,9 +231,9 @@ export default function BootstrapCarousel() {
 
     <>
       <Modal
-        size="xxl-down"
+        fullscreen={true}
         show={lgShow2}
-        onHide={() => setLgShow2(false)}
+        onHide={() => { setLgShow2(false); pauseYouTube(freeIframeRef); try { lastActiveRef.current && lastActiveRef.current.focus && lastActiveRef.current.focus(); } catch(e){} }}
         aria-labelledby="example-modal-sizes-title-lg"
       >
         <Modal.Header closeButton>
@@ -164,15 +248,17 @@ export default function BootstrapCarousel() {
           </p>
 
           <div className="ratio ratio-16x9">
-          <iframe 
-          width="560" 
-          height="315" 
-          src="https://www.youtube.com/embed/N2WhwHaicR4?si=oH6JWh_VnC-jWj0H" 
-          title="YouTube video player" 
-          frameborder="0" 
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-          allowfullscreen>
-          </iframe>
+          <iframe
+            ref={freeIframeRef}
+            loading="lazy"
+            width="100%"
+            height="560"
+            src={getEmbedSrc(REELS.freeRider)}
+            title="Free Rider video"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+            allowFullScreen
+          />
           </div>
         
         </Modal.Body>
@@ -181,9 +267,9 @@ export default function BootstrapCarousel() {
 
     <>
       <Modal
-        size="lg"
+        fullscreen={true}
         show={lgShow3}
-        onHide={() => setLgShow3(false)}
+        onHide={() => { setLgShow3(false); pauseYouTube(swordIframeRef); try { lastActiveRef.current && lastActiveRef.current.focus && lastActiveRef.current.focus(); } catch(e){} }}
         aria-labelledby="example-modal-sizes-title-lg"
       >
         <Modal.Header closeButton>
@@ -201,19 +287,22 @@ export default function BootstrapCarousel() {
           <br/>
           <br/>
           <div className="ratio ratio-16x9">
-          <iframe width="560" 
-          height="315" 
-          src="https://www.youtube.com/embed/hLH3htg2GS0?si=y5onQfNbBUpvm-Os" 
-          title="YouTube video player" 
-          frameborder="0" 
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-          allowfullscreen>
-          </iframe>
+          <iframe
+            ref={swordIframeRef}
+            loading="lazy"
+            width="100%"
+            height="560"
+            src={getEmbedSrc(REELS.sword)}
+            title="Sword video"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+            allowFullScreen
+          />
           </div>
 
           </p>
           <br/>
-          <Card.Img src={swordd} className="rounded" alt="Card image" />
+          <Card.Img loading="lazy" src={swordd} className="rounded" alt="Card image" />
           <a href="https://react-bootstrap.github.io/components/modal/"></a>
 
           <NavDropdown.Divider />
@@ -223,7 +312,7 @@ export default function BootstrapCarousel() {
 
           <NavDropdown.Divider />
           <br/>
-          <Card.Img src={swordInfo} className="rounded" alt="Card image" />
+          <Card.Img loading="lazy" src={swordInfo} className="rounded" alt="Card image" />
           <a href="https://react-bootstrap.github.io/components/modal/"></a>
         
         </Modal.Body>
@@ -242,7 +331,7 @@ export default function BootstrapCarousel() {
       <Carousel.Caption className="text-light">
       <h3>Mask of Malice </h3>
       <p> View Mask of Malice in the Portfolio tab</p>
-      <Button variant="outline-warning" onClick={() => setLgShow(true)}>View Now</Button>{' '}
+      <Button variant="outline-warning" onClick={(e) => { lastActiveRef.current = e.currentTarget; preconnectYouTube(); noteOpen(REELS.mask); setModalAnnounce('Opening Mask of Malice'); setLgShow(true); setTimeout(() => setModalAnnounce(''), 1200); }}>View Now</Button>{' '}
     </Carousel.Caption>
     
   </Carousel.Item>
@@ -257,7 +346,7 @@ export default function BootstrapCarousel() {
       <Carousel.Caption className="text-light">
       <h3>Colin Nebula 3D </h3>
       <p> View my VFX Reel in the VFX tab</p>
-      <Button variant="outline-warning" onClick={() => setLgShow1(true)}>View Now</Button>{' '}
+      <Button variant="outline-warning" onClick={(e) => { lastActiveRef.current = e.currentTarget; preconnectYouTube(); noteOpen(REELS.vfx); setModalAnnounce('Opening VFX Reel'); setLgShow1(true); setTimeout(() => setModalAnnounce(''), 1200); }}>View Now</Button>{' '}
     </Carousel.Caption>
   </Carousel.Item>
     
@@ -271,13 +360,13 @@ export default function BootstrapCarousel() {
       <Carousel.Caption className="text-light">
       <h3>Free Rider</h3>
       <p>A short film made in blender</p>
-      <Button variant="outline-warning" onClick={() => setLgShow2(true)}>View Now</Button>{' '}
+      <Button variant="outline-warning" onClick={(e) => { lastActiveRef.current = e.currentTarget; preconnectYouTube(); noteOpen(REELS.freeRider); setModalAnnounce('Opening Free Rider'); setLgShow2(true); setTimeout(() => setModalAnnounce(''), 1200); }}>View Now</Button>{' '}
     </Carousel.Caption>
   </Carousel.Item>
 
     <Carousel.Item>
       <img
-        className="d-block w-100 h-100 carousel-fade" data-bs-interval="10000"
+        className="d-block w-100 h-100"
         src="https://1.bp.blogspot.com/-Ge9N6vdTKHA/UTUI34cwZ8I/AAAAAAAAAZ0/YVS8B_oQmLc/s640/ACL_Bar_Ao.jpeg"
         alt="Colin Nebula's Old Bar Occlusion Layer"
       />
@@ -300,7 +389,7 @@ export default function BootstrapCarousel() {
       <h3>Sword model</h3>
       <p>Modeled in Maya and sculpted in Zbrush. Xnormal was used to bake
       the normal maps</p>
-      <Button variant="outline-warning" onClick={() => setLgShow3(true)}>View Now</Button>{' '}
+      <Button variant="outline-warning" onClick={(e) => { lastActiveRef.current = e.currentTarget; preconnectYouTube(); noteOpen(REELS.sword); setModalAnnounce('Opening Sword'); setLgShow3(true); setTimeout(() => setModalAnnounce(''), 1200); }}>View Now</Button>{' '}
     </Carousel.Caption>
   </Carousel.Item>
   
@@ -414,8 +503,11 @@ export default function BootstrapCarousel() {
 
     
   </Carousel>
-  
+  {/* announce modal opens to screen readers */}
+      <span className="visually-hidden" aria-live="assertive">{modalAnnounce}</span>
     </div>
   )
 }
+
+
 

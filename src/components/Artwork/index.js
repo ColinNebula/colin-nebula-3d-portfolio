@@ -11,6 +11,8 @@ function Artwork() {
   const [lgShow1, setLgShow1] = useState(false);
   const [lgShow2, setLgShow2] = useState(false);
   const [showTop, setShowTop] = useState(false);
+  const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const currentYear = new Date().getFullYear();
   useEffect(() => {
       const onScroll = () => setShowTop(window.scrollY > 240);
       window.addEventListener('scroll', onScroll);
@@ -163,23 +165,23 @@ function Artwork() {
     <NavDropdown.Divider />  
 
     
-     {/* Footer Section */}
-          <Container fluid className="footer">
-            <Row>
-              <Col md={12} className="text-center">
-                <div className="rights">
-                  Colin Nebula
-                </div>
-              </Col>
-    
-              <Col xs={12} className="icons text-center">
-                <SocialIcons />
-              </Col>
-            </Row>
-          </Container>
-          {showTop && (
+     {/* Footer Section (semantic) */}
+      <footer id="site-footer" role="contentinfo" className="footer" aria-label="Site footer">
+        <Container fluid>
+          <Row className="align-items-center py-3">
+            <Col md={8} className="text-md-start text-center">
+              <div className="rights">© {currentYear} Colin Nebula</div>
+            </Col>
+            <Col md={4} className="icons text-md-end text-center" aria-label="Social links">
+              <SocialIcons />
+            </Col>
+          </Row>
+        </Container>
+      </footer>
+
+      {showTop && (
         <button
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          onClick={() => { const behavior = prefersReducedMotion ? 'auto' : 'smooth'; window.scrollTo({ top: 0, behavior }); }}
           aria-label="Back to top"
           title="Back to top"
           style={{
@@ -190,13 +192,14 @@ function Artwork() {
             padding: '10px 14px',
             borderRadius: 6,
             border: 'none',
-            background: '#0ea5e9',
+            background: 'var(--primary)',
             color: '#fff',
             cursor: 'pointer',
             boxShadow: '0 6px 18px rgba(0,0,0,0.2)'
           }}
         >
-          ↑ Top
+          <span aria-hidden="true">↑</span>
+          <span className="visually-hidden">Back to top</span>
         </button>
       )}
         </Container>

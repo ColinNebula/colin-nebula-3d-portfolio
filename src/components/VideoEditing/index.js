@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useRef} from "react";
 // import OldBar from '../../assets/images/ACL_Bar_Dis4.jpeg';
 import logoD from '../../assets/images/logoD.png';
 import nbg from '../../assets/images/nbg.png';
@@ -13,8 +13,18 @@ function VfxVideoEditing() {
   // new features
   const [autoplay, setAutoplay] = useState(false);
   const [muted, setMuted] = useState(true);
-  const [showLegend, setShowLegend] = useState(false);
+  // persisted on-screen legend
+  const [showLegend, setShowLegend] = useState(() => {
+    try { return localStorage.getItem("nebula_showLegend") === "1"; } catch { return false; }
+  });
+  useEffect(() => { try { localStorage.setItem("nebula_showLegend", showLegend ? "1" : "0"); } catch (e) {} }, [showLegend]);
   const [shareMsg, setShareMsg] = useState('');
+  // refs to restore focus + pause players
+  const lastActiveRef = useRef(null);
+  const demoIframeRef = useRef(null);
+  const vfxIframeRef = useRef(null);
+  const byteIframeRef = useRef(null);
+
   // reduced-motion preference
   const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -25,12 +35,38 @@ function VfxVideoEditing() {
     byte: { id: '1wI6aDte_1Q', url: 'https://www.youtube.com/watch?v=1wI6aDte_1Q' }
   };
 
+  const [showTop, setShowTop] = useState(false);
+  const currentYear = new Date().getFullYear();
+    // accessibility announcement for filter changes
+    const [announce, setAnnounce] = useState('');
+  
+    useEffect(() => {
+      const onScroll = () => setShowTop(window.scrollY > 240);
+      window.addEventListener('scroll', onScroll);
+      return () => window.removeEventListener('scroll', onScroll);
+    }, []);
+
   const getEmbedSrc = (id) => {
     const params = new URLSearchParams();
     params.set('rel', '0');
     if (autoplay) params.set('autoplay', '1');
     if (muted) params.set('mute', '1');
+    // keep embed simple; enable JS API for postMessage
+    params.set('enablejsapi', '1');
+    params.set('modestbranding','1');
+    params.set('playsinline','1');
+    try { if (typeof window !== 'undefined' && window.location && window.location.origin) params.set('origin', window.location.origin); } catch(e){}
     return `https://www.youtube.com/embed/${id}?${params.toString()}`;
+  };
+
+  // pause a YouTube iframe (requires enablejsapi=1)
+  const pauseYouTube = (ref) => {
+    try {
+      const f = ref && ref.current;
+      if (!f || !f.contentWindow) return;
+      const msg = JSON.stringify({ event: 'command', func: 'pauseVideo', args: [] });
+      f.contentWindow.postMessage(msg, '*');
+    } catch (e) {}
   };
 
   const copyToClipboard = async (text, setMsg) => {
@@ -101,12 +137,20 @@ function VfxVideoEditing() {
               </div>
             )}
 
+            {/* small help button to toggle legend */}
+            <button
+              onClick={() => setShowLegend(s => !s)}
+              aria-label="Toggle shortcuts legend"
+              title="Shortcuts (L)"
+              style={{ position: 'fixed', left: 12, bottom: 70, zIndex: 1300, width: 36, height: 36, borderRadius: 18, border: 'none', background: 'var(--primary)', color: '#fff', cursor: 'pointer' }}
+            >?</button>
+
         <div>
         <>
         <Modal
         size="lg"
         show={lgShow}
-        onHide={() => setLgShow(false)}
+        onHide={() => { setLgShow(false); pauseYouTube(demoIframeRef); try { lastActiveRef.current && lastActiveRef.current.focus && lastActiveRef.current.focus(); } catch(e){} }}
         aria-labelledby="example-modal-sizes-title-lg"
       >
          <Modal.Header closeButton>
@@ -125,12 +169,14 @@ function VfxVideoEditing() {
            </p>
           <div className="ratio ratio-16x9">
             <iframe
+              ref={demoIframeRef}
+              loading="lazy"
               width="100%"
               height="480"
               src={getEmbedSrc(REEL.demo.id)}
               title="VFX Demo Reel"
               frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
               allowFullScreen
             />
           </div>
@@ -164,7 +210,7 @@ function VfxVideoEditing() {
         <Modal
         size="lg"
         show={lgShow2}
-        onHide={() => setLgShow2(false)}
+        onHide={() => { setLgShow2(false); pauseYouTube(vfxIframeRef); try { lastActiveRef.current && lastActiveRef.current.focus && lastActiveRef.current.focus(); } catch(e){} }}
         aria-labelledby="example-modal-sizes-title-lg"
       >
         <Modal.Header closeButton>
@@ -180,16 +226,18 @@ function VfxVideoEditing() {
 
           </p>
           <div className="ratio ratio-16x9">
-      <iframe 
-      width="560" 
-      height="315" 
-      src="https://www.youtube.com/embed/mPxmNbMpO7A?si=akRyOXO_rVHT5zDC" 
-      title="YouTube video player" 
-      frameborder="0" 
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-      allowfullscreen>
-      </iframe>
-      </div>
+            <iframe
+              ref={vfxIframeRef}
+              loading="lazy"
+              width="100%"
+              height="480"
+              src={getEmbedSrc(REEL.recent.id)}
+              title="VFX Reel"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+              allowFullScreen
+            />
+          </div>
           <br />
           <br />
         <p>
@@ -207,7 +255,7 @@ function VfxVideoEditing() {
       <Modal
             size="xl"
             show={lgShow1}
-            onHide={() => setLgShow1(false)}
+            onHide={() => { setLgShow1(false); pauseYouTube(byteIframeRef); try { lastActiveRef.current && lastActiveRef.current.focus && lastActiveRef.current.focus(); } catch(e){} }}
             aria-labelledby="example-modal-sizes-title-lg"
           >
             <Modal.Header closeButton>
@@ -223,14 +271,16 @@ function VfxVideoEditing() {
               </p>
               <div className="ratio ratio-16x9">
                 <iframe
-                  width="560"
-                  height="315"
-                  src="https://www.youtube.com/embed/1wI6aDte_1Q"
-                  title="YouTube video player"
-                  frameborder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowfullscreen
-                ></iframe>
+                  ref={byteIframeRef}
+                  loading="lazy"
+                  width="100%"
+                  height="480"
+                  src={getEmbedSrc(REEL.byte.id)}
+                  title="Byte Size Soccer Videos"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+                  allowFullScreen
+                />
               </div>
               <br />
               <p>
@@ -258,15 +308,14 @@ function VfxVideoEditing() {
         </div>
         <br/>
         <br/>
-            <h2 class="top_text"> VFX and Video Editing</h2>
-            <p class="top-p">Videos are rendered though a 3D software and worked on in post production for added effects</p>
+            <h2 className="top_text"> VFX and Video Editing</h2>
+            <p className="top-p">Videos are rendered though a 3D software and worked on in post production for added effects</p>
             <NavDropdown.Divider />
                 <Col ms={"auto"}>
                 
                 <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto"}}>
                 <div className="ratio ratio-21x9">
-                  <Card.Img variant="top" src={nbg} className="rounded" 
-                  alt="Card image" />
+                  <Card.Img loading="lazy" variant="top" src={nbg} className="rounded" alt="VFX reel poster" />
                   </div>
                   <Card.Body>
                   <br/>
@@ -278,21 +327,23 @@ function VfxVideoEditing() {
                   </Card.Body>
                   <Card.Footer>
                   <div style={{display:'flex', gap:8, alignItems:'center'}}>
-                    <Button variant="outline-warning" size="sm" onClick={() => scrollToTopAndOpen(() => setLgShow2(true), 'recent')}>View video here</Button>
+                    <Button variant="outline-warning" size="sm" onClick={(e) => { lastActiveRef.current = e.currentTarget; scrollToTopAndOpen(() => setLgShow2(true), 'recent'); }}>View video here</Button>
                     <button className="btn btn-sm btn-outline-secondary" onClick={() => copyToClipboard(REEL.recent.url, setShareMsg)}>Copy</button>
                     <a className="btn btn-sm btn-outline-primary" href={REEL.recent.url} target="_blank" rel="noopener noreferrer">Open</a>
                   </div>
-                  
                   <br/>
+                  
+                  
                   </Card.Footer>
-                </Card>
 
-                <h2 class="top_text"> Blender and After Effects</h2>
-            <p class="top-p">Using 2D tools in conjunction with 3D tools to produce amazing artwork</p>
+                  <br/>
+                </Card>
+                
+                <h2 className="top_text"> Blender and After Effects</h2>
+            <p className="top-p">Using 2D tools in conjunction with 3D tools to produce amazing artwork</p>
                 <CardGroup>
                 <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto"}}>
-                  <Card.Img variant="top" src={logoD} className="rounded" 
-                  alt="Card image" />
+                  <Card.Img loading="lazy" variant="top" src={logoD} className="rounded" alt="VFX logo" />
                   <Card.Body>
                     <Card.Title>VFX Reel</Card.Title>
                     <Card.Text>
@@ -302,18 +353,17 @@ function VfxVideoEditing() {
                   </Card.Body>
                   <Card.Footer>
                   <div style={{display:'flex', gap:8, alignItems:'center'}}>
-                    <Button variant="outline-warning" size="sm" onClick={() => scrollToTopAndOpen(() => setLgShow(true), 'demo')}>View video here</Button>
+                    <Button variant="outline-warning" size="sm" onClick={(e) => { lastActiveRef.current = e.currentTarget; scrollToTopAndOpen(() => setLgShow(true), 'demo'); }}>View video here</Button>
                     <button className="btn btn-sm btn-outline-secondary" onClick={() => copyToClipboard(REEL.demo.url, setShareMsg)}>Copy</button>
                     <a className="btn btn-sm btn-outline-primary" href={REEL.demo.url} target="_blank" rel="noopener noreferrer">Open</a>
                   </div>
-                   
-                   <br/>
-                  </Card.Footer>
+                    
+                    <br/>
+                   </Card.Footer>
                  </Card>
                  
                  <Card className="bg-dark text-white shadow-lg" style={{ color: "#000", width: "auto"}}>
-                  <Card.Img variant="top" src={byte3} className="rounded" 
-                  alt="Card image" />
+                  <Card.Img loading="lazy" variant="top" src={byte3} className="rounded" alt="Byte video poster" />
                   <Card.Body>
                     <Card.Title>Video Editing</Card.Title>
                     <Card.Text>
@@ -324,13 +374,14 @@ function VfxVideoEditing() {
                   </Card.Body>
                   <Card.Footer>
                   <div style={{display:'flex', gap:8, alignItems:'center'}}>
-                    <Button variant="outline-warning" size="sm" onClick={() => scrollToTopAndOpen(() => setLgShow1(true), 'byte')}>View video here</Button>
+                    <Button variant="outline-warning" size="sm" onClick={(e) => { lastActiveRef.current = e.currentTarget; scrollToTopAndOpen(() => setLgShow1(true), 'byte'); }}>View video here</Button>
                     <button className="btn btn-sm btn-outline-secondary" onClick={() => copyToClipboard(REEL.byte.url, setShareMsg)}>Copy</button>
                     <a className="btn btn-sm btn-outline-primary" href={REEL.byte.url} target="_blank" rel="noopener noreferrer">Open</a>
-                  </div>
-                   
-                   <br/>
-                   </Card.Footer>
+                  
+                    </div>
+                    
+                    <br/>
+                    </Card.Footer>
                  </Card>
                  
                </CardGroup>
@@ -342,22 +393,45 @@ function VfxVideoEditing() {
       <br />
       <NavDropdown.Divider />
 
-      {/* Footer Section */}
-            <Container fluid className="footer">
-              <Row>
-                <Col md={12} className="text-center">
-                  <div className="rights">
-                    Colin Nebula
-                  </div>
-                </Col>
-      
-                <Col xs={12} className="icons text-center">
-                  <SocialIcons />
-                </Col>
-              </Row>
-            </Container>
-          </Container>
-    )
-}
+      {/* Footer Section (semantic) */}
+      <footer id="site-footer" role="contentinfo" className="footer" aria-label="Site footer">
+        <Container fluid>
+          <Row className="align-items-center py-3">
+            <Col md={8} className="text-md-start text-center">
+              <div className="rights">© {currentYear} Colin Nebula</div>
+            </Col>
+            <Col md={4} className="icons text-md-end text-center" aria-label="Social links">
+              <SocialIcons />
+            </Col>
+          </Row>
+        </Container>
+      </footer>
 
-export default VfxVideoEditing;
+      {showTop && (
+         <button
+           onClick={() => scrollToTop()}
+           aria-label="Back to top"
+           title="Back to top"
+           style={{
+             position: "fixed",
+             right: 20,
+             bottom: 30,
+             zIndex: 999,
+             padding: "10px 14px",
+             borderRadius: 6,
+             border: "none",
+             background: "var(--primary)",
+             color: "#fff",
+             cursor: "pointer",
+             boxShadow: "0 6px 18px rgba(0,0,0,0.2)",
+           }}
+         >
+           <span aria-hidden="true">↑</span>
+           <span className="visually-hidden">Back to top</span>
+         </button>
+       )}
+           </Container>
+     )
+ }
+ 
+ export default VfxVideoEditing;

@@ -18,7 +18,10 @@ export const Home = () => {
       return v == null ? true : v === '1';
     } catch { return true; }
   });
-  const [showLegend, setShowLegend] = useState(false);
+  const [showLegend, setShowLegend] = useState(() => {
+    try { return localStorage.getItem('nebula_showLegend') === '1'; } catch { return false; }
+  });
+  useEffect(() => { try { localStorage.setItem('nebula_showLegend', showLegend ? '1' : '0'); } catch (e) {} }, [showLegend]);
   const [shareMsg3D, setShareMsg3D] = useState('');
   const [shareMsgVFX, setShareMsgVFX] = useState('');
   const [downloadLoading, setDownloadLoading] = useState(false);
@@ -40,6 +43,10 @@ export const Home = () => {
   // refs for potential focus management
   const modal3DRef = useRef(null);
   const modalVfxRef = useRef(null);
+  // iframe refs so we can pause players
+  const featuredIframeRef = useRef(null);
+  const modal3DIframeRef = useRef(null);
+  const modalVfxIframeRef = useRef(null);
   // detect reduced motion preference
   const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -61,6 +68,9 @@ export const Home = () => {
       ytPrefetched.current = true;
     } catch (e) {}
   };
+
+  // simple analytics for external opens
+  const noteOpen = (label) => { try { console.info('analytics', 'open_link', label); } catch (e) {} };
 
   const preconnectDocs = () => {
     try {
@@ -147,6 +157,8 @@ export const Home = () => {
   const [showTop, setShowTop] = useState(false);
   // accessibility announcement for filter changes
   const [announce, setAnnounce] = useState('');
+  // current year used in footer
+  const currentYear = new Date().getFullYear();
 
   useEffect(() => {
     const onScroll = () => setShowTop(window.scrollY > 240);
@@ -181,6 +193,8 @@ export const Home = () => {
     const delay = prefersReducedMotion ? 0 : 150;
     setTimeout(() => {
       console.info('analytics', 'open_modal', '3d_demo');
+      // pause hero player to avoid overlapping audio
+      pauseYouTube(featuredIframeRef);
       setLgShow(true);
       setAnnounce('Opened 3D demo reel');
     }, delay);
@@ -192,6 +206,8 @@ export const Home = () => {
     const delay = prefersReducedMotion ? 0 : 150;
     setTimeout(() => {
       console.info('analytics', 'open_modal', 'vfx_reel');
+      // pause hero player to avoid overlapping audio
+      pauseYouTube(featuredIframeRef);
       setLgShow1(true);
       setAnnounce('Opened VFX reel');
     }, delay);
@@ -218,9 +234,23 @@ export const Home = () => {
   const getEmbedSrc = (videoId) => {
     const params = new URLSearchParams();
     params.set('rel', '0');
+    params.set('modestbranding', '1');
+    params.set('playsinline', '1');
+    params.set('enablejsapi', '1');
+    try { if (typeof window !== 'undefined' && window.location && window.location.origin) params.set('origin', window.location.origin); } catch (e) {}
     if (autoplay) params.set('autoplay', '1');
     if (muted) params.set('mute', '1');
     return `https://www.youtube.com/embed/${videoId}?${params.toString()}`;
+  };
+
+  // pause a youtube iframe (requires enablejsapi=1)
+  const pauseYouTube = (ref) => {
+    try {
+      const f = ref && ref.current;
+      if (!f || !f.contentWindow) return;
+      const msg = JSON.stringify({ event: 'command', func: 'pauseVideo', args: [] });
+      f.contentWindow.postMessage(msg, '*');
+    } catch (e) {}
   };
 
   // copy helper with accessible feedback + analytics
@@ -305,6 +335,25 @@ export const Home = () => {
 
   return (
     <Container fluid className="home-container">
+      {/* small help button to toggle legend (persisted) */}
+      <button
+        onClick={() => setShowLegend(s => !s)}
+        aria-label="Toggle shortcuts legend"
+        title="Shortcuts (L)"
+        style={{
+          position: 'fixed',
+          left: 12,
+          bottom: 70,
+          zIndex: 1300,
+          width: 36,
+          height: 36,
+          borderRadius: 18,
+          border: 'none',
+          background: 'var(--primary)',
+          color: 'var(--light)',
+          cursor: 'pointer'
+        }}
+      >?</button>
       {/* skip link for keyboard users */}
       <a href="#main-content" className="visually-hidden focusable" style={{position:'absolute',left:8,top:8,zIndex:2000}}>Skip to content</a>
       <div id="main-content" />
@@ -329,7 +378,7 @@ export const Home = () => {
           <Modal
             size="xl"
             show={lgShow}
-            onHide={() => { setLgShow(false); setAnnounce(''); }}
+            onHide={() => { setLgShow(false); setAnnounce(''); setModalAnnounce(''); pauseYouTube(modal3DIframeRef); }}
             aria-labelledby="example-modal-sizes-title-lg"
             ref={modal3DRef}
             className="custom-modal"
@@ -347,37 +396,39 @@ export const Home = () => {
               </p>
               <div className="ratio ratio-21x9">
                 <iframe
+                  ref={modal3DIframeRef}
                   loading="lazy"
                   width="100%"
                   height="480"
                   src={getEmbedSrc('mPxmNbMpO7A')}
                   title="2014 Demo Reel"
                   frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
                   allowFullScreen
                 />
               </div>
               <div style={{ marginTop: 8, display: 'flex', gap: 8 }}>
-                <a onMouseEnter={preconnectYouTube} className="btn btn-sm btn-outline-primary" href={reel3DUrl} target="_blank" rel="noopener noreferrer" title="Open 3D reel on YouTube">Open on YouTube</a>
+                <a onMouseEnter={preconnectYouTube} onClick={() => noteOpen(reel3DUrl)} className="btn btn-sm btn-outline-primary" href={reel3DUrl} target="_blank" rel="noopener noreferrer" title="Open 3D reel on YouTube">Open on YouTube</a>
                 <button aria-label="Copy 3D reel link" title="Copy link" className="btn btn-sm btn-outline-secondary" onClick={() => { copyToClipboard(reel3DUrl, setShareMsg3D); }}>
                   Copy link
                 </button>
                 <button aria-label="Share 3D on Twitter" className="btn btn-sm btn-outline-info" onClick={() => openShareWindow('twitter', reel3DUrl)}>Tweet</button>
                 <button aria-label="Share 3D on LinkedIn" className="btn btn-sm btn-outline-info" onClick={() => openShareWindow('linkedin', reel3DUrl)}>LinkedIn</button>
-                <span className="visually-hidden" aria-live="polite">{shareMsg3D}</span>
-               <div style={{ marginLeft: 'auto' }}>
-                 <label style={{ marginRight: 8, fontSize: 12 }}>
-                   <input type="checkbox" checked={autoplay} onChange={() => setAutoplay(s => !s)} /> Autoplay
-                 </label>
-                 <label style={{ fontSize: 12 }}>
-                   <input type="checkbox" checked={muted} onChange={() => setMuted(s => !s)} /> Mute
-                 </label>
-               </div>
-             </div>
-           </Modal.Body>
-         </Modal>
-       </>
-     </div>
+                {/* visible share feedback */}
+                {shareMsg3D && <span role="status" style={{ marginLeft: 8, fontSize: 12, color: 'var(--primary)' }}>{shareMsg3D}</span>}
+                <div style={{ marginLeft: 'auto' }}>
+                  <label style={{ marginRight: 8, fontSize: 12 }}>
+                    <input type="checkbox" checked={autoplay} onChange={() => setAutoplay(s => !s)} /> Autoplay
+                  </label>
+                  <label style={{ fontSize: 12 }}>
+                    <input type="checkbox" checked={muted} onChange={() => setMuted(s => !s)} /> Mute
+                  </label>
+                </div>
+              </div>
+            </Modal.Body>
+          </Modal>
+        </>
+      </div>
 
       {/* Modal for VFX Reel 2024 */}
       <div>
@@ -385,7 +436,7 @@ export const Home = () => {
           <Modal
             size="xl"
             show={lgShow1}
-            onHide={() => setLgShow1(false)}
+            onHide={() => { setLgShow1(false); setModalAnnounce(''); pauseYouTube(modalVfxIframeRef); }}
             aria-labelledby="example-modal-sizes-title-lg"
             className="custom-modal"
           >
@@ -401,24 +452,25 @@ export const Home = () => {
               </p>
               <div className="ratio ratio-16x9">
                 <iframe
+                  ref={modalVfxIframeRef}
                   loading="lazy"
                   width="100%"
                   height="480"
                   src={getEmbedSrc('mPxmNbMpO7A')}
                   title="VFX Reel 2024"
                   frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
                   allowFullScreen
                 />
               </div>
               <div style={{ marginTop: 8, display: 'flex', gap: 8 }}>
-                <a onMouseEnter={preconnectYouTube} className="btn btn-sm btn-outline-primary" href={reelVfxUrl} target="_blank" rel="noopener noreferrer" title="Open VFX reel on YouTube">Open on YouTube</a>
+                <a onMouseEnter={preconnectYouTube} onClick={() => noteOpen(reelVfxUrl)} className="btn btn-sm btn-outline-primary" href={reelVfxUrl} target="_blank" rel="noopener noreferrer" title="Open VFX reel on YouTube">Open on YouTube</a>
                 <button aria-label="Copy VFX reel link" title="Copy link" className="btn btn-sm btn-outline-secondary" onClick={() => { copyToClipboard(reelVfxUrl, setShareMsgVFX); }}>
                   Copy link
                 </button>
                 <button aria-label="Share VFX on Twitter" className="btn btn-sm btn-outline-info" onClick={() => openShareWindow('twitter', reelVfxUrl)}>Tweet</button>
                 <button aria-label="Share VFX on LinkedIn" className="btn btn-sm btn-outline-info" onClick={() => openShareWindow('linkedin', reelVfxUrl)}>LinkedIn</button>
-                <span className="visually-hidden" aria-live="polite">{shareMsgVFX}</span>
+                {shareMsgVFX && <span role="status" style={{ marginLeft: 8, fontSize: 12, color: 'var(--primary)' }}>{shareMsgVFX}</span>}
               </div>
 
               <br />
@@ -507,6 +559,7 @@ export const Home = () => {
         >
           <div className="ratio ratio-21x9"> {/* cinematic 21:9 */}
             <iframe
+              ref={featuredIframeRef}
               loading="lazy"
               width="100%"
               height="720"
@@ -554,7 +607,7 @@ export const Home = () => {
                 <div style={{display:'flex', gap:8, alignItems:'center'}}>
                   <Button onMouseEnter={preconnectYouTube} variant="outline-warning" onClick={open3DModal} aria-label="View 3D reel">View Reel</Button>
                   <button aria-label="Copy 3D reel link" title="Copy 3D link" className="btn btn-sm btn-outline-secondary" onClick={() => copyToClipboard(reel3DUrl, setShareMsg3D)}>Copy</button>
-                  <a onMouseEnter={preconnectYouTube} className="btn btn-sm btn-outline-primary" href={reel3DUrl} target="_blank" rel="noopener noreferrer" title="Open 3D reel on YouTube">Open</a>
+                  <a onMouseEnter={preconnectYouTube} onClick={() => noteOpen(reel3DUrl)} className="btn btn-sm btn-outline-primary" href={reel3DUrl} target="_blank" rel="noopener noreferrer" title="Open 3D reel on YouTube">Open</a>
                   <button aria-label="Share 3D on Twitter" className="btn btn-sm btn-outline-info" onClick={() => openShareWindow('twitter', reel3DUrl)}>Tweet</button>
                   <button aria-label="Share 3D on LinkedIn" className="btn btn-sm btn-outline-info" onClick={() => openShareWindow('linkedin', reel3DUrl)}>LinkedIn</button>
                  {shareMsg3D && <span role="status" aria-hidden="false" style={{marginLeft:8, fontSize:12, color:'var(--primary)'}}>{shareMsg3D}</span>}
@@ -578,7 +631,7 @@ export const Home = () => {
                 <div style={{display:'flex', gap:8, alignItems:'center'}}>
                   <Button onMouseEnter={preconnectYouTube} variant="outline-warning" onClick={openVFXModal} aria-label="View VFX reel">View Reel</Button>
                   <button aria-label="Copy VFX reel link" title="Copy VFX link" className="btn btn-sm btn-outline-secondary" onClick={() => copyToClipboard(reelVfxUrl, setShareMsgVFX)}>Copy</button>
-                  <a onMouseEnter={preconnectYouTube} className="btn btn-sm btn-outline-primary" href={reelVfxUrl} target="_blank" rel="noopener noreferrer" title="Open VFX reel on YouTube">Open</a>
+                  <a onMouseEnter={preconnectYouTube} onClick={() => noteOpen(reelVfxUrl)} className="btn btn-sm btn-outline-primary" href={reelVfxUrl} target="_blank" rel="noopener noreferrer" title="Open VFX reel on YouTube">Open</a>
                   <button aria-label="Share VFX on Twitter" className="btn btn-sm btn-outline-info" onClick={() => openShareWindow('twitter', reelVfxUrl)}>Tweet</button>
                   <button aria-label="Share VFX on LinkedIn" className="btn btn-sm btn-outline-info" onClick={() => openShareWindow('linkedin', reelVfxUrl)}>LinkedIn</button>
                  {shareMsgVFX && <span role="status" aria-hidden="false" style={{marginLeft:8, fontSize:12, color:'var(--primary)'}}>{shareMsgVFX}</span>}
@@ -589,40 +642,43 @@ export const Home = () => {
          </CardGroup>
        </Col>
       {/* ensure back-to-top respects reduced-motion elsewhere if present */}
-      {/* Footer Section */}
-            <Container fluid className="footer">
-              <Row>
-                <Col md={12} className="text-center">
-                  <div className="rights">Colin Nebula</div>
-                </Col>
-      
-                <Col xs={12} className="icons text-center">
-                  <SocialIcons />
-                </Col>
-              </Row>
-            </Container>
-            {showTop && (
-              <button
-                onClick={() => scrollToTop()}
-                aria-label="Back to top"
-                title="Back to top"
-                style={{
-                  position: "fixed",
-                  right: 20,
-                  bottom: 30,
-                  zIndex: 999,
-                  padding: "10px 14px",
-                  borderRadius: 6,
-                  border: "none",
-                  background: "#0ea5e9",
-                  color: "#fff",
-                  cursor: "pointer",
-                  boxShadow: "0 6px 18px rgba(0,0,0,0.2)",
-                }}
-              >
-                ↑ Top
-              </button>
-              )}
+      {/* Footer Section (semantic and accessible) */}
+      <footer id="site-footer" role="contentinfo" className="footer" aria-label="Site footer">
+        <Container fluid>
+          <Row className="align-items-center py-3">
+            <Col md={8} className="text-md-start text-center">
+              <div className="rights">© {currentYear} Colin Nebula</div>
+            </Col>
+            <Col md={4} className="icons text-md-end text-center">
+              <div aria-label="Social links"><SocialIcons /></div>
+            </Col>
+          </Row>
+        </Container>
+      </footer>
+
+      {showTop && (
+        <button
+          onClick={() => scrollToTop()}
+          aria-label="Back to top"
+          title="Back to top"
+          style={{
+            position: "fixed",
+            right: 20,
+            bottom: 30,
+            zIndex: 999,
+            padding: "10px 14px",
+            borderRadius: 6,
+            border: "none",
+            background: "var(--primary)",
+            color: "#fff",
+            cursor: "pointer",
+            boxShadow: "0 6px 18px rgba(0,0,0,0.2)",
+          }}
+        >
+          <span aria-hidden="true">↑</span>
+          <span className="visually-hidden">Back to top</span>
+        </button>
+      )}
      </Container>
    );
  }

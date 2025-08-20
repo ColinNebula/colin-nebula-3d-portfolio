@@ -185,6 +185,15 @@ function Portfolio() {
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+  // current year for footer
+  const currentYear = new Date().getFullYear();
+
+  // helper to scroll to top, respecting reduced-motion preference
+  const scrollToTop = (behavior = "smooth") => {
+    const finalBehavior = prefersReducedMotion ? "auto" : behavior;
+    if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: finalBehavior });
+  };
+
   return (
     <Container fluid>
       {/* skip link for keyboard users */}
@@ -772,42 +781,45 @@ function Portfolio() {
 
       <NavDropdown.Divider />
 
-      {/* Footer Section */}
-      <Container fluid className="footer">
-        <Row>
-          <Col md={12} className="text-center">
-            <div className="rights">Colin Nebula</div>
-          </Col>
+      {/* Footer Section (semantic & accessible) */}
+      <footer id="site-footer" role="contentinfo" className="footer" aria-label="Site footer">
+        <Container fluid>
+          <Row className="align-items-center py-3">
+            <Col md={8} className="text-md-start text-center">
+              <div className="rights">© {currentYear} Colin Nebula</div>
+            </Col>
+            <Col md={4} className="icons text-md-end text-center" aria-label="Social links">
+              <SocialIcons />
+            </Col>
+          </Row>
+        </Container>
+      </footer>
 
-          <Col xs={12} className="icons text-center">
-            <SocialIcons />
-          </Col>
-        </Row>
-      </Container>
       {showTop && (
         <button
-          onClick={() => { const behavior = prefersReducedMotion ? "auto" : "smooth"; window.scrollTo({ top: 0, behavior }); }}
-           aria-label="Back to top"
-           title="Back to top"
-           style={{
-             position: "fixed",
-             right: 20,
-             bottom: 30,
-             zIndex: 999,
-             padding: "10px 14px",
-             borderRadius: 6,
-             border: "none",
-             background: "#0ea5e9",
-             color: "#fff",
-             cursor: "pointer",
-             boxShadow: "0 6px 18px rgba(0,0,0,0.2)",
-           }}
-         >
-           ↑ Top
-         </button>
-       )}
-     </Container>
-   );
- }
- 
- export default Portfolio;
+          onClick={() => scrollToTop()}
+          aria-label="Back to top"
+          title="Back to top"
+          style={{
+            position: "fixed",
+            right: 20,
+            bottom: 30,
+            zIndex: 999,
+            padding: "10px 14px",
+            borderRadius: 6,
+            border: "none",
+            background: "var(--primary)",
+            color: "#fff",
+            cursor: "pointer",
+            boxShadow: "0 6px 18px rgba(0,0,0,0.2)",
+          }}
+        >
+          <span aria-hidden="true">↑</span>
+          <span className="visually-hidden">Back to top</span>
+        </button>
+      )}
+    </Container>
+  );
+}
+
+export default Portfolio;
