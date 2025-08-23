@@ -6,10 +6,11 @@ import About from './components/About';
 import Portfolio from './components/Portfolio';
 import Animation from './components/Animation';
 import Artwork from './components/Artwork';
-import Resume from './components/Resume';
+import PrivacyPolicy from './components/Private-policy';
 import VideoEditing from './components/VideoEditing';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
+
 // import Footer from './components/Footer';
 
 import BootstrapCarousel from './components/BootstrapCarousel';
@@ -38,8 +39,8 @@ function App() {
       case "animation":
           return <Animation />;
 
-      case "resume":
-          return <Resume />;
+      case "private-policy":
+          return <PrivacyPolicy />;
 
           case "video-editing":
           return <VideoEditing />;

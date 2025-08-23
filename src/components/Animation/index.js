@@ -1,3 +1,4 @@
+import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useState, useEffect, useRef } from "react";
 // import OldBar from '../../assets/images/ACL_Bar_Dis4.jpeg';
 import shapeAnimation from '../../assets/images/shapeAnimation.png';
@@ -5,6 +6,7 @@ import rundown from '../../assets/images/rundown.png';
 import rigging from '../../assets/images/rigging.png';
 import { Card, Container, Button, Col, Row, CardGroup, NavDropdown, Modal } from 'react-bootstrap';
 import SocialIcons from '../SocialIcons';
+
 
 function Animation() {
   // modals

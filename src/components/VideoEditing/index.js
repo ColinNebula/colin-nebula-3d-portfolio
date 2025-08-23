@@ -5,6 +5,7 @@ import nbg from '../../assets/images/nbg.png';
 import byte3 from '../../assets/images/byte3.png';
 import { Card, Container, Button, Col, Row, CardGroup, NavDropdown, Modal } from 'react-bootstrap';
 import SocialIcons from '../SocialIcons';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function VfxVideoEditing() {
   const [lgShow, setLgShow] = useState(false);

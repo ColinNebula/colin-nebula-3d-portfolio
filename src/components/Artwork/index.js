@@ -1,3 +1,4 @@
+import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useState, useEffect } from 'react';
 import { capitalizeFirstLetter } from '../../utils/helpers';
 import { Card, CardGroup, Container, Row, Col, Button, NavDropdown, Modal } from 'react-bootstrap/';
@@ -5,6 +6,7 @@ import img1 from '../../assets/images/LifeDrawingWeb_05.jpg';
 import img2 from '../../assets/images/LifeDrawingWeb_03.jpg';
 import img3 from '../../assets/images/LifeDrawingWeb_06.jpg';
 import SocialIcons from '../SocialIcons';
+
 
 function Artwork() {
   const [lgShow, setLgShow] = useState(false);

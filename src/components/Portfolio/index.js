@@ -5,6 +5,7 @@ import shield1 from "../../assets/images/shield1.png";
 import tacticalK from "../../assets/images/tacticalK.png";
 import sword from "../../assets/images/sword.png";
 import swordd from "../../assets/images/swordd.png";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 import swordInfo from "../../assets/images/swordInfo.png";
 import cover1 from "../../assets/images/cover1.png";

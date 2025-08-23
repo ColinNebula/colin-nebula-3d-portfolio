@@ -1,4 +1,6 @@
+import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useState, useEffect, useRef } from 'react';
+
 import { Card, Container, Row, Col, CardGroup, NavDropdown, Modal, Button } from 'react-bootstrap';
 import sword from '../../assets/images/sword.png';
 import demoR from '../../assets/images/3dModels.png';
@@ -28,9 +30,47 @@ export const Home = () => {
   const [downloadMsg, setDownloadMsg] = useState('');
   // modal announcements for screen readers
   const [modalAnnounce, setModalAnnounce] = useState('');
-  // preconnect tracking
-  const ytPrefetched = useRef(false);
-  const docsPrefetched = useRef(false);
+  // subscription UI (enhanced)
+  const [email, setEmail] = useState('');
+  const [signupName, setSignupName] = useState('');
+  const [agreePrivacy, setAgreePrivacy] = useState(false);
+  const [signupMsg, setSignupMsg] = useState('');
+  const [subscribers, setSubscribers] = useState(() => {
+    try {
+      const raw = JSON.parse(localStorage.getItem('nebula_email_subscribers') || '[]');
+      // normalize older string arrays to objects { email, name, ts }
+      if (!Array.isArray(raw)) return [];
+      return raw.map(item => {
+        if (!item) return null;
+        if (typeof item === 'string') return { email: item, name: '', ts: new Date().toISOString() };
+        if (typeof item === 'object' && item.email) return { email: item.email, name: item.name || '', ts: item.ts || new Date().toISOString() };
+        return null;
+      }).filter(Boolean);
+    } catch {
+      return [];
+    }
+  });
+  const [signupSuccess, setSignupSuccess] = useState(''); // transient success toast
+  const [showSubscribers, setShowSubscribers] = useState(false);
+  const [subscriberBusy, setSubscriberBusy] = useState(false);
+  const [subscriberMsg, setSubscriberMsg] = useState('');
+  // signup modal control
+  const [showSignup, setShowSignup] = useState(false);
+  useEffect(() => { try { localStorage.setItem('nebula_email_subscribers', JSON.stringify(subscribers)); } catch(e){} }, [subscribers]);
+  const validEmail = (v) => /\S+@\S+\.\S+/.test(v);
+  // keyboard: press "s" to focus subscribe input (ignore typing in inputs)
+  useEffect(() => {
+    const onKey = (e) => {
+      if (!e.key) return;
+      if (e.key.toLowerCase() !== 's') return;
+      const tag = e.target && e.target.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || e.target.isContentEditable) return;
+      const el = document.getElementById('subscribe-email');
+      try { el && el.focus && el.focus(); } catch(e){}
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
 
   // persist autoplay/mute
   useEffect(() => {
@@ -49,6 +89,9 @@ export const Home = () => {
   const modalVfxIframeRef = useRef(null);
   // detect reduced motion preference
   const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ref to track if YouTube preconnect has been done
+  const ytPrefetched = useRef(false);
 
   // preconnect helper called on hover (speed up iframe load)
   const preconnectYouTube = () => {
@@ -71,6 +114,9 @@ export const Home = () => {
 
   // simple analytics for external opens
   const noteOpen = (label) => { try { console.info('analytics', 'open_link', label); } catch (e) {} };
+
+  // ref to track if docs preconnect has been done
+  const docsPrefetched = useRef(false);
 
   const preconnectDocs = () => {
     try {
@@ -333,6 +379,148 @@ export const Home = () => {
     }
   };
 
+  // helper: convert Blob to base64 (data portion only)
+  const blobToBase64 = (blob) => new Promise((resolve, reject) => {
+    try {
+      const reader = new FileReader();
+      reader.onerror = () => reject(new Error('Failed to read blob'));
+      reader.onloadend = () => {
+        // reader.result is like "data:<type>;base64,AAAA..."
+        const result = reader.result || '';
+        const idx = result.indexOf('base64,');
+        resolve(idx >= 0 ? result.slice(idx + 7) : result);
+      };
+      reader.readAsDataURL(blob);
+    } catch (e) { reject(e); }
+  });
+
+
+  // subscribe handler: POST email to server (or localStorage), include a welcome attachment when available
+  const subscribeEmail = async () => {
+    if (subscriberBusy) return false;
+    setSubscriberMsg(''); setSignupMsg('');
+    const emailTrimmed = ('' + email || '').trim().toLowerCase();
+    const nameTrimmed = ('' + signupName || '').trim();
+    if (!validEmail(emailTrimmed)) { setSignupMsg('Enter a valid email'); return false; }
+    if (!nameTrimmed) { setSignupMsg('Please enter your name'); return false; }
+    if (!agreePrivacy) { setSignupMsg('Please agree to the privacy terms'); return false; }
+    // dedupe
+    if (subscribers.some(s => s.email && s.email.toLowerCase() === emailTrimmed)) {
+      setSignupMsg('This email is already subscribed');
+      return true; // treat as success
+    }
+    setSubscriberBusy(true);
+
+    // attempt to fetch attachment (optional)
+    let attachment = null;
+    try {
+      const attachUrl = '/documents/welcome.pdf'; // change to your server path (fallback to resume if not present)
+      const res = await fetch(attachUrl, { cache: 'no-cache' });
+      if (res.ok) {
+        const blob = await res.blob();
+        const base64 = await blobToBase64(blob);
+        attachment = {
+          filename: attachUrl.split('/').pop() || 'attachment.pdf',
+          contentType: blob.type || 'application/pdf',
+          data: base64
+        };
+      }
+    } catch (e) {
+      // silently continue without attachment
+      console.warn('Attachment fetch failed, proceeding without attachment', e);
+      attachment = null;
+    }
+
+    try {
+      // post attempt with graceful fallback
+      const postData = async (url, data) => {
+        try {
+          const opts = { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data), credentials: 'same-origin' };
+          const res = await fetch(url, opts);
+          if (!res.ok) throw new Error('Network response was not ok');
+          return true;
+        } catch (e) {
+          console.warn('Submit error, falling back to localStorage', e);
+          return false;
+        }
+      };
+      const payload = { email: emailTrimmed, name: nameTrimmed, attachment }; // attachment may be null
+      const isSuccess = await postData('/api/subscribe', payload);
+
+      // normalize stored item
+      const newItem = { email: emailTrimmed, name: nameTrimmed, ts: new Date().toISOString() };
+      setSubscribers(prev => [...prev, newItem]);
+      setEmail(''); setSignupName(''); setAgreePrivacy(false);
+
+      if (isSuccess) {
+        setSubscriberMsg('Subscribed! Check your inbox.');
+        // server should handle sending a welcome email with attachment if supported
+        setSignupMsg(attachment ? 'Thank you — a welcome email with attachment will be sent.' : 'Thank you — you are subscribed.');
+      } else {
+        setSubscriberMsg('Subscribed (offline).');
+        setSignupMsg('Subscribed locally; attachment will be sent when online.');
+      }
+      setTimeout(() => setSignupMsg(''), 2400);
+      return true;
+    } catch (e) {
+      setSubscriberMsg('Subscription failed');
+      console.error('Subscription error', e);
+      return false;
+    } finally {
+      setSubscriberBusy(false);
+    }
+  };
+
+  // focus name input when signup modal opens
+  useEffect(() => {
+    if (!showSignup) return;
+    const t = setTimeout(() => {
+      try {
+        const el = document.getElementById('signup-name');
+        if (el && typeof el.focus === 'function') el.focus();
+      } catch (e) {}
+    }, prefersReducedMotion ? 0 : 120);
+    return () => clearTimeout(t);
+  }, [showSignup, prefersReducedMotion]);
+
+  // copy all subscriber emails to clipboard
+  const copyAllSubscribers = async () => {
+    try {
+      const list = (subscribers || []).map(s => s.email).filter(Boolean).join(', ');
+      if (!list) {
+        setSubscriberMsg('No subscribers to copy');
+        setTimeout(() => setSubscriberMsg(''), 1400);
+        return;
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) await navigator.clipboard.writeText(list);
+      else {
+        const ta = document.createElement('textarea'); ta.value = list; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+      }
+      setSubscriberMsg('Copied emails');
+      setTimeout(() => setSubscriberMsg(''), 1400);
+    } catch (e) {
+      setSubscriberMsg('Copy failed');
+      setTimeout(() => setSubscriberMsg(''), 1400);
+    }
+  };
+
+  // download subscribers as CSV
+  const downloadSubscribersCsv = () => {
+    try {
+      const rows = ['email,name,ts', ...(subscribers || []).map(s => `${(s.email||'').replace(/"/g,'""')},${(s.name||'').replace(/"/g,'""')},${s.ts||''}`)];
+      const csv = rows.join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = `subscribers-${new Date().toISOString().slice(0,10)}.csv`; document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+      setSubscriberMsg('Download started');
+      setTimeout(() => setSubscriberMsg(''), 1400);
+    } catch (e) {
+      setSubscriberMsg('Download failed');
+      setTimeout(() => setSubscriberMsg(''), 1400);
+    }
+  };
+
   return (
     <Container fluid className="home-container">
       {/* small help button to toggle legend (persisted) */}
@@ -525,6 +713,90 @@ export const Home = () => {
           >
             {downloadLoading ? 'Downloading…' : 'Download Resume'}
           </button>
+          <button
+            type="button"
+            className="btn btn-outline-success"
+            title="Sign up for updates"
+            aria-label="Sign up"
+            style={{ marginRight: 8, display: 'inline-flex', alignItems: 'center', gap: 8 }}
+            onClick={() => setShowSignup(true)}
+          >
+            Sign up
+            <span className="badge bg-secondary" aria-hidden="true" style={{ fontSize: 12 }}>{subscribers.length}</span>
+          </button>
+          {/* Signup modal */}
+          <Modal show={showSignup} onHide={() => setShowSignup(false)} centered aria-labelledby="signup-modal-title" fullscreen="sm-down">
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+              const ok = await subscribeEmail();
+              if (ok) {
+                setShowSignup(false);
+                setSignupSuccess('Thanks — you are subscribed.');
+                setTimeout(() => setSignupSuccess(''), 3000);
+              }
+            }}>
+              <Modal.Header closeButton>
+                <Modal.Title id="signup-modal-title">Sign up for updates</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <label htmlFor="signup-name" className="visually-hidden">Full name</label>
+                  <input id="signup-name" type="text" className="form-control" placeholder="Your full name" value={signupName} onChange={(e) => setSignupName(e.target.value)} required />
+                  <label htmlFor="signup-email" className="visually-hidden">Email</label>
+                  <input id="signup-email" type="email" className="form-control" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <input id="agree-privacy" type="checkbox" checked={agreePrivacy} onChange={(e) => setAgreePrivacy(e.target.checked)} />
+                    <label htmlFor="agree-privacy" style={{ fontSize: 13 }}>I agree to receive occasional emails. <a href="/privacy" target="_blank" rel="noopener noreferrer">Privacy</a></label>
+                  </div>
+                  {(signupMsg || subscriberMsg) && <div style={{ marginTop: 6 }} role="status" className={signupMsg ? 'text-success' : 'text-muted'}>{signupMsg || subscriberMsg}</div>}
+                </div>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="secondary" onClick={() => setShowSignup(false)}>Cancel</Button>
+                <Button type="submit" variant="primary" disabled={subscriberBusy || !validEmail(email) || !signupName || !agreePrivacy}>{subscriberBusy ? 'Subscribing…' : 'Subscribe'}</Button>
+              </Modal.Footer>
+            </form>
+          </Modal>
+          {/* transient success toast */}
+          {signupSuccess && (
+            <div aria-live="polite" style={{
+              position: 'fixed', right: 16, top: 80, zIndex: 1400,
+              background: 'var(--card-bg)', color: 'var(--text)', padding: '8px 12px',
+              borderRadius: 6, boxShadow: '0 6px 18px rgba(0,0,0,0.18)'
+            }}>
+              <div style={{ fontSize: 13, display:'flex', gap:8, alignItems:'center' }}>
+                <span>{signupSuccess}</span>
+                <button type="button" className="btn btn-sm btn-outline-light" onClick={() => setShowSubscribers(true)} style={{ marginLeft: 8 }}>View</button>
+              </div>
+            </div>
+          )}
+          {/* Subscribers modal (view / copy / export) */}
+          <Modal show={showSubscribers} onHide={() => setShowSubscribers(false)} centered aria-labelledby="subscribers-modal-title" size="md">
+            <Modal.Header closeButton>
+              <Modal.Title id="subscribers-modal-title">Subscribers ({subscribers.length})</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              {subscribers.length === 0 ? (
+                <div>No subscribers yet</div>
+              ) : (
+                <div style={{ maxHeight: 260, overflow: 'auto' }}>
+                  <ul style={{ paddingLeft: 16, margin: 0 }}>
+                    {subscribers.slice().reverse().map((s, i) => (
+                      <li key={i} style={{ marginBottom: 6 }}>
+                        <strong>{s.name || '—'}</strong> &lt;{s.email}&gt; <small className="text-muted" style={{ marginLeft: 6 }}>{new Date(s.ts).toLocaleString()}</small>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {subscriberMsg && <div style={{ marginTop: 10 }} role="status">{subscriberMsg}</div>}
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={() => setShowSubscribers(false)}>Close</Button>
+              <Button variant="outline-primary" onClick={copyAllSubscribers} disabled={subscribers.length === 0}>Copy emails</Button>
+              <Button variant="primary" onClick={downloadSubscribersCsv} disabled={subscribers.length === 0}>Download CSV</Button>
+            </Modal.Footer>
+          </Modal>
           <span className="visually-hidden" aria-live="polite">{downloadMsg}</span>
           <span style={{ marginLeft: 8 }}>Filter:</span>
           <div role="tablist" aria-label="Project filters" style={{ display: 'inline-block', marginLeft: 8 }}>
