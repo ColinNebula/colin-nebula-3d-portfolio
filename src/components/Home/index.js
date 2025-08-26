@@ -1,6 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import React, { useState, useEffect, useRef } from 'react';
-
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Card, Container, Row, Col, CardGroup, NavDropdown, Modal, Button } from 'react-bootstrap';
 import sword from '../../assets/images/sword.png';
 import demoR from '../../assets/images/3dModels.png';
@@ -24,8 +23,6 @@ export const Home = () => {
     try { return localStorage.getItem('nebula_showLegend') === '1'; } catch { return false; }
   });
   useEffect(() => { try { localStorage.setItem('nebula_showLegend', showLegend ? '1' : '0'); } catch (e) {} }, [showLegend]);
-  const [shareMsg3D, setShareMsg3D] = useState('');
-  const [shareMsgVFX, setShareMsgVFX] = useState('');
   const [downloadLoading, setDownloadLoading] = useState(false);
   const [downloadMsg, setDownloadMsg] = useState('');
   // modal announcements for screen readers
@@ -133,6 +130,112 @@ export const Home = () => {
     } catch (e) {}
   };
 
+  // remove per-item share msg states and add a single toast state
+  const [notifications, setNotifications] = useState([]);
+  const notificationTimeouts = useRef(new Map());
+
+  // Clear all timeouts when component unmounts to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      notificationTimeouts.current.forEach(timeoutId => clearTimeout(timeoutId));
+    };
+  }, []);
+
+  // Enhanced notification function with more options
+  const showNotification = useCallback((props) => {
+    const {
+      message,
+      variant = 'info',
+      icon = null,
+      duration = 4000,
+      dismissible = true,
+      progress = true,
+      action = null
+    } = typeof props === 'string' ? { message: props } : props;
+
+    const id = Date.now() + Math.random().toString(36).substr(2, 5);
+    
+    // Add new notification to the stack
+    setNotifications(prev => [
+      ...prev,
+      {
+        id,
+        message,
+        variant,
+        icon,
+        dismissible,
+        progress,
+        createdAt: Date.now(),
+        duration,
+        action
+      }
+    ]);
+
+    // Set timeout to remove notification
+    if (duration !== Infinity) {
+      const timeoutId = setTimeout(() => {
+        dismissNotification(id);
+        notificationTimeouts.current.delete(id);
+      }, duration);
+      
+      notificationTimeouts.current.set(id, timeoutId);
+    }
+
+    return id; // Return ID so it can be dismissed programmatically
+  }, []);
+
+  // Function to dismiss a notification
+  const dismissNotification = useCallback((id) => {
+    setNotifications(prev => 
+      prev.map(notification => 
+        notification.id === id 
+          ? { ...notification, dismissing: true } 
+          : notification
+      )
+    );
+    
+    // Clear any existing timeout
+    if (notificationTimeouts.current.has(id)) {
+      clearTimeout(notificationTimeouts.current.get(id));
+      notificationTimeouts.current.delete(id);
+    }
+    
+    // Remove the notification after animation completes
+    setTimeout(() => {
+      setNotifications(prev => prev.filter(notification => notification.id !== id));
+    }, 300); // Match this to CSS transition duration
+  }, []);
+
+  // copy helper with centralized toast feedback + analytics
+  const copyToClipboard = async (text, successMessage = 'Copied!') => {
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+      console.info('analytics', 'copy_link', text);
+      showNotification({
+        message: successMessage,
+        variant: 'success',
+        icon: '✓',
+        duration: 2200
+      });
+    } catch (err) {
+      showNotification({
+        message: 'Copy failed',
+        variant: 'danger',
+        icon: '⚠️',
+        duration: 3000
+      });
+    }
+  };
+
   // share helpers (Twitter / LinkedIn)
   const openShareWindow = (platform, url) => {
     try {
@@ -142,9 +245,23 @@ export const Home = () => {
       } else if (platform === 'linkedin') {
         shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
       } else return;
+      
       window.open(shareUrl, '_blank', 'noopener,noreferrer,width=600,height=460');
       console.info('analytics', 'share', platform, url);
-    } catch (e) {}
+      
+      showNotification({
+        message: `Opened ${platform} share window`,
+        variant: 'info',
+        icon: platform === 'twitter' ? '𝕏' : 'in',
+        duration: 2200
+      });
+    } catch (e) {
+      showNotification({
+        message: 'Unable to open share window',
+        variant: 'danger',
+        icon: '⚠️'
+      });
+    }
   };
 
   // basic focus trap for open modals (keeps Tab inside modal)
@@ -299,28 +416,6 @@ export const Home = () => {
     } catch (e) {}
   };
 
-  // copy helper with accessible feedback + analytics
-  const copyToClipboard = async (text, setMsg) => {
-    try {
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        await navigator.clipboard.writeText(text);
-      } else {
-        const ta = document.createElement('textarea');
-        ta.value = text;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand('copy');
-        document.body.removeChild(ta);
-      }
-      setMsg('Copied!');
-      console.info('analytics', 'copy_link', text);
-      setTimeout(() => setMsg(''), 1400);
-    } catch (err) {
-      setMsg('Copy failed');
-      setTimeout(() => setMsg(''), 1400);
-    }
-  };
-
   // keyboard shortcuts: 1 -> open 3D modal, 2 -> open VFX modal, A -> autoplay, M -> mute, L -> legend
   useEffect(() => {
     const onKey = (e) => {
@@ -350,6 +445,15 @@ export const Home = () => {
       setDownloadLoading(true);
       setDownloadMsg('Starting download...');
       console.info('analytics', 'download_resume', url);
+      
+      showNotification({
+        message: 'Starting download...',
+        variant: 'info',
+        icon: '⬇️',
+        duration: 2000,
+        dismissible: false
+      });
+      
       // Try to fetch and download as blob so browsers save with filename instead of opening
       const res = await fetch(url, { cache: 'no-cache' });
       if (!res.ok) throw new Error('Fetch failed');
@@ -362,15 +466,42 @@ export const Home = () => {
       a.click();
       a.remove();
       URL.revokeObjectURL(blobUrl);
+      
+      showNotification({
+        message: 'Download started successfully!',
+        variant: 'success',
+        icon: '✓',
+        action: {
+          label: 'View Downloads',
+          onClick: () => {
+            // Could open downloads folder or handle in some way
+            console.log('View downloads clicked');
+          },
+          dismissOnClick: true
+        }
+      });
+      
       setDownloadMsg('Download started');
       setTimeout(() => setDownloadMsg(''), 1800);
     } catch (e) {
       // fallback: open in new tab
       try {
         window.open(url, '_blank', 'noopener,noreferrer');
+        showNotification({
+          message: 'Opened resume in new tab',
+          variant: 'info',
+          icon: '🔗',
+          duration: 2000
+        });
         setDownloadMsg('Opened in new tab');
         setTimeout(() => setDownloadMsg(''), 1800);
       } catch (err) {
+        showNotification({
+          message: 'Download failed. Please try again later.',
+          variant: 'danger',
+          icon: '⚠️',
+          duration: 4000
+        });
         setDownloadMsg('Download failed');
         setTimeout(() => setDownloadMsg(''), 1800);
       }
@@ -401,15 +532,37 @@ export const Home = () => {
     setSubscriberMsg(''); setSignupMsg('');
     const emailTrimmed = ('' + email || '').trim().toLowerCase();
     const nameTrimmed = ('' + signupName || '').trim();
-    if (!validEmail(emailTrimmed)) { setSignupMsg('Enter a valid email'); return false; }
-    if (!nameTrimmed) { setSignupMsg('Please enter your name'); return false; }
-    if (!agreePrivacy) { setSignupMsg('Please agree to the privacy terms'); return false; }
+    
+    if (!validEmail(emailTrimmed)) { 
+      setSignupMsg('Enter a valid email'); 
+      return false; 
+    }
+    
+    if (!nameTrimmed) { 
+      setSignupMsg('Please enter your name'); 
+      return false; 
+    }
+    
+    if (!agreePrivacy) { 
+      setSignupMsg('Please agree to the privacy terms'); 
+      return false; 
+    }
+    
     // dedupe
     if (subscribers.some(s => s.email && s.email.toLowerCase() === emailTrimmed)) {
       setSignupMsg('This email is already subscribed');
       return true; // treat as success
     }
+    
     setSubscriberBusy(true);
+    
+    const notificationId = showNotification({
+      message: 'Subscribing...',
+      variant: 'info',
+      icon: '📨',
+      dismissible: false,
+      progress: false
+    });
 
     // attempt to fetch attachment (optional)
     let attachment = null;
@@ -452,17 +605,51 @@ export const Home = () => {
       setSubscribers(prev => [...prev, newItem]);
       setEmail(''); setSignupName(''); setAgreePrivacy(false);
 
+      dismissNotification(notificationId); // Remove the "subscribing" notification
+    
       if (isSuccess) {
         setSubscriberMsg('Subscribed! Check your inbox.');
-        // server should handle sending a welcome email with attachment if supported
+        
+        showNotification({
+          message: attachment 
+            ? 'Subscribed! A welcome email with attachment will be sent.' 
+            : 'Thank you for subscribing!',
+          variant: 'success',
+          icon: '✓',
+          duration: 5000,
+          action: {
+            label: 'View Subscribers',
+            onClick: () => setShowSubscribers(true),
+            dismissOnClick: true
+          }
+        });
+        
         setSignupMsg(attachment ? 'Thank you — a welcome email with attachment will be sent.' : 'Thank you — you are subscribed.');
       } else {
         setSubscriberMsg('Subscribed (offline).');
+        
+        showNotification({
+          message: 'Subscribed in offline mode.',
+          variant: 'warning',
+          icon: '⚠️',
+          duration: 5000,
+        });
+        
         setSignupMsg('Subscribed locally; attachment will be sent when online.');
       }
+      
       setTimeout(() => setSignupMsg(''), 2400);
       return true;
     } catch (e) {
+      dismissNotification(notificationId);
+      
+      showNotification({
+        message: 'Failed to subscribe. Please try again later.',
+        variant: 'danger',
+        icon: '⚠️',
+        duration: 5000,
+      });
+      
       setSubscriberMsg('Subscription failed');
       console.error('Subscription error', e);
       return false;
@@ -521,6 +708,114 @@ export const Home = () => {
     }
   };
 
+  // Enhanced card styles with improved full-width layout
+  const cardStyles = {
+    cardContainer: {
+      height: '100%', 
+      display: 'flex',
+      flexDirection: 'column',
+      position: 'relative',
+      overflow: 'hidden',
+      borderRadius: '12px',
+      transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease',
+      width: '100%', // Changed from maxWidth to width for full container width
+      margin: '0',   // Remove auto margin which can cause centering issues
+    },
+    cardBody: {
+      flex: '1 1 auto',
+      display: 'flex',
+      flexDirection: 'column',
+      zIndex: 1,
+      padding: '1.25rem', // Consistent padding
+      width: '100%' // Full width
+    },
+    cardImageContainer: {
+      overflow: 'hidden',
+      position: 'relative',
+      paddingTop: '56.25%' // 16:9 aspect ratio
+    },
+    cardImage: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      objectFit: 'cover',
+      objectPosition: 'center',
+      transition: 'transform 0.5s ease'
+    },
+    cardBadge: {
+      position: 'absolute',
+      top: '12px',
+      right: '12px',
+      background: 'rgba(0, 0, 0, 0.7)',
+      color: 'white',
+      padding: '6px 12px',
+      borderRadius: '20px',
+      fontSize: '0.8rem',
+      fontWeight: '600',
+      zIndex: 2,
+      textTransform: 'uppercase',
+      letterSpacing: '1px'
+    },
+    cardFooter: {
+      background: 'rgba(0, 0, 0, 0.25)',
+      borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+      padding: '1rem',
+      position: 'relative',
+      zIndex: 1
+    },
+    cardOverlay: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      background: 'linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.8) 100%)',
+      opacity: 0.2,
+      transition: 'opacity 0.3s ease'
+    },
+    cardInfoItem: {
+      display: 'flex',
+      alignItems: 'center',
+      fontSize: '0.85rem',
+      color: '#b0b0b0',
+      margin: '5px 0'
+    },
+    cardInfoIcon: {
+      marginRight: '6px',
+      fontSize: '0.9rem'
+    },
+    buttonContainer: {
+      display: 'flex',
+      flexDirection: 'row', // Default for larger screens
+      flexWrap: 'wrap',
+      gap: '0.5rem',
+      marginTop: 'auto',
+      width: '100%', // Ensure button container takes full width
+      justifyContent: 'space-between', // Distribute buttons evenly
+    },
+    primaryButton: {
+      flex: '1 0 auto', // Allow button to grow but maintain minimum size
+      minWidth: '120px', // Minimum width for readability
+      whiteSpace: 'nowrap',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '0.5rem 1.25rem',
+      borderRadius: '50px',
+      fontWeight: '600',
+      transition: 'all 0.3s ease',
+      margin: '0 0.25rem 0.25rem 0', // Small margin for spacing
+    },
+    actionButtons: {
+      display: 'flex',
+      flexWrap: 'nowrap', // Keep buttons in a row
+      gap: '0.5rem',
+      alignItems: 'center',
+    }
+  };
+
   return (
     <Container fluid className="home-container">
       {/* small help button to toggle legend (persisted) */}
@@ -567,27 +862,26 @@ export const Home = () => {
             size="xl"
             show={lgShow}
             onHide={() => { setLgShow(false); setAnnounce(''); setModalAnnounce(''); pauseYouTube(modal3DIframeRef); }}
-            aria-labelledby="example-modal-sizes-title-lg"
+            aria-labelledby="modal-3d-reel"
             ref={modal3DRef}
-            className="custom-modal"
+            className="custom-modal video-modal"
+            fullscreen="sm-down" // Full screen on small devices
           >
             <Modal.Header closeButton>
-              <Modal.Title className="ti-tle" id="example-modal-sizes-title-lg">
+              <Modal.Title className="ti-tle" id="modal-3d-reel">
                 2014 Demo Reel
               </Modal.Title>
             </Modal.Header>
-            <Modal.Body>
-              <p>
+            <Modal.Body className="p-2 p-sm-3">
+              <p className="modal-description">
                 Objects were modeled, UV unwrapped, and textured in Maya 3D software.
                 Sculpted in ZBrush and painted in Photoshop.
                 Post effects were done using Fusion.
               </p>
-              <div className="ratio ratio-21x9">
+              <div className="ratio ratio-16x9 video-container">
                 <iframe
                   ref={modal3DIframeRef}
                   loading="lazy"
-                  width="100%"
-                  height="480"
                   src={getEmbedSrc('mPxmNbMpO7A')}
                   title="2014 Demo Reel"
                   frameBorder="0"
@@ -595,23 +889,31 @@ export const Home = () => {
                   allowFullScreen
                 />
               </div>
-              <div style={{ marginTop: 8, display: 'flex', gap: 8 }}>
-                <a onMouseEnter={preconnectYouTube} onClick={() => noteOpen(reel3DUrl)} className="btn btn-sm btn-outline-primary" href={reel3DUrl} target="_blank" rel="noopener noreferrer" title="Open 3D reel on YouTube">Open on YouTube</a>
-                <button aria-label="Copy 3D reel link" title="Copy link" className="btn btn-sm btn-outline-secondary" onClick={() => { copyToClipboard(reel3DUrl, setShareMsg3D); }}>
-                  Copy link
+              <div className="modal-actions mt-3 d-flex flex-wrap gap-2">
+                <button 
+                  className="btn btn-sm btn-outline-secondary" 
+                  onClick={() => copyToClipboard(reel3DUrl, '3D reel link copied')}
+                  aria-label="Copy link to 3D reel"
+                >
+                  Copy Link
                 </button>
-                <button aria-label="Share 3D on Twitter" className="btn btn-sm btn-outline-info" onClick={() => openShareWindow('twitter', reel3DUrl)}>Tweet</button>
-                <button aria-label="Share 3D on LinkedIn" className="btn btn-sm btn-outline-info" onClick={() => openShareWindow('linkedin', reel3DUrl)}>LinkedIn</button>
-                {/* visible share feedback */}
-                {shareMsg3D && <span role="status" style={{ marginLeft: 8, fontSize: 12, color: 'var(--primary)' }}>{shareMsg3D}</span>}
-                <div style={{ marginLeft: 'auto' }}>
-                  <label style={{ marginRight: 8, fontSize: 12 }}>
-                    <input type="checkbox" checked={autoplay} onChange={() => setAutoplay(s => !s)} /> Autoplay
-                  </label>
-                  <label style={{ fontSize: 12 }}>
-                    <input type="checkbox" checked={muted} onChange={() => setMuted(s => !s)} /> Mute
-                  </label>
-                </div>
+                <a 
+                  onMouseEnter={preconnectYouTube} 
+                  onClick={() => { noteOpen(reel3DUrl); }} 
+                  className="btn btn-sm btn-outline-primary" 
+                  href={reel3DUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                >
+                  Watch on YouTube
+                </a>
+                <button 
+                  className="btn btn-sm btn-outline-info" 
+                  onClick={() => openShareWindow('twitter', reel3DUrl)}
+                  aria-label="Share on social media"
+                >
+                  Share
+                </button>
               </div>
             </Modal.Body>
           </Modal>
@@ -625,25 +927,24 @@ export const Home = () => {
             size="xl"
             show={lgShow1}
             onHide={() => { setLgShow1(false); setModalAnnounce(''); pauseYouTube(modalVfxIframeRef); }}
-            aria-labelledby="example-modal-sizes-title-lg"
-            className="custom-modal"
+            aria-labelledby="modal-vfx-reel"
+            className="custom-modal video-modal"
+            fullscreen="sm-down" // Full screen on small devices
           >
             <Modal.Header closeButton>
-              <Modal.Title className="ti-tle" id="example-modal-sizes-title-lg">
+              <Modal.Title className="ti-tle" id="modal-vfx-reel">
                 VFX Reel 2024
               </Modal.Title>
             </Modal.Header>
-            <Modal.Body>
-              <p>
+            <Modal.Body className="p-2 p-sm-3">
+              <p className="modal-description">
                 Thank you for viewing my most recent reel. All objects were created in Blender.
                 After Effects was used for camera and motion tracking of the raw footage.
               </p>
-              <div className="ratio ratio-16x9">
+              <div className="ratio ratio-16x9 video-container">
                 <iframe
                   ref={modalVfxIframeRef}
                   loading="lazy"
-                  width="100%"
-                  height="480"
                   src={getEmbedSrc('mPxmNbMpO7A')}
                   title="VFX Reel 2024"
                   frameBorder="0"
@@ -651,79 +952,92 @@ export const Home = () => {
                   allowFullScreen
                 />
               </div>
-              <div style={{ marginTop: 8, display: 'flex', gap: 8 }}>
-                <a onMouseEnter={preconnectYouTube} onClick={() => noteOpen(reelVfxUrl)} className="btn btn-sm btn-outline-primary" href={reelVfxUrl} target="_blank" rel="noopener noreferrer" title="Open VFX reel on YouTube">Open on YouTube</a>
-                <button aria-label="Copy VFX reel link" title="Copy link" className="btn btn-sm btn-outline-secondary" onClick={() => { copyToClipboard(reelVfxUrl, setShareMsgVFX); }}>
-                  Copy link
+              <div className="modal-actions mt-3 d-flex flex-wrap gap-2">
+                <button 
+                  className="btn btn-sm btn-outline-secondary" 
+                  onClick={() => copyToClipboard(reelVfxUrl, 'VFX reel link copied')}
+                  aria-label="Copy link to VFX reel"
+                >
+                  Copy Link
                 </button>
-                <button aria-label="Share VFX on Twitter" className="btn btn-sm btn-outline-info" onClick={() => openShareWindow('twitter', reelVfxUrl)}>Tweet</button>
-                <button aria-label="Share VFX on LinkedIn" className="btn btn-sm btn-outline-info" onClick={() => openShareWindow('linkedin', reelVfxUrl)}>LinkedIn</button>
-                {shareMsgVFX && <span role="status" style={{ marginLeft: 8, fontSize: 12, color: 'var(--primary)' }}>{shareMsgVFX}</span>}
+                <a 
+                  onMouseEnter={preconnectYouTube} 
+                  onClick={() => { noteOpen(reelVfxUrl); }} 
+                  className="btn btn-sm btn-outline-primary" 
+                  href={reelVfxUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                >
+                  Watch on YouTube
+                </a>
+                <button 
+                  className="btn btn-sm btn-outline-info" 
+                  onClick={() => openShareWindow('twitter', reelVfxUrl)}
+                  aria-label="Share on social media"
+                >
+                  Share
+                </button>
               </div>
 
-              <br />
-              <br />
-              <Modal.Title className="ti-tle" id="example-modal-sizes-title-lg">
-                Past VFX Projects
-              </Modal.Title>
-              <br />
-              <p>
-                This VFX reel displays the work I participated in during my internship. First, the reel shows a 'Gomu' eraser TV commercial, which was a fun project preparing 2D and 3D product placement. I researched the types of products used, created concept art of the positioning of the items, 3D bubbles,
-                and other aspects to help complete the project.
-                Photoshop and Maya were used predominantly.
-                <br />
-                <br />
-                Second in the reel is the pilot for the 'Alphas' which is a SYFY TV show and hit series.
-                My job was to very precisely roto-scope the actor Bryant Cartwright, who plays Gary Bell, out of the green screen and into specific environments.
-                This was accomplished utilizing Nuke primarily.
-              </p>
-              <div className="ratio ratio-16x9">
-                <iframe
-                  loading="lazy"
-                  width="100%"
-                  height="480"
-                  src={getEmbedSrc('tFwtXZw_VzM')}
-                  title="Past VFX Projects"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                />
+              {/* Past VFX Projects section - improved responsiveness */}
+              <div className="mt-4">
+                <h4 className="past-projects-title">Past VFX Projects</h4>
+                <p className="past-projects-description">
+                  This VFX reel displays the work I participated in during my internship. First, the reel shows a 'Gomu' eraser TV commercial, which was a fun project preparing 2D and 3D product placement. I researched the types of products used, created concept art of the positioning of the items, 3D bubbles,
+                  and other aspects to help complete the project.
+                  Photoshop and Maya were used predominantly.
+                  <br className="d-none d-md-block" />
+                  <br className="d-none d-md-block" />
+                  Second in the reel is the pilot for the 'Alphas' which is a SYFY TV show and hit series.
+                  My job was to very precisely roto-scope the actor Bryant Cartwright, who plays Gary Bell, out of the green screen and into specific environments.
+                  This was accomplished utilizing Nuke primarily.
+                </p>
+                <div className="ratio ratio-16x9 mt-3">
+                  <iframe
+                    loading="lazy"
+                    src={getEmbedSrc('tFwtXZw_VzM')}
+                    title="Past VFX Projects"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                  />
+                </div>
               </div>
             </Modal.Body>
           </Modal>
         </>
       </div>
 
-      {/* Introduction Section */}
+      {/* Introduction Section - improved responsiveness */}
       <Col xs={12} className="text-center intro-section">
         <h2 className="top_text"> Welcome to Nebula 3D</h2>
-        <p className="top-p">
+        <p className="top-p px-2 px-md-5">
           My name is Colin Nebula, and I am a 3D Artist and a computer enthusiast. Thank you for visiting my online portfolio!
         </p>
-        <div style={{ margin: '10px 0' }}>
+        <div className="action-buttons-container">
           <button
             onMouseEnter={preconnectDocs}
             onClick={downloadResume}
-            className="btn btn-outline-primary"
+            className="btn btn-outline-primary mb-2 mb-sm-0 me-sm-2"
             title="Download resume"
             aria-live="polite"
             aria-busy={downloadLoading}
             disabled={downloadLoading}
-            style={{ marginRight: 8 }}
           >
             {downloadLoading ? 'Downloading…' : 'Download Resume'}
           </button>
           <button
             type="button"
-            className="btn btn-outline-success"
+            className="btn btn-outline-success mb-2 mb-sm-0 me-sm-2"
             title="Sign up for updates"
             aria-label="Sign up"
-            style={{ marginRight: 8, display: 'inline-flex', alignItems: 'center', gap: 8 }}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}
             onClick={() => setShowSignup(true)}
           >
             Sign up
             <span className="badge bg-secondary" aria-hidden="true" style={{ fontSize: 12 }}>{subscribers.length}</span>
           </button>
+          
           {/* Signup modal */}
           <Modal show={showSignup} onHide={() => setShowSignup(false)} centered aria-labelledby="signup-modal-title" fullscreen="sm-down">
             <form onSubmit={async (e) => {
@@ -797,162 +1111,433 @@ export const Home = () => {
               <Button variant="primary" onClick={downloadSubscribersCsv} disabled={subscribers.length === 0}>Download CSV</Button>
             </Modal.Footer>
           </Modal>
-          <span className="visually-hidden" aria-live="polite">{downloadMsg}</span>
-          <span style={{ marginLeft: 8 }}>Filter:</span>
-          <div role="tablist" aria-label="Project filters" style={{ display: 'inline-block', marginLeft: 8 }}>
-            <button className={`btn btn-sm ${filter === 'all' ? 'btn-primary' : 'btn-outline-secondary'}`} onClick={() => changeFilter('all')} aria-pressed={filter === 'all'} style={{ marginLeft: 6 }}>All</button>
-            <button className={`btn btn-sm ${filter === '3d' ? 'btn-primary' : 'btn-outline-secondary'}`} onClick={() => changeFilter('3d')} aria-pressed={filter === '3d'} style={{ marginLeft: 6 }}>3D</button>
-            <button className={`btn btn-sm ${filter === 'vfx' ? 'btn-primary' : 'btn-outline-secondary'}`} onClick={() => changeFilter('vfx')} aria-pressed={filter === 'vfx'} style={{ marginLeft: 6 }}>VFX</button>
-            <button className="btn btn-sm btn-outline-dark" onClick={resetFilter} title="Reset filter" style={{ marginLeft: 8 }} aria-label="Reset filter">Reset</button>
-           </div>
-          {/* active filter label */}
-          <span aria-hidden="true" style={{ marginLeft: 10, fontSize: 12, color: 'var(--muted)' }}>
-            {filter === 'all' ? 'Showing: All' : filter === '3d' ? 'Showing: 3D' : 'Showing: VFX'}
-          </span>
+          <div className="filter-controls mt-3 mt-sm-0">
+            <span className="filter-label me-2">Filter:</span>
+            <div role="tablist" aria-label="Project filters" className="d-inline-flex flex-wrap align-items-center">
+              <button className={`btn btn-sm ${filter === 'all' ? 'btn-primary' : 'btn-outline-secondary'} me-1 mb-1`} onClick={() => changeFilter('all')} aria-pressed={filter === 'all'}>All</button>
+              <button className={`btn btn-sm ${filter === '3d' ? 'btn-primary' : 'btn-outline-secondary'} me-1 mb-1`} onClick={() => changeFilter('3d')} aria-pressed={filter === '3d'}>3D</button>
+              <button className={`btn btn-sm ${filter === 'vfx' ? 'btn-primary' : 'btn-outline-secondary'} me-1 mb-1`} onClick={() => changeFilter('vfx')} aria-pressed={filter === 'vfx'}>VFX</button>
+              <button className="btn btn-sm btn-outline-dark me-1 mb-1" onClick={resetFilter} title="Reset filter" aria-label="Reset filter">Reset</button>
+            </div>
+            {/* active filter label */}
+            <span aria-hidden="true" className="filter-status d-block d-sm-inline mt-1 mt-sm-0 ms-sm-2">
+              {filter === 'all' ? 'Showing: All' : filter === '3d' ? 'Showing: 3D' : 'Showing: VFX'}
+            </span>
+          </div>
            {/* live region for screen readers */}
-           <div aria-live="polite" aria-atomic="true" style={{ position: 'absolute', left: -9999 }}>{announce}</div>
+           <div aria-live="polite" aria-atomic="true" className="visually-hidden">{announce}</div>
          </div>
         <NavDropdown.Divider />
       </Col>
 
-      {/* Featured VFX Reel */}
-      <Col xs={12} className="mb-4 px-0">
-        <Card
-          className="overflow bg-dark text-white shadow-lg"
-          style={{
-            position: 'relative',
-            left: '50%',
-            right: '50%',
-            marginLeft: '-50vw',
-            marginRight: '-50vw',
-            width: '100vw',
-            borderRadius: 0
-          }}
-        >
-          <div className="ratio ratio-21x9"> {/* cinematic 21:9 */}
-            <iframe
-              ref={featuredIframeRef}
-              loading="lazy"
-              width="100%"
-              height="720"
-              src={getEmbedSrc('tFwtXZw_VzM')}
-              title="VFX Blender Reel"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
-              allowFullScreen
-              onMouseEnter={preconnectYouTube}
-            />
-          </div>
-          <Card.ImgOverlay style={{ pointerEvents: 'none', left: 24, bottom: 24 }}>
-            <Card.Title style={{ fontSize: 28, fontWeight: 700 }}>VFX Blender Reel</Card.Title>
-            <Card.Text style={{ fontSize: 16 }}>
-              This is my most recent VFX reel created with Blender and After Effects.
-            </Card.Text>
-          </Card.ImgOverlay>
-        </Card>
-      </Col>
+      {/* Featured VFX Reel - Fixed full-width implementation */}
+      <div className="featured-video-wrapper mb-4">
+        <div className="ratio ratio-16x9"> {/* Changed to 16:9 for better mobile compatibility */}
+          <iframe
+            ref={featuredIframeRef}
+            loading="lazy"
+            title="VFX Blender Reel"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+            allowFullScreen
+            onMouseEnter={preconnectYouTube}
+            src={getEmbedSrc('tFwtXZw_VzM')}
+          />
+        </div>
+        <div className="video-overlay-content">
+          <h3 className="video-title">VFX Blender Reel</h3>
+          <p className="video-description d-none d-md-block">
+            This is my most recent VFX reel created with Blender and After Effects.
+          </p>
+        </div>
+      </div>
 
       {/* Portfolio Overview */}
-      <Col xs={12} className="text-center portfolio-overview">
-        <h2 className="middle_text"> Colin Nebula 3D Portfolio</h2>
-        <p className="mid-p">
+      <Col xs={12} className="text-center portfolio-overview my-4 px-2 px-md-0">
+        <h2 className="middle_text">Colin Nebula 3D Portfolio</h2>
+        <p className="mid-p px-2 px-md-5"> {/* Added extra padding control */}
           3D modeling is a fun and continuous learning process: creating, animating, learning, and improving.
         </p>
         <NavDropdown.Divider />
       </Col>
 
-      {/* Demo Reels Card Group */}
-      <Col xs={12}>
-        <CardGroup>
-          { (filter === 'all' || filter === '3d') && (
-            <Card className="overflow bg-dark text-white shadow-lg" tabIndex={0}
+      {/* Demo Reels Card Group - Fixed width and spacing issues */}
+      <Row className="g-4 mx-0 card-row w-100">
+        {(filter === 'all' || filter === '3d') && (
+          <Col lg={filter === 'all' ? 6 : 12} md={12} sm={12} className="mb-4 card-column">
+            <Card 
+              className="overflow bg-dark text-white shadow-lg enhanced-card w-100" 
+              style={cardStyles.cardContainer}
+              tabIndex={0}
               onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') open3DModal(); }}
-              role="button" aria-label="Open 3D Modeling Demo Reel">
-              <Card.Img variant="top" src={demoR} className="card-image rounded" alt="Demo Reel" loading="lazy" />
-              <Card.Body>
-                <Card.Title>3D Modeling Demo Reel</Card.Title>
-                <Card.Text>
+              role="button" 
+              aria-label="Open 3D Modeling Demo Reel"
+            >
+              <div style={cardStyles.cardOverlay} className="card-overlay"></div>
+              <div style={cardStyles.cardBadge}>3D Modeling</div>
+              
+              <div style={cardStyles.cardImageContainer} className="card-image-container">
+                <Card.Img 
+                  src={demoR} 
+                  alt="Demo Reel" 
+                  loading="lazy" 
+                  style={cardStyles.cardImage}
+                  className="card-zoom-image"
+                />
+              </div>
+              
+              <Card.Body style={cardStyles.cardBody}>
+                <Card.Title className="card-title-enhanced">3D Modeling Demo Reel</Card.Title>
+                
+                <div className="card-info-items">
+                  <div style={cardStyles.cardInfoItem}>
+                    <span style={cardStyles.cardInfoIcon}>🕒</span>
+                    <span>Duration: 2:45</span>
+                  </div>
+                  <div style={cardStyles.cardInfoItem}>
+                    <span style={cardStyles.cardInfoIcon}>🎬</span>
+                    <span className="d-none d-sm-inline">Software: Blender, ZBrush, Photoshop</span>
+                    <span className="d-inline d-sm-none">Software: Blender, ZBrush</span>
+                  </div>
+                </div>
+                
+                <Card.Text className="my-3 card-description">
                   This demo reel showcases my 3D modeling and texturing skills using industry-standard software such as Blender, Zbrush, Photoshop, xNormal, and After Effects.
                 </Card.Text>
-              </Card.Body>
-              <Card.Footer>
-                <div style={{display:'flex', gap:8, alignItems:'center'}}>
-                  <Button onMouseEnter={preconnectYouTube} variant="outline-warning" onClick={open3DModal} aria-label="View 3D reel">View Reel</Button>
-                  <button aria-label="Copy 3D reel link" title="Copy 3D link" className="btn btn-sm btn-outline-secondary" onClick={() => copyToClipboard(reel3DUrl, setShareMsg3D)}>Copy</button>
-                  <a onMouseEnter={preconnectYouTube} onClick={() => noteOpen(reel3DUrl)} className="btn btn-sm btn-outline-primary" href={reel3DUrl} target="_blank" rel="noopener noreferrer" title="Open 3D reel on YouTube">Open</a>
-                  <button aria-label="Share 3D on Twitter" className="btn btn-sm btn-outline-info" onClick={() => openShareWindow('twitter', reel3DUrl)}>Tweet</button>
-                  <button aria-label="Share 3D on LinkedIn" className="btn btn-sm btn-outline-info" onClick={() => openShareWindow('linkedin', reel3DUrl)}>LinkedIn</button>
-                 {shareMsg3D && <span role="status" aria-hidden="false" style={{marginLeft:8, fontSize:12, color:'var(--primary)'}}>{shareMsg3D}</span>}
+                
+                <div className="button-container d-flex flex-wrap justify-content-between align-items-center">
+                  <Button 
+                    onMouseEnter={preconnectYouTube} 
+                    variant="outline-warning" 
+                    onClick={open3DModal} 
+                    aria-label="View 3D reel"
+                    className="view-reel-btn mb-2 mb-sm-0 me-2"
+                  >
+                    <span className="play-icon">▶</span> View Reel
+                  </Button>
+                  <div className="action-buttons d-flex gap-2 flex-nowrap">
+                    <button 
+                      aria-label="Copy 3D reel link" 
+                      title="Copy 3D link" 
+                      className="btn btn-sm btn-outline-secondary btn-card-action" 
+                      onClick={() => copyToClipboard(reel3DUrl, '3D reel link copied')}
+                    >
+                      Copy
+                    </button>
+                    <button 
+                      aria-label="Share 3D reel" 
+                      className="btn btn-sm btn-outline-info btn-card-action" 
+                      onClick={() => openShareWindow('twitter', reel3DUrl)}
+                      title="Share on Twitter"
+                    >
+                      Share
+                    </button>
+                  </div>
                 </div>
-               </Card.Footer>
-             </Card>
-           )}
-
-          { (filter === 'all' || filter === 'vfx') && (
-            <Card className="overflow bg-dark text-white shadow-lg" tabIndex={0}
+              </Card.Body>
+            </Card>
+          </Col>
+        )}
+        
+        {(filter === 'all' || filter === 'vfx') && (
+          <Col lg={filter === 'all' ? 6 : 12} md={12} sm={12} className="mb-4 card-column">
+            <Card 
+              className="overflow bg-dark text-white shadow-lg enhanced-card w-100" 
+              style={cardStyles.cardContainer}
+              tabIndex={0}
               onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') openVFXModal(); }}
-              role="button" aria-label="Open VFX Reel">
-              <Card.Img variant="top" src={sword} className="card-image rounded" alt="VFX Reel" loading="lazy" />
-              <Card.Body>
-                <Card.Title>VFX Reel</Card.Title>
-                <Card.Text>
+              role="button" 
+              aria-label="Open VFX Reel"
+            >
+              <div style={cardStyles.cardOverlay} className="card-overlay"></div>
+              <div style={cardStyles.cardBadge}>VFX</div>
+              
+              <div style={cardStyles.cardImageContainer} className="card-image-container">
+                <Card.Img 
+                  src={sword} 
+                  alt="VFX Reel" 
+                  loading="lazy" 
+                  style={cardStyles.cardImage}
+                  className="card-zoom-image"
+                />
+              </div>
+              
+              <Card.Body style={cardStyles.cardBody}>
+                <Card.Title className="card-title-enhanced">VFX Reel</Card.Title>
+                
+                <div className="card-info-items">
+                  <div style={cardStyles.cardInfoItem}>
+                    <span style={cardStyles.cardInfoIcon}>🕒</span>
+                    <span>Duration: 3:12</span>
+                  </div>
+                  <div style={cardStyles.cardInfoItem}>
+                    <span style={cardStyles.cardInfoIcon}>🎬</span>
+                    <span>Software: After Effects, Nuke</span>
+                  </div>
+                </div>
+                
+                <Card.Text className="my-3 card-description">
                   This VFX reel displays post-production effects and includes some of the work I was involved with at Intelligent Creatures Toronto.
                 </Card.Text>
-              </Card.Body>
-              <Card.Footer>
-                <div style={{display:'flex', gap:8, alignItems:'center'}}>
-                  <Button onMouseEnter={preconnectYouTube} variant="outline-warning" onClick={openVFXModal} aria-label="View VFX reel">View Reel</Button>
-                  <button aria-label="Copy VFX reel link" title="Copy VFX link" className="btn btn-sm btn-outline-secondary" onClick={() => copyToClipboard(reelVfxUrl, setShareMsgVFX)}>Copy</button>
-                  <a onMouseEnter={preconnectYouTube} onClick={() => noteOpen(reelVfxUrl)} className="btn btn-sm btn-outline-primary" href={reelVfxUrl} target="_blank" rel="noopener noreferrer" title="Open VFX reel on YouTube">Open</a>
-                  <button aria-label="Share VFX on Twitter" className="btn btn-sm btn-outline-info" onClick={() => openShareWindow('twitter', reelVfxUrl)}>Tweet</button>
-                  <button aria-label="Share VFX on LinkedIn" className="btn btn-sm btn-outline-info" onClick={() => openShareWindow('linkedin', reelVfxUrl)}>LinkedIn</button>
-                 {shareMsgVFX && <span role="status" aria-hidden="false" style={{marginLeft:8, fontSize:12, color:'var(--primary)'}}>{shareMsgVFX}</span>}
+                
+                <div className="button-container d-flex flex-wrap justify-content-between align-items-center">
+                  <Button 
+                    onMouseEnter={preconnectYouTube} 
+                    variant="outline-warning" 
+                    onClick={openVFXModal} 
+                    aria-label="View VFX reel"
+                    className="view-reel-btn mb-2 mb-sm-0 me-2"
+                  >
+                    <span className="play-icon">▶</span> View Reel
+                  </Button>
+                  <div className="action-buttons d-flex gap-2 flex-nowrap">
+                    <button 
+                      aria-label="Copy VFX reel link" 
+                      title="Copy VFX link" 
+                      className="btn btn-sm btn-outline-secondary btn-card-action" 
+                      onClick={() => copyToClipboard(reelVfxUrl, 'VFX reel link copied')}
+                    >
+                      Copy
+                    </button>
+                    <button 
+                      aria-label="Share VFX reel" 
+                      className="btn btn-sm btn-outline-info btn-card-action" 
+                      onClick={() => openShareWindow('twitter', reelVfxUrl)}
+                      title="Share on Twitter"
+                    >
+                      Share
+                    </button>
+                  </div>
                 </div>
-               </Card.Footer>
-             </Card>
-           )}
-         </CardGroup>
-       </Col>
-      {/* ensure back-to-top respects reduced-motion elsewhere if present */}
-      {/* Footer Section (semantic and accessible) */}
-      <footer id="site-footer" role="contentinfo" className="footer" aria-label="Site footer">
-        <Container fluid>
-          <Row className="align-items-center py-3">
-            <Col md={8} className="text-md-start text-center">
-              <div className="rights">© {currentYear} Colin Nebula</div>
-            </Col>
-            <Col md={4} className="icons text-md-end text-center">
-              <div aria-label="Social links"><SocialIcons /></div>
-            </Col>
-          </Row>
-        </Container>
-      </footer>
+              </Card.Body>
+            </Card>
+          </Col>
+        )}
+      </Row>
 
+      {/* Improved modal responsiveness */}
+      <Modal
+        size="xl"
+        show={lgShow}
+        onHide={() => { setLgShow(false); setAnnounce(''); setModalAnnounce(''); pauseYouTube(modal3DIframeRef); }}
+        aria-labelledby="modal-3d-reel"
+        ref={modal3DRef}
+        className="custom-modal video-modal"
+        fullscreen="sm-down" // Full screen on small devices
+      >
+        <Modal.Header closeButton>
+          <Modal.Title className="ti-tle" id="modal-3d-reel">
+            2014 Demo Reel
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="p-2 p-sm-3">
+          <p className="modal-description">
+            Objects were modeled, UV unwrapped, and textured in Maya 3D software.
+            Sculpted in ZBrush and painted in Photoshop.
+            Post effects were done using Fusion.
+          </p>
+          <div className="ratio ratio-16x9 video-container">
+            <iframe
+              ref={modal3DIframeRef}
+              loading="lazy"
+              src={getEmbedSrc('mPxmNbMpO7A')}
+              title="2014 Demo Reel"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+              allowFullScreen
+            />
+          </div>
+          <div className="modal-actions mt-3 d-flex flex-wrap gap-2">
+            <button 
+              className="btn btn-sm btn-outline-secondary" 
+              onClick={() => copyToClipboard(reel3DUrl, '3D reel link copied')}
+              aria-label="Copy link to 3D reel"
+            >
+              Copy Link
+            </button>
+            <a 
+              onMouseEnter={preconnectYouTube} 
+              onClick={() => { noteOpen(reel3DUrl); }} 
+              className="btn btn-sm btn-outline-primary" 
+              href={reel3DUrl} 
+              target="_blank" 
+              rel="noopener noreferrer"
+            >
+              Watch on YouTube
+            </a>
+            <button 
+              className="btn btn-sm btn-outline-info" 
+              onClick={() => openShareWindow('twitter', reel3DUrl)}
+              aria-label="Share on social media"
+            >
+              Share
+            </button>
+          </div>
+        </Modal.Body>
+      </Modal>
+
+      {/* Fix VFX Modal responsiveness too */}
+      <Modal
+        size="xl"
+        show={lgShow1}
+        onHide={() => { setLgShow1(false); setModalAnnounce(''); pauseYouTube(modalVfxIframeRef); }}
+        aria-labelledby="modal-vfx-reel"
+        className="custom-modal video-modal"
+        fullscreen="sm-down" // Full screen on small devices
+      >
+        <Modal.Header closeButton>
+          <Modal.Title className="ti-tle" id="modal-vfx-reel">
+            VFX Reel 2024
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="p-2 p-sm-3">
+          <p className="modal-description">
+            Thank you for viewing my most recent reel. All objects were created in Blender.
+            After Effects was used for camera and motion tracking of the raw footage.
+          </p>
+          <div className="ratio ratio-16x9 video-container">
+            <iframe
+              ref={modalVfxIframeRef}
+              loading="lazy"
+              src={getEmbedSrc('mPxmNbMpO7A')}
+              title="VFX Reel 2024"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+              allowFullScreen
+            />
+          </div>
+          <div className="modal-actions mt-3 d-flex flex-wrap gap-2">
+            <button 
+              className="btn btn-sm btn-outline-secondary" 
+              onClick={() => copyToClipboard(reelVfxUrl, 'VFX reel link copied')}
+              aria-label="Copy link to VFX reel"
+            >
+              Copy Link
+            </button>
+            <a 
+              onMouseEnter={preconnectYouTube} 
+              onClick={() => { noteOpen(reelVfxUrl); }} 
+              className="btn btn-sm btn-outline-primary" 
+              href={reelVfxUrl} 
+              target="_blank" 
+              rel="noopener noreferrer"
+            >
+              Watch on YouTube
+            </a>
+            <button 
+              className="btn btn-sm btn-outline-info" 
+              onClick={() => openShareWindow('twitter', reelVfxUrl)}
+              aria-label="Share on social media"
+            >
+              Share
+            </button>
+          </div>
+
+          {/* Past VFX Projects section - improved responsiveness */}
+          <div className="mt-4">
+            <h4 className="past-projects-title">Past VFX Projects</h4>
+            <p className="past-projects-description">
+              This VFX reel displays the work I participated in during my internship. First, the reel shows a 'Gomu' eraser TV commercial, which was a fun project preparing 2D and 3D product placement. I researched the types of products used, created concept art of the positioning of the items, 3D bubbles,
+              and other aspects to help complete the project.
+              Photoshop and Maya were used predominantly.
+              <br className="d-none d-md-block" />
+              <br className="d-none d-md-block" />
+              Second in the reel is the pilot for the 'Alphas' which is a SYFY TV show and hit series.
+              My job was to very precisely roto-scope the actor Bryant Cartwright, who plays Gary Bell, out of the green screen and into specific environments.
+              This was accomplished utilizing Nuke primarily.
+            </p>
+            <div className="ratio ratio-16x9 mt-3">
+              <iframe
+                loading="lazy"
+                src={getEmbedSrc('tFwtXZw_VzM')}
+                title="Past VFX Projects"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+            </div>
+          </div>
+        </Modal.Body>
+      </Modal>
+
+      {/* Notifications (stacked) */}
+      <Col xs={12}>
+        <div className="notification-container" aria-live="polite" aria-atomic="true">
+          {notifications.map(notification => (
+            <div 
+              key={notification.id}
+              className={`
+                notification-toast 
+                notification-${notification.variant} 
+                ${notification.dismissing ? 'notification-dismissing' : ''}
+              `}
+              role="alert"
+            >
+              <div className="notification-content">
+                {notification.icon && (
+                  <div className="notification-icon">
+                    {notification.icon}
+                  </div>
+                )}
+                <div className="notification-message">
+                  {notification.message}
+                </div>
+              </div>
+              
+              {notification.action && (
+                <div className="notification-actions">
+                  <button 
+                    onClick={() => {
+                      notification.action.onClick();
+                      if (notification.action.dismissOnClick) {
+                        dismissNotification(notification.id);
+                      }
+                    }}
+                    className="notification-action-btn"
+                  >
+                    {notification.action.label}
+                  </button>
+                </div>
+              )}
+              
+              {notification.dismissible && (
+                <button 
+                  onClick={() => dismissNotification(notification.id)} 
+                  className="notification-close"
+                  aria-label="Dismiss notification"
+                >
+                  ×
+                </button>
+              )}
+              
+              {notification.progress && notification.duration !== Infinity && (
+                <div 
+                  className="notification-progress"
+                  style={{
+                    animationDuration: `${notification.duration}ms`,
+                    animationPlayState: 'running'
+                  }}
+                />
+              )}
+            </div>
+          ))}
+        </div>
+      </Col>
+
+      {/* Back to top button - improved touch area */}
       {showTop && (
         <button
           onClick={() => scrollToTop()}
           aria-label="Back to top"
           title="Back to top"
-          style={{
-            position: "fixed",
-            right: 20,
-            bottom: 30,
-            zIndex: 999,
-            padding: "10px 14px",
-            borderRadius: 6,
-            border: "none",
-            background: "var(--primary)",
-            color: "#fff",
-            cursor: "pointer",
-            boxShadow: "0 6px 18px rgba(0,0,0,0.2)",
-          }}
+          className="back-to-top-btn"
         >
           <span aria-hidden="true">↑</span>
           <span className="visually-hidden">Back to top</span>
         </button>
       )}
-     </Container>
-   );
- }
+    </Container>
+  );
+}
 
 export default Home;

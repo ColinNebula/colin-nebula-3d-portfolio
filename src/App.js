@@ -1,5 +1,6 @@
 //Imports
 import React, { useState } from 'react';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import Header from './components/Header';
 import Home from './components/Home';
 import About from './components/About';
@@ -8,70 +9,52 @@ import Animation from './components/Animation';
 import Artwork from './components/Artwork';
 import PrivacyPolicy from './components/Private-policy';
 import VideoEditing from './components/VideoEditing';
-
+import Resume from './components/Resume';
+import Updates from './components/Updates'; 
+import Account from './components/Account'; 
+import Footer from './components/Footer';
+import LandingPage from "./components/LandingPage";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-// import Footer from './components/Footer';
-
-import BootstrapCarousel from './components/BootstrapCarousel';
-import LandingPage from "./components/LandingPage";
-
-
+/**
+ * NOTE: To use Apollo Client for GraphQL:
+ * 1. Install required packages:
+ *    npm install @apollo/client graphql
+ * 
+ * 2. Then uncomment and complete the Apollo configuration
+ */
 
 function App() {
-
-  const [currentTab, setCurrentTab] = useState("landing-page");
-
-  const renderTab = () => {
-    switch (currentTab) {
-      case "home":
-        return <Home />;
-
-      case "about":
-        return <About />;
-
-      case "portfolio":
-        return <Portfolio />
-
-      case "artwork":
-        return <Artwork />;
-
-      case "animation":
-          return <Animation />;
-
-      case "private-policy":
-          return <PrivacyPolicy />;
-
-          case "video-editing":
-          return <VideoEditing />;
-
-          case "landing-page":
-            return <LandingPage />;
-      default:
-        return null;
-    }
+  // State for theme or other app-wide settings could go here
+  const [darkMode, setDarkMode] = useState(false);
+  
+  // Toggle theme function
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
   };
 
   return (
-    
-    <div>
-    
-    <div>
-    
-    
-				<Header currentTab={currentTab} setCurrentTab={setCurrentTab}></Header>
-        
-			</div>
-
-    <BootstrapCarousel />
-    <div className="scroll-watcher"></div> 
-  
-      <div>
-      <main>{renderTab()}</main>
+    <div className={darkMode ? 'dark-theme' : 'light-theme'}>
+      <Header toggleDarkMode={toggleDarkMode} darkMode={darkMode} />
+      <main>
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/portfolio" element={<Portfolio />} />
+          <Route path="/animation" element={<Animation />} />
+          <Route path="/artwork" element={<Artwork />} />
+          <Route path="/video-editing" element={<VideoEditing />} />
+          <Route path="/resume" element={<Resume />} />
+          <Route path="/updates" element={<Updates />} />
+          <Route path="/account" element={<Account />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          {/* Add a catch-all route that redirects to the landing page */}
+          <Route path="*" element={<LandingPage />} />
+        </Routes>
+      </main>
+      <Footer />
     </div>
-   
-  </div>
-
   );
 }
 

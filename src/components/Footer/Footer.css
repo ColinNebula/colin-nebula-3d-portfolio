@@ -1,0 +1,132 @@
+.footer-container {
+    background-color: #212529;
+    color: #f8f9fa;
+    padding: 30px 0 0 0;
+    margin-top: 40px;
+    box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.footer-heading {
+    color: #ffffff;
+    font-weight: 600;
+    margin-bottom: 20px;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+.footer-heading:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 40px;
+    height: 3px;
+    background: linear-gradient(90deg, #3498db, #2ecc71);
+    border-radius: 2px;
+}
+
+.footer-text {
+    color: #adb5bd;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.footer-contact {
+    color: #adb5bd;
+}
+
+.footer-links {
+    list-style: none;
+    padding-left: 0;
+}
+
+.footer-links li {
+    margin-bottom: 10px;
+}
+
+.footer-link {
+    color: #adb5bd;
+    text-decoration: none;
+    transition: color 0.3s;
+    display: inline-flex;
+    align-items: center;
+}
+
+.footer-link:hover {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.social-icons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.social-icon {
+    font-size: 1.5rem;
+    color: #adb5bd;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.social-icon:hover {
+    color: var(--hover-color, #ffffff);
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.copyright-bar {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 20px;
+    color: #adb5bd;
+    font-size: 0.85rem;
+}
+
+.heart-icon {
+    color: #e74c3c;
+    animation: pulse 1.5s infinite;
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 0.8rem;
+    margin: 0 4px;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .social-icons {
+        justify-content: center;
+    }
+    
+    .footer-heading {
+        margin-top: 20px;
+    }
+    
+    .footer-heading:after {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    
+    .footer-text, .footer-contact, .footer-links {
+        text-align: center;
+    }
+    
+    .footer-links li {
+        display: inline-block;
+        margin: 0 10px 10px 0;
+    }
+}

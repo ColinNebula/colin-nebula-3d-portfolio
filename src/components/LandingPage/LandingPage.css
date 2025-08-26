@@ -1,0 +1,380 @@
+.landing-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  width: 100%;
+  background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.6s ease-in;
+}
+
+.landing-page.loaded {
+  opacity: 1;
+}
+
+.landing-container {
+  position: relative;
+  z-index: 10;
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.landing-content {
+  display: flex;
+  align-items: center;
+  min-height: 80vh;
+}
+
+.landing-text-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.landing-text-wrapper {
+  max-width: 600px;
+}
+
+.landing-title {
+  font-size: 3.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  line-height: 1.2;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.landing-title.animate {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.welcome-accent {
+  color: #50e3c2;
+  font-style: italic;
+}
+
+.lastly {
+  color: #ffd700;
+  font-weight: 800;
+  font-size: 3.8rem;
+  display: inline-block;
+  margin-top: 0.5rem;
+}
+
+.landing-description {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease 0.2s, transform 0.8s ease 0.2s;
+}
+
+.landing-description.animate {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.landing-cta {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease 0.4s, transform 0.8s ease 0.4s;
+}
+
+.landing-cta.animate {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.landing-button {
+  padding: 0.75rem 2rem;
+  font-weight: 600;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 50px;
+}
+
+.landing-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 7px 14px rgba(0, 0, 0, 0.2);
+}
+
+.landing-logo-col {
+  position: relative;
+}
+
+.logo-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.landing-logo {
+  max-width: 100%;
+  height: auto;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3));
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 1s ease, transform 1s ease;
+}
+
+.landing-logo.loaded {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.logo-link {
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.logo-link:hover {
+  transform: scale(1.05);
+}
+
+.scroll-indicator {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  opacity: 0;
+  animation: fadeIn 1s ease 1.2s forwards;
+}
+
+.mouse {
+  width: 30px;
+  height: 50px;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  border-radius: 15px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.wheel {
+  width: 4px;
+  height: 8px;
+  background: #fff;
+  border-radius: 2px;
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: wheelScroll 1.5s infinite;
+}
+
+.scroll-text {
+  margin-top: 10px;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.landing-footer {
+  position: absolute;
+  bottom: 15px;
+  width: 100%;
+  left: 0;
+  text-align: center;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+  opacity: 0;
+  animation: fadeIn 1s ease 1.4s forwards;
+}
+
+.technologies {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.dot-separator {
+  margin: 0 5px;
+  opacity: 0.5;
+}
+
+/* Background elements */
+.bg-elements {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.bg-circle {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.1;
+}
+
+.circle-1 {
+  width: 400px;
+  height: 400px;
+  background: linear-gradient(135deg, #50e3c2, #4a00e0);
+  top: -100px;
+  right: -100px;
+  animation: float 15s infinite alternate ease-in-out;
+}
+
+.circle-2 {
+  width: 600px;
+  height: 600px;
+  background: linear-gradient(135deg, #ffd700, #ff3e78);
+  bottom: -200px;
+  left: -150px;
+  animation: float 20s infinite alternate-reverse ease-in-out;
+}
+
+.circle-3 {
+  width: 300px;
+  height: 300px;
+  background: linear-gradient(135deg, #4a00e0, #ff3e78);
+  top: 30%;
+  right: 10%;
+  animation: float 18s infinite alternate ease-in-out;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes wheelScroll {
+  0% {
+    opacity: 1;
+    top: 10px;
+  }
+  100% {
+    opacity: 0;
+    top: 30px;
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(5deg);
+  }
+  100% {
+    transform: translateY(20px) rotate(-5deg);
+  }
+}
+
+/* Media Queries */
+@media (max-width: 991px) {
+  .landing-content {
+    flex-direction: column-reverse;
+    gap: 2rem;
+    text-align: center;
+  }
+  
+  .landing-text-wrapper {
+    margin: 0 auto;
+  }
+  
+  .landing-logo {
+    max-width: 280px;
+  }
+  
+  .landing-title {
+    font-size: 2.8rem;
+  }
+  
+  .lastly {
+    font-size: 3rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .landing-container {
+    padding: 1rem;
+  }
+  
+  .landing-title {
+    font-size: 2.2rem;
+  }
+  
+  .lastly {
+    font-size: 2.5rem;
+  }
+  
+  .landing-logo {
+    max-width: 220px;
+  }
+  
+  .landing-button {
+    padding: 0.6rem 1.5rem;
+  }
+  
+  .landing-cta .btn + .btn {
+    margin-top: 1rem;
+    margin-left: 0 !important;
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .landing-title,
+  .landing-description,
+  .landing-cta,
+  .landing-logo {
+    transition: none;
+    animation: none;
+    transform: none;
+    opacity: 1;
+  }
+  
+  .wheel {
+    animation: none;
+  }
+  
+  .bg-circle {
+    animation: none;
+  }
+  
+  .scroll-indicator,
+  .landing-footer {
+    opacity: 1;
+    animation: none;
+  }
+}
+
+/* High Contrast Mode */
+@media (forced-colors: active) {
+  .landing-page {
+    background: Canvas;
+    color: CanvasText;
+  }
+  
+  .welcome-accent,
+  .lastly {
+    color: HighlightText;
+  }
+  
+  .bg-circle {
+    background: ButtonText;
+    opacity: 0.05;
+  }
+  
+  .landing-button {
+    border: 1px solid ButtonText;
+  }
+}

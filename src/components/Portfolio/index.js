@@ -783,7 +783,7 @@ function Portfolio() {
       <NavDropdown.Divider />
 
       {/* Footer Section (semantic & accessible) */}
-      <footer id="site-footer" role="contentinfo" className="footer" aria-label="Site footer">
+      {/* <footer id="site-footer" role="contentinfo" className="footer" aria-label="Site footer">
         <Container fluid>
           <Row className="align-items-center py-3">
             <Col md={8} className="text-md-start text-center">
@@ -794,7 +794,7 @@ function Portfolio() {
             </Col>
           </Row>
         </Container>
-      </footer>
+      </footer> */}
 
       {showTop && (
         <button

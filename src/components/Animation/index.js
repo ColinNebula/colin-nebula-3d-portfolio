@@ -384,19 +384,7 @@ function Animation() {
       <br />
       <NavDropdown.Divider />
 
-      {/* Footer Section (semantic) */}
-      <footer id="site-footer" role="contentinfo" className="footer" aria-label="Site footer">
-        <Container fluid>
-          <Row className="align-items-center py-3">
-            <Col md={8} className="text-md-start text-center">
-              <div className="rights">© {currentYear} Colin Nebula</div>
-            </Col>
-            <Col md={4} className="icons text-md-end text-center" aria-label="Social links">
-              <SocialIcons />
-            </Col>
-          </Row>
-        </Container>
-      </footer>
+      
 
       {showTop && (
         <button
