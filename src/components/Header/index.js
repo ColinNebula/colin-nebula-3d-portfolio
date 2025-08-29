@@ -1,19 +1,12 @@
 import React from 'react';
-import Nav from "../Nav";
+import Navigation from '../Nav';
 
-function Header(props) {
-    const { currentTab, setCurrentTab } = props;
-
-    return (
-        <header>
-        <div>
-            <Nav
-                currentTab={currentTab}
-                setCurrentTab={setCurrentTab}
-            ></Nav>
-            </div>
-        </header>
-    );
-}
+const Header = ({ toggleDarkMode, darkMode }) => {
+  return (
+    <header>
+      <Navigation toggleDarkMode={toggleDarkMode} darkMode={darkMode} />
+    </header>
+  );
+};
 
 export default Header;

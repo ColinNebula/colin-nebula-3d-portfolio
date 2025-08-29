@@ -855,158 +855,150 @@ export const Home = () => {
         </div>
       )}
 
-      {/* Modal for 2014 Demo Reel */}
-      <div>
-        <>
-          <Modal
-            size="xl"
-            show={lgShow}
-            onHide={() => { setLgShow(false); setAnnounce(''); setModalAnnounce(''); pauseYouTube(modal3DIframeRef); }}
-            aria-labelledby="modal-3d-reel"
-            ref={modal3DRef}
-            className="custom-modal video-modal"
-            fullscreen="sm-down" // Full screen on small devices
-          >
-            <Modal.Header closeButton>
-              <Modal.Title className="ti-tle" id="modal-3d-reel">
-                2014 Demo Reel
-              </Modal.Title>
-            </Modal.Header>
-            <Modal.Body className="p-2 p-sm-3">
-              <p className="modal-description">
-                Objects were modeled, UV unwrapped, and textured in Maya 3D software.
-                Sculpted in ZBrush and painted in Photoshop.
-                Post effects were done using Fusion.
-              </p>
-              <div className="ratio ratio-16x9 video-container">
-                <iframe
-                  ref={modal3DIframeRef}
-                  loading="lazy"
-                  src={getEmbedSrc('mPxmNbMpO7A')}
-                  title="2014 Demo Reel"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
-                  allowFullScreen
-                />
-              </div>
-              <div className="modal-actions mt-3 d-flex flex-wrap gap-2">
-                <button 
-                  className="btn btn-sm btn-outline-secondary" 
-                  onClick={() => copyToClipboard(reel3DUrl, '3D reel link copied')}
-                  aria-label="Copy link to 3D reel"
-                >
-                  Copy Link
-                </button>
-                <a 
-                  onMouseEnter={preconnectYouTube} 
-                  onClick={() => { noteOpen(reel3DUrl); }} 
-                  className="btn btn-sm btn-outline-primary" 
-                  href={reel3DUrl} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                >
-                  Watch on YouTube
-                </a>
-                <button 
-                  className="btn btn-sm btn-outline-info" 
-                  onClick={() => openShareWindow('twitter', reel3DUrl)}
-                  aria-label="Share on social media"
-                >
-                  Share
-                </button>
-              </div>
-            </Modal.Body>
-          </Modal>
-        </>
-      </div>
+      {/* Modal for 2014 Demo Reel - Single instance */}
+      <Modal
+        size="xl"
+        show={lgShow}
+        onHide={() => { setLgShow(false); setAnnounce(''); setModalAnnounce(''); pauseYouTube(modal3DIframeRef); }}
+        aria-labelledby="modal-3d-reel"
+        ref={modal3DRef}
+        className="custom-modal video-modal"
+        fullscreen="sm-down"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title className="ti-tle" id="modal-3d-reel">
+            2014 Demo Reel
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="p-2 p-sm-3">
+          <p className="modal-description">
+            Objects were modeled, UV unwrapped, and textured in Maya 3D software.
+            Sculpted in ZBrush and painted in Photoshop.
+            Post effects were done using Fusion.
+          </p>
+          <div className="ratio ratio-16x9 video-container">
+            <iframe
+              ref={modal3DIframeRef}
+              loading="lazy"
+              src={getEmbedSrc('mPxmNbMpO7A')}
+              title="2014 Demo Reel"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+              allowFullScreen
+            />
+          </div>
+          <div className="modal-actions mt-3 d-flex flex-wrap gap-2">
+            <button 
+              className="btn btn-sm btn-outline-secondary" 
+              onClick={() => copyToClipboard(reel3DUrl, '3D reel link copied')}
+              aria-label="Copy link to 3D reel"
+            >
+              Copy Link
+            </button>
+            <a 
+              onMouseEnter={preconnectYouTube} 
+              onClick={() => { noteOpen(reel3DUrl); }} 
+              className="btn btn-sm btn-outline-primary" 
+              href={reel3DUrl} 
+              target="_blank" 
+              rel="noopener noreferrer"
+            >
+              Watch on YouTube
+            </a>
+            <button 
+              className="btn btn-sm btn-outline-info" 
+              onClick={() => openShareWindow('twitter', reel3DUrl)}
+              aria-label="Share on social media"
+            >
+              Share
+            </button>
+          </div>
+        </Modal.Body>
+      </Modal>
 
-      {/* Modal for VFX Reel 2024 */}
-      <div>
-        <>
-          <Modal
-            size="xl"
-            show={lgShow1}
-            onHide={() => { setLgShow1(false); setModalAnnounce(''); pauseYouTube(modalVfxIframeRef); }}
-            aria-labelledby="modal-vfx-reel"
-            className="custom-modal video-modal"
-            fullscreen="sm-down" // Full screen on small devices
-          >
-            <Modal.Header closeButton>
-              <Modal.Title className="ti-tle" id="modal-vfx-reel">
-                VFX Reel 2024
-              </Modal.Title>
-            </Modal.Header>
-            <Modal.Body className="p-2 p-sm-3">
-              <p className="modal-description">
-                Thank you for viewing my most recent reel. All objects were created in Blender.
-                After Effects was used for camera and motion tracking of the raw footage.
-              </p>
-              <div className="ratio ratio-16x9 video-container">
-                <iframe
-                  ref={modalVfxIframeRef}
-                  loading="lazy"
-                  src={getEmbedSrc('mPxmNbMpO7A')}
-                  title="VFX Reel 2024"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
-                  allowFullScreen
-                />
-              </div>
-              <div className="modal-actions mt-3 d-flex flex-wrap gap-2">
-                <button 
-                  className="btn btn-sm btn-outline-secondary" 
-                  onClick={() => copyToClipboard(reelVfxUrl, 'VFX reel link copied')}
-                  aria-label="Copy link to VFX reel"
-                >
-                  Copy Link
-                </button>
-                <a 
-                  onMouseEnter={preconnectYouTube} 
-                  onClick={() => { noteOpen(reelVfxUrl); }} 
-                  className="btn btn-sm btn-outline-primary" 
-                  href={reelVfxUrl} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                >
-                  Watch on YouTube
-                </a>
-                <button 
-                  className="btn btn-sm btn-outline-info" 
-                  onClick={() => openShareWindow('twitter', reelVfxUrl)}
-                  aria-label="Share on social media"
-                >
-                  Share
-                </button>
-              </div>
+      {/* Modal for VFX Reel 2024 - Single instance */}
+      <Modal
+        size="xl"
+        show={lgShow1}
+        onHide={() => { setLgShow1(false); setModalAnnounce(''); pauseYouTube(modalVfxIframeRef); }}
+        aria-labelledby="modal-vfx-reel"
+        className="custom-modal video-modal"
+        fullscreen="sm-down"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title className="ti-tle" id="modal-vfx-reel">
+            VFX Reel 2024
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="p-2 p-sm-3">
+          <p className="modal-description">
+            Thank you for viewing my most recent reel. All objects were created in Blender.
+            After Effects was used for camera and motion tracking of the raw footage.
+          </p>
+          <div className="ratio ratio-16x9 video-container">
+            <iframe
+              ref={modalVfxIframeRef}
+              loading="lazy"
+              src={getEmbedSrc('tFwtXZw_VzM')}
+              title="VFX Reel 2024"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+              allowFullScreen
+            />
+          </div>
+          <div className="modal-actions mt-3 d-flex flex-wrap gap-2">
+            <button 
+              className="btn btn-sm btn-outline-secondary" 
+              onClick={() => copyToClipboard(reelVfxUrl, 'VFX reel link copied')}
+              aria-label="Copy link to VFX reel"
+            >
+              Copy Link
+            </button>
+            <a 
+              onMouseEnter={preconnectYouTube} 
+              onClick={() => { noteOpen(reelVfxUrl); }} 
+              className="btn btn-sm btn-outline-primary" 
+              href={reelVfxUrl} 
+              target="_blank" 
+              rel="noopener noreferrer"
+            >
+              Watch on YouTube
+            </a>
+            <button 
+              className="btn btn-sm btn-outline-info" 
+              onClick={() => openShareWindow('twitter', reelVfxUrl)}
+              aria-label="Share on social media"
+            >
+              Share
+            </button>
+          </div>
 
-              {/* Past VFX Projects section - improved responsiveness */}
-              <div className="mt-4">
-                <h4 className="past-projects-title">Past VFX Projects</h4>
-                <p className="past-projects-description">
-                  This VFX reel displays the work I participated in during my internship. First, the reel shows a 'Gomu' eraser TV commercial, which was a fun project preparing 2D and 3D product placement. I researched the types of products used, created concept art of the positioning of the items, 3D bubbles,
-                  and other aspects to help complete the project.
-                  Photoshop and Maya were used predominantly.
-                  <br className="d-none d-md-block" />
-                  <br className="d-none d-md-block" />
-                  Second in the reel is the pilot for the 'Alphas' which is a SYFY TV show and hit series.
-                  My job was to very precisely roto-scope the actor Bryant Cartwright, who plays Gary Bell, out of the green screen and into specific environments.
-                  This was accomplished utilizing Nuke primarily.
-                </p>
-                <div className="ratio ratio-16x9 mt-3">
-                  <iframe
-                    loading="lazy"
-                    src={getEmbedSrc('tFwtXZw_VzM')}
-                    title="Past VFX Projects"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    allowFullScreen
-                  />
-                </div>
-              </div>
-            </Modal.Body>
-          </Modal>
-        </>
-      </div>
+          {/* Past VFX Projects section */}
+          <div className="mt-4">
+            <h4 className="past-projects-title">Past VFX Projects</h4>
+            <p className="past-projects-description">
+              This VFX reel displays the work I participated in during my internship. First, the reel shows a 'Gomu' eraser TV commercial, which was a fun project preparing 2D and 3D product placement. I researched the types of products used, created concept art of the positioning of the items, 3D bubbles,
+              and other aspects to help complete the project.
+              Photoshop and Maya were used predominantly.
+              <br className="d-none d-md-block" />
+              <br className="d-none d-md-block" />
+              Second in the reel is the pilot for the 'Alphas' which is a SYFY TV show and hit series.
+              My job was to very precisely roto-scope the actor Bryant Cartwright, who plays Gary Bell, out of the green screen and into specific environments.
+              This was accomplished utilizing Nuke primarily.
+            </p>
+            <div className="ratio ratio-16x9 mt-3">
+              <iframe
+                loading="lazy"
+                src={getEmbedSrc('tFwtXZw_VzM')}
+                title="Past VFX Projects"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+            </div>
+          </div>
+        </Modal.Body>
+      </Modal>
 
       {/* Introduction Section - improved responsiveness */}
       <Col xs={12} className="text-center intro-section">
@@ -1314,151 +1306,6 @@ export const Home = () => {
           </Col>
         )}
       </Row>
-
-      {/* Improved modal responsiveness */}
-      <Modal
-        size="xl"
-        show={lgShow}
-        onHide={() => { setLgShow(false); setAnnounce(''); setModalAnnounce(''); pauseYouTube(modal3DIframeRef); }}
-        aria-labelledby="modal-3d-reel"
-        ref={modal3DRef}
-        className="custom-modal video-modal"
-        fullscreen="sm-down" // Full screen on small devices
-      >
-        <Modal.Header closeButton>
-          <Modal.Title className="ti-tle" id="modal-3d-reel">
-            2014 Demo Reel
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body className="p-2 p-sm-3">
-          <p className="modal-description">
-            Objects were modeled, UV unwrapped, and textured in Maya 3D software.
-            Sculpted in ZBrush and painted in Photoshop.
-            Post effects were done using Fusion.
-          </p>
-          <div className="ratio ratio-16x9 video-container">
-            <iframe
-              ref={modal3DIframeRef}
-              loading="lazy"
-              src={getEmbedSrc('mPxmNbMpO7A')}
-              title="2014 Demo Reel"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
-              allowFullScreen
-            />
-          </div>
-          <div className="modal-actions mt-3 d-flex flex-wrap gap-2">
-            <button 
-              className="btn btn-sm btn-outline-secondary" 
-              onClick={() => copyToClipboard(reel3DUrl, '3D reel link copied')}
-              aria-label="Copy link to 3D reel"
-            >
-              Copy Link
-            </button>
-            <a 
-              onMouseEnter={preconnectYouTube} 
-              onClick={() => { noteOpen(reel3DUrl); }} 
-              className="btn btn-sm btn-outline-primary" 
-              href={reel3DUrl} 
-              target="_blank" 
-              rel="noopener noreferrer"
-            >
-              Watch on YouTube
-            </a>
-            <button 
-              className="btn btn-sm btn-outline-info" 
-              onClick={() => openShareWindow('twitter', reel3DUrl)}
-              aria-label="Share on social media"
-            >
-              Share
-            </button>
-          </div>
-        </Modal.Body>
-      </Modal>
-
-      {/* Fix VFX Modal responsiveness too */}
-      <Modal
-        size="xl"
-        show={lgShow1}
-        onHide={() => { setLgShow1(false); setModalAnnounce(''); pauseYouTube(modalVfxIframeRef); }}
-        aria-labelledby="modal-vfx-reel"
-        className="custom-modal video-modal"
-        fullscreen="sm-down" // Full screen on small devices
-      >
-        <Modal.Header closeButton>
-          <Modal.Title className="ti-tle" id="modal-vfx-reel">
-            VFX Reel 2024
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body className="p-2 p-sm-3">
-          <p className="modal-description">
-            Thank you for viewing my most recent reel. All objects were created in Blender.
-            After Effects was used for camera and motion tracking of the raw footage.
-          </p>
-          <div className="ratio ratio-16x9 video-container">
-            <iframe
-              ref={modalVfxIframeRef}
-              loading="lazy"
-              src={getEmbedSrc('mPxmNbMpO7A')}
-              title="VFX Reel 2024"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
-              allowFullScreen
-            />
-          </div>
-          <div className="modal-actions mt-3 d-flex flex-wrap gap-2">
-            <button 
-              className="btn btn-sm btn-outline-secondary" 
-              onClick={() => copyToClipboard(reelVfxUrl, 'VFX reel link copied')}
-              aria-label="Copy link to VFX reel"
-            >
-              Copy Link
-            </button>
-            <a 
-              onMouseEnter={preconnectYouTube} 
-              onClick={() => { noteOpen(reelVfxUrl); }} 
-              className="btn btn-sm btn-outline-primary" 
-              href={reelVfxUrl} 
-              target="_blank" 
-              rel="noopener noreferrer"
-            >
-              Watch on YouTube
-            </a>
-            <button 
-              className="btn btn-sm btn-outline-info" 
-              onClick={() => openShareWindow('twitter', reelVfxUrl)}
-              aria-label="Share on social media"
-            >
-              Share
-            </button>
-          </div>
-
-          {/* Past VFX Projects section - improved responsiveness */}
-          <div className="mt-4">
-            <h4 className="past-projects-title">Past VFX Projects</h4>
-            <p className="past-projects-description">
-              This VFX reel displays the work I participated in during my internship. First, the reel shows a 'Gomu' eraser TV commercial, which was a fun project preparing 2D and 3D product placement. I researched the types of products used, created concept art of the positioning of the items, 3D bubbles,
-              and other aspects to help complete the project.
-              Photoshop and Maya were used predominantly.
-              <br className="d-none d-md-block" />
-              <br className="d-none d-md-block" />
-              Second in the reel is the pilot for the 'Alphas' which is a SYFY TV show and hit series.
-              My job was to very precisely roto-scope the actor Bryant Cartwright, who plays Gary Bell, out of the green screen and into specific environments.
-              This was accomplished utilizing Nuke primarily.
-            </p>
-            <div className="ratio ratio-16x9 mt-3">
-              <iframe
-                loading="lazy"
-                src={getEmbedSrc('tFwtXZw_VzM')}
-                title="Past VFX Projects"
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-              />
-            </div>
-          </div>
-        </Modal.Body>
-      </Modal>
 
       {/* Notifications (stacked) */}
       <Col xs={12}>

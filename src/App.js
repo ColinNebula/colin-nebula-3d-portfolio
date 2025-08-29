@@ -1,20 +1,25 @@
 //Imports
-import React, { useState } from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
-import Header from './components/Header';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
+import Navigation from './components/Nav'; // Fixed: Import Navigation instead of Header
 import Home from './components/Home';
-import About from './components/About';
-import Portfolio from './components/Portfolio';
-import Animation from './components/Animation';
-import Artwork from './components/Artwork';
-import PrivacyPolicy from './components/Private-policy';
-import VideoEditing from './components/VideoEditing';
-import Resume from './components/Resume';
-import Updates from './components/Updates'; 
-import Account from './components/Account'; 
-import Footer from './components/Footer';
 import LandingPage from "./components/LandingPage";
+import LoadingSpinner from './components/UI/LoadingSpinner';
+import ErrorBoundary from './components/ErrorBoundary';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './App.css';
+
+// Lazy load components for better performance
+const About = lazy(() => import('./components/About'));
+const Portfolio = lazy(() => import('./components/Portfolio'));
+const Animation = lazy(() => import('./components/Animation'));
+const Artwork = lazy(() => import('./components/Artwork'));
+const PrivacyPolicy = lazy(() => import('./components/Private-policy'));
+const VideoEditing = lazy(() => import('./components/VideoEditing'));
+const Resume = lazy(() => import('./components/Resume'));
+const Updates = lazy(() => import('./components/Updates'));
+const Account = lazy(() => import('./components/Account'));
+const Footer = lazy(() => import('./components/Footer'));
 
 /**
  * NOTE: To use Apollo Client for GraphQL:
@@ -25,35 +30,83 @@ import 'bootstrap/dist/css/bootstrap.min.css';
  */
 
 function App() {
-  // State for theme or other app-wide settings could go here
-  const [darkMode, setDarkMode] = useState(false);
+  const [showLandingPage, setShowLandingPage] = useState(true);
+  const location = useLocation();
+
+  // Check if we're on the home page and should show landing
+  const isHomePage = location.pathname === '/';
+  const shouldShowLanding = isHomePage && showLandingPage;
+
+  // Improved theme handling with localStorage persistence
+  const [darkMode, setDarkMode] = useState(() => {
+    // Check localStorage first
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      return savedTheme === 'dark';
+    }
+    // Otherwise check system preference
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  });
   
+  // Observe system theme changes
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = (e) => {
+      if (!localStorage.getItem('theme')) {
+        setDarkMode(e.matches);
+      }
+    };
+    
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener('change', handleChange);
+      return () => mediaQuery.removeEventListener('change', handleChange);
+    } else if (mediaQuery.addListener) {
+      // Fallback for older browsers
+      mediaQuery.addListener(handleChange);
+      return () => mediaQuery.removeListener(handleChange);
+    }
+  }, []);
+  
+  // Apply theme to document and persist user choice
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+    localStorage.setItem('theme', darkMode ? 'dark' : 'light');
+  }, [darkMode]);
+
   // Toggle theme function
   const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
+    setDarkMode(prev => !prev);
   };
 
   return (
     <div className={darkMode ? 'dark-theme' : 'light-theme'}>
-      <Header toggleDarkMode={toggleDarkMode} darkMode={darkMode} />
+      {/* Only show Navigation if not on landing page */}
+      {!shouldShowLanding && <Navigation toggleDarkMode={toggleDarkMode} darkMode={darkMode} />}
       <main>
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/portfolio" element={<Portfolio />} />
-          <Route path="/animation" element={<Animation />} />
-          <Route path="/artwork" element={<Artwork />} />
-          <Route path="/video-editing" element={<VideoEditing />} />
-          <Route path="/resume" element={<Resume />} />
-          <Route path="/updates" element={<Updates />} />
-          <Route path="/account" element={<Account />} />
-          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-          {/* Add a catch-all route that redirects to the landing page */}
-          <Route path="*" element={<LandingPage />} />
-        </Routes>
+        <ErrorBoundary>
+          <Suspense fallback={<LoadingSpinner />}>
+            <Routes>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/home" element={<Home setShowLandingPage={setShowLandingPage} />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/portfolio" element={<Portfolio />} />
+              <Route path="/animation" element={<Animation />} />
+              <Route path="/artwork" element={<Artwork />} />
+              <Route path="/video-editing" element={<VideoEditing />} />
+              <Route path="/resume" element={<Resume />} />
+              <Route path="/updates" element={<Updates />} />
+              <Route path="/account" element={<Account />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              {/* Add a catch-all route that redirects to the landing page */}
+              <Route path="*" element={<LandingPage />} />
+            </Routes>
+          </Suspense>
+        </ErrorBoundary>
       </main>
-      <Footer />
+      <Suspense fallback={<div className="pb-5 mb-5" />}>
+        {/* Only show Footer if not on landing page */}
+        {!shouldShowLanding && <Footer />}
+      </Suspense>
     </div>
   );
 }

@@ -39,7 +39,7 @@ function Landing() {
                             </div>
                             
                             <div className={`landing-cta ${animateTitle ? 'animate' : ''}`}>
-                                <Link to="/home" className="main-cta-link">
+                                <Link to="/portfolio" className="main-cta-link">
                                     <Button variant="primary" size="lg" className="landing-button">
                                         Explore Portfolio
                                     </Button>
@@ -55,7 +55,7 @@ function Landing() {
                     
                     <Col md={5} className="landing-logo-col d-flex align-items-center justify-content-center">
                         <div className="logo-container">
-                            <Link to="/home" className="logo-link" aria-label="Go to portfolio home">
+                            <Link to="/portfolio" className="logo-link" aria-label="Go to portfolio">
                                 <img 
                                     className={`landing-logo ${loaded ? 'loaded' : ''}`} 
                                     src={maskU} 

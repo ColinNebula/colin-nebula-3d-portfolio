@@ -1,0 +1,205 @@
+/* About Section Styling */
+.about-section {
+    padding: 60px 0;
+    color: var(--text);
+    background-color: var(--surface);
+}
+
+/* Header Styling */
+.about-header {
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--primary);
+}
+
+.header-underline {
+    height: 4px;
+    width: 80px;
+    background: var(--primary);
+    margin-bottom: 30px;
+}
+
+/* Section Titles */
+.section-title {
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.subsection-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: var(--text);
+}
+
+/* Profile Image Styling */
+.profile-image-container {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.profile-image {
+    width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+    position: relative;
+    z-index: 2;
+}
+
+.image-border-effect {
+    position: absolute;
+    top: -15px;
+    left: 15px;
+    width: 100%;
+    height: 100%;
+    border: 3px solid var(--primary);
+    border-radius: 8px;
+    z-index: 1;
+}
+
+.profile-image-container:hover .profile-image {
+    transform: translateY(-5px);
+}
+
+/* Bio Content Styling */
+.bio-content {
+    padding: 0 20px;
+}
+
+.bio-text {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    margin-bottom: 1rem;
+}
+
+/* Skills Styling */
+.skills-section {
+    margin-top: 60px;
+}
+
+.skills-card {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    background-color: var(--card-bg);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.skills-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+.skill-name {
+    font-weight: 500;
+}
+
+.skill-percentage {
+    font-weight: 700;
+}
+
+.skill-bar {
+    height: 8px;
+    border-radius: 4px;
+}
+
+/* Professional Skills Badges */
+.professional-skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.professional-skill-badge {
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 8px 15px;
+}
+
+/* Experience List */
+.experience-title {
+    font-size: 1.25rem;
+    margin-bottom: 15px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.approach-list {
+    padding-left: 20px;
+}
+
+.approach-list li {
+    margin-bottom: 10px;
+    line-height: 1.6;
+}
+
+/* Call to Action */
+.cta-container {
+    background: linear-gradient(rgba(0,0,0,0.01), rgba(0,0,0,0.05));
+    padding: 40px 20px;
+    border-radius: 8px;
+    margin-top: 40px;
+}
+
+.cta-title {
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: var(--primary);
+}
+
+.cta-text {
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+}
+
+.cta-buttons {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 991px) {
+    .bio-content {
+        padding: 20px 0;
+    }
+    
+    .profile-image-container {
+        max-width: 300px;
+    }
+}
+
+@media (max-width: 767px) {
+    .about-header {
+        font-size: 2.5rem;
+    }
+    
+    .section-title {
+        font-size: 1.75rem;
+    }
+    
+    .profile-image-container {
+        max-width: 250px;
+    }
+}
+
+/* Dark Theme Adjustments */
+.dark-theme .skills-card {
+    background-color: var(--card-bg);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.dark-theme .cta-container {
+    background: linear-gradient(rgba(255,255,255,0.01), rgba(255,255,255,0.05));
+}
+
+.dark-theme .image-border-effect {
+    border-color: var(--primary);
+}

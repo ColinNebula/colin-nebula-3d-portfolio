@@ -1,0 +1,81 @@
+.privacy-policy-container {
+  margin: 2rem auto;
+  color: var(--text);
+}
+
+.privacy-card {
+  border-radius: 1rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  background-color: var(--card-bg);
+  border: none;
+  transition: box-shadow 0.3s ease;
+}
+
+.privacy-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 1.5rem;
+}
+
+.privacy-updated {
+  font-size: 0.9rem;
+  margin-bottom: 2rem;
+}
+
+.policy-section {
+  margin-bottom: 2.5rem;
+}
+
+.policy-section h2 {
+  font-size: 1.5rem;
+  color: var(--primary);
+  margin-bottom: 1rem;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding-bottom: 0.5rem;
+}
+
+.policy-section p, .policy-section li {
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.policy-section ul {
+  padding-left: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.contact-info {
+  background-color: rgba(0, 0, 0, 0.05);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-top: 1rem;
+}
+
+@media (max-width: 768px) {
+  .privacy-title {
+    font-size: 2rem;
+  }
+  
+  .policy-section h2 {
+    font-size: 1.3rem;
+  }
+  
+  .privacy-card {
+    border-radius: 0.5rem;
+  }
+}
+
+/* Dark theme support */
+.dark-theme .privacy-card {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.dark-theme .policy-section h2 {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dark-theme .contact-info {
+  background-color: rgba(255, 255, 255, 0.05);
+}
