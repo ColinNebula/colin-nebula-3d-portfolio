@@ -1,0 +1,844 @@
+.portfolio-container {
+  min-height: 100vh;
+}
+
+.portfolio-card {
+  border: none;
+  border-radius: 16px;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  will-change: transform;
+}
+
+.portfolio-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.portfolio-card.featured-project {
+  border: 2px solid #ffc107;
+  position: relative;
+}
+
+.featured-badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: #ffc107;
+  color: #000;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.featured-badge::before {
+  content: '\F4F6'; /* star icon */
+  font-family: 'Bootstrap Icons';
+  font-size: 0.8rem;
+}
+
+.project-image-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.project-image {
+  height: 200px;
+  object-fit: cover;
+  transition: transform 0.2s ease;
+  will-change: transform;
+}
+
+.portfolio-card:hover .project-image {
+  transform: scale(1.02);
+}
+
+.project-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  will-change: opacity;
+}
+
+.portfolio-card:hover .project-overlay {
+  opacity: 1;
+}
+
+.view-project-btn {
+  transform: translateY(10px);
+  transition: transform 0.2s ease;
+  will-change: transform;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.view-project-btn::before {
+  content: '\F341'; /* eye icon */
+  font-family: 'Bootstrap Icons';
+  font-size: 1rem;
+}
+
+.portfolio-card:hover .view-project-btn {
+  transform: translateY(0);
+}
+
+.project-tech .badge {
+  font-size: 0.7rem;
+}
+
+.project-meta {
+  border-top: 1px solid var(--bs-border-color);
+  padding-top: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+/* Enhanced Portfolio Styles */
+.portfolio-stats {
+  margin-bottom: 2rem;
+}
+
+.stat-item {
+  padding: 1rem;
+  text-align: center;
+  position: relative;
+}
+
+.stat-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 3px;
+  background: var(--bs-primary);
+  border-radius: 2px;
+}
+
+.stat-number {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: var(--bs-primary);
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.stat-number::before {
+  font-family: 'Bootstrap Icons';
+  font-size: 1.5rem;
+  color: var(--bs-primary);
+}
+
+.stat-item:nth-child(1) .stat-number::before {
+  content: '\F4A5'; /* folder icon */
+}
+
+.stat-item:nth-child(2) .stat-number::before {
+  content: '\F4F6'; /* star icon */
+}
+
+.stat-item:nth-child(3) .stat-number::before {
+  content: '\F279'; /* trophy icon */
+}
+
+.stat-item:nth-child(4) .stat-number::before {
+  content: '\F2D2'; /* grid icon */
+}
+
+.stat-label {
+  color: var(--bs-secondary);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* Enhanced Search */
+.search-container {
+  position: relative;
+}
+
+.search-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--bs-secondary);
+}
+
+.search-icon::before {
+  content: '\F52A'; /* search icon */
+  font-family: 'Bootstrap Icons';
+}
+
+/* Enhanced Card Badges */
+.card-badges {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.award-badge {
+  background: linear-gradient(135deg, #ffd700, #ffed4e);
+  color: #000;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.award-badge::before {
+  content: '\F279'; /* trophy icon */
+  font-family: 'Bootstrap Icons';
+  font-size: 0.7rem;
+}
+
+.progress-badge {
+  background: #17a2b8;
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.progress-badge::before {
+  content: '\F1FD'; /* clock icon */
+  font-family: 'Bootstrap Icons';
+  font-size: 0.7rem;
+}
+
+/* Progress Indicator */
+.progress-indicator {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: rgba(0,0,0,0.1);
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--bs-primary), var(--bs-success));
+  transition: width 0.3s ease;
+}
+
+/* Enhanced Metrics */
+.project-metrics {
+  border-top: 1px solid var(--bs-border-color);
+  padding-top: 0.5rem;
+}
+
+.metrics-grid {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.metric-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.metric-value {
+  font-weight: 600;
+  color: var(--bs-success);
+}
+
+/* Quick Links in Overlay */
+.quick-links {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  gap: 0.5rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.portfolio-card:hover .quick-links {
+  opacity: 1;
+}
+
+/* Enhanced Modal */
+.project-modal .modal-dialog {
+  max-width: 90vw;
+}
+
+.project-carousel {
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.project-carousel img {
+  height: 400px;
+  object-fit: cover;
+}
+
+.awards .award-item {
+  padding: 0.25rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.modal-footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-links {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.footer-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Loading Enhancements */
+.loading-progress {
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+/* Dark Theme Enhancements */
+[data-theme="dark"] .search-suggestions,
+.theme-dark .search-suggestions {
+  background: var(--bs-dark);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .suggestion-item:hover,
+.theme-dark .suggestion-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .quick-filters,
+.theme-dark .quick-filters {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Responsive Enhancements */
+@media (max-width: 768px) {
+  .portfolio-stats {
+    text-align: center;
+  }
+  
+  .stat-number {
+    font-size: 2rem;
+  }
+  
+  .card-badges {
+    top: 0.5rem;
+    right: 0.5rem;
+  }
+  
+  .modal-footer-content {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .footer-links {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .portfolio-container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .portfolio-card {
+    margin-bottom: 1.5rem;
+  }
+  
+  .portfolio-card:hover {
+    transform: none;
+  }
+  
+  .project-overlay {
+    opacity: 1;
+    background: rgba(0,0,0,0.5);
+  }
+  
+  .view-project-btn {
+    transform: none;
+    font-size: 0.875rem;
+    padding: 0.5rem 1rem;
+  }
+  
+  .portfolio-list-item:hover {
+    transform: none;
+  }
+  
+  .project-thumb {
+    height: 100px;
+    margin-bottom: 1rem;
+  }
+  
+  .project-tech .badge {
+    font-size: 0.65rem;
+    margin-bottom: 0.25rem;
+  }
+  
+  .project-meta {
+    font-size: 0.8rem;
+  }
+  
+  .featured-badge {
+    top: 0.5rem;
+    right: 0.5rem;
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .portfolio-container {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+  
+  .portfolio-card {
+    border-radius: 12px;
+  }
+  
+  .project-image {
+    height: 180px;
+  }
+  
+  .portfolio-list-item .row {
+    flex-direction: column;
+  }
+  
+  .portfolio-list-item .col-md-3,
+  .portfolio-list-item .col-md-9 {
+    max-width: 100%;
+    flex: 0 0 100%;
+  }
+  
+  .project-thumb {
+    height: 120px;
+    width: 100%;
+    margin-bottom: 0.75rem;
+  }
+  
+  .d-flex.justify-content-between {
+    flex-direction: column;
+    align-items: flex-start !important;
+  }
+  
+  .d-flex.justify-content-between .btn {
+    margin-top: 0.5rem;
+    align-self: flex-end;
+  }
+  
+  .project-tech {
+    margin-bottom: 0.5rem;
+  }
+  
+  .project-tech .badge {
+    display: inline-block;
+    margin-right: 0.25rem;
+    margin-bottom: 0.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .portfolio-container {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  
+  .display-4 {
+    font-size: 2rem;
+  }
+  
+  .lead {
+    font-size: 1rem;
+  }
+  
+  .project-image {
+    height: 160px;
+  }
+  
+  .portfolio-card .card-body {
+    padding: 1rem;
+  }
+  
+  .project-tech .badge {
+    font-size: 0.6rem;
+    padding: 0.2rem 0.4rem;
+  }
+  
+  .btn-group {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .btn-group .btn {
+    border-radius: 0.375rem !important;
+    margin-bottom: 0.25rem;
+  }
+  
+  .btn-group .btn:last-child {
+    margin-bottom: 0;
+  }
+  
+  .empty-state .display-1 {
+    font-size: 2.5rem;
+  }
+}
+
+/* Filter controls responsiveness */
+@media (max-width: 992px) {
+  .mb-4 .col-md-3,
+  .mb-4 .col-md-4,
+  .mb-4 .col-md-2 {
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .d-flex.justify-content-between.align-items-center {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 1rem;
+  }
+  
+  .btn-group[role="group"] {
+    width: 100%;
+  }
+  
+  .text-muted {
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* Modal responsiveness */
+@media (max-width: 768px) {
+  .modal-xl {
+    max-width: 95%;
+  }
+  
+  .modal-body .row {
+    flex-direction: column;
+  }
+  
+  .modal-body .col-md-8,
+  .modal-body .col-md-4 {
+    max-width: 100%;
+    flex: 0 0 100%;
+  }
+  
+  .modal-body .col-md-4 {
+    margin-top: 1rem;
+  }
+  
+  .project-images .row {
+    margin-top: 1rem;
+  }
+  
+  .project-images .col-sm-6 {
+    margin-bottom: 0.5rem;
+  }
+  
+  .table-sm {
+    font-size: 0.8rem;
+  }
+  
+  .specifications,
+  .technologies,
+  .tags {
+    margin-bottom: 1.5rem;
+  }
+}
+
+/* Project Meta Icons */
+.project-meta small {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.project-meta small::before {
+  font-family: 'Bootstrap Icons';
+  font-size: 0.75rem;
+}
+
+.project-meta small:first-child::before {
+  content: '\F1EC'; /* calendar icon */
+}
+
+.project-meta small:last-child::before {
+  content: '\F1FD'; /* clock icon */
+}
+
+/* Project Metrics Icons */
+.project-metrics small {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.project-metrics small:first-child::before {
+  content: '\F341'; /* eye icon */
+  font-family: 'Bootstrap Icons';
+  font-size: 0.75rem;
+}
+
+.project-metrics small:last-child::before {
+  content: '\F2CE'; /* graph up icon */
+  font-family: 'Bootstrap Icons';
+  font-size: 0.75rem;
+}
+
+/* Quick Links Icons */
+.quick-links .btn::before {
+  font-family: 'Bootstrap Icons';
+  font-size: 1rem;
+}
+
+.quick-links .btn:first-child::before {
+  content: '\F40E'; /* play circle icon */
+}
+
+.quick-links .btn:last-child::before {
+  content: '\F2DC'; /* github icon */
+}
+
+/* Modal Header Icons */
+.modal-title .badge::before {
+  content: '\F279'; /* trophy icon */
+  font-family: 'Bootstrap Icons';
+  font-size: 0.8rem;
+  margin-right: 0.25rem;
+}
+
+/* Modal Content Icons */
+.awards h6::before {
+  content: '\F279'; /* trophy icon */
+  font-family: 'Bootstrap Icons';
+  margin-right: 0.5rem;
+  color: #ffd700;
+}
+
+.metrics h6::before {
+  content: '\F2CE'; /* graph up icon */
+  font-family: 'Bootstrap Icons';
+  margin-right: 0.5rem;
+  color: var(--bs-primary);
+}
+
+.technologies h6::before {
+  content: '\F4A8'; /* tools icon */
+  font-family: 'Bootstrap Icons';
+  margin-right: 0.5rem;
+  color: var(--bs-info);
+}
+
+.specifications h6::before {
+  content: '\F2A4'; /* gear icon */
+  font-family: 'Bootstrap Icons';
+  margin-right: 0.5rem;
+  color: var(--bs-secondary);
+}
+
+.tags h6::before {
+  content: '\F4EC'; /* tags icon */
+  font-family: 'Bootstrap Icons';
+  margin-right: 0.5rem;
+  color: var(--bs-warning);
+}
+
+/* Award Items Icons */
+.awards .award-item::before {
+  content: '\F241'; /* award icon */
+  font-family: 'Bootstrap Icons';
+  color: #ffd700;
+  margin-right: 0.5rem;
+}
+
+/* Footer Links Icons */
+.footer-links .btn::before {
+  font-family: 'Bootstrap Icons';
+  margin-right: 0.5rem;
+}
+
+.footer-links .btn:nth-child(1)::before {
+  content: '\F40E'; /* play circle icon */
+}
+
+.footer-links .btn:nth-child(2)::before {
+  content: '\F2DC'; /* github icon */
+}
+
+.footer-links .btn:nth-child(3)::before {
+  content: '\F223'; /* download icon */
+}
+
+/* Share Button Icon */
+.footer-actions .btn:last-child::before {
+  content: '\F52D'; /* share icon */
+  font-family: 'Bootstrap Icons';
+  margin-right: 0.5rem;
+}
+
+/* View Mode Toggle Icons */
+.btn-group .btn::before {
+  font-family: 'Bootstrap Icons';
+  margin-right: 0.5rem;
+}
+
+.btn-group .btn:first-child::before {
+  content: '\F2D2'; /* grid icon */
+}
+
+.btn-group .btn:last-child::before {
+  content: '\F2F2'; /* list icon */
+}
+
+/* Filter Icons */
+.filter-tag.clickable::before {
+  font-family: 'Bootstrap Icons';
+  margin-right: 0.25rem;
+}
+
+.filter-tag:nth-child(1)::before {
+  content: '\F4A5'; /* folder icon */
+}
+
+.filter-tag:nth-child(2)::before {
+  content: '\F4F6'; /* star icon */
+}
+
+.filter-tag:nth-child(3)::before {
+  content: '\F279'; /* trophy icon */
+}
+
+.filter-tag:nth-child(4)::before {
+  content: '\F4A8'; /* tools icon */
+}
+
+/* Suggestion Items Icons */
+.suggestion-item::before {
+  content: '\F4EC'; /* tag icon */
+  font-family: 'Bootstrap Icons';
+  margin-right: 0.5rem;
+  color: var(--bs-secondary);
+}
+
+/* Empty State Icon */
+.empty-state .display-1::before {
+  content: '\F52A'; /* search icon */
+  font-family: 'Bootstrap Icons';
+  display: block;
+  margin-bottom: 1rem;
+  color: var(--bs-secondary);
+}
+
+/* Loading State Enhancement */
+.loading-progress::before {
+  content: '\F3C3'; /* hourglass icon */
+  font-family: 'Bootstrap Icons';
+  display: block;
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: var(--bs-primary);
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Category Badge Icons */
+.badge[data-category="3d-modeling"]::before {
+  content: '\F4A5'; /* folder icon */
+  font-family: 'Bootstrap Icons';
+  margin-right: 0.25rem;
+}
+
+.badge[data-category="animation"]::before {
+  content: '\F40E'; /* play circle icon */
+  font-family: 'Bootstrap Icons';
+  margin-right: 0.25rem;
+}
+
+.badge[data-category="vfx"]::before {
+  content: '\F4A8'; /* sparkles icon */
+  font-family: 'Bootstrap Icons';
+  margin-right: 0.25rem;
+}
+
+.badge[data-category="game-assets"]::before {
+  content: '\F35A'; /* controller icon */
+  font-family: 'Bootstrap Icons';
+  margin-right: 0.25rem;
+}
+
+.badge[data-category="architectural"]::before {
+  content: '\F1D5'; /* building icon */
+  font-family: 'Bootstrap Icons';
+  margin-right: 0.25rem;
+}
+
+.badge[data-category="motion-graphics"]::before {
+  content: '\F4C1'; /* hurricane icon */
+  font-family: 'Bootstrap Icons';
+  margin-right: 0.25rem;
+}
+
+/* Status Badge Icons */
+.badge[data-status="completed"]::before {
+  content: '\F26A'; /* check circle icon */
+  font-family: 'Bootstrap Icons';
+  margin-right: 0.25rem;
+}
+
+.badge[data-status="in-progress"]::before {
+  content: '\F1FD'; /* clock icon */
+  font-family: 'Bootstrap Icons';
+  margin-right: 0.25rem;
+}
+
+.badge[data-status="planning"]::before {
+  content: '\F318'; /* lightbulb icon */
+  font-family: 'Bootstrap Icons';
+  margin-right: 0.25rem;
+}

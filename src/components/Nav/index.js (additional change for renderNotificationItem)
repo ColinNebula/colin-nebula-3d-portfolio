@@ -1,0 +1,42 @@
+    // Render individual notification item
+    const renderNotificationItem = (notification) => {
+      return (
+        <li 
+          key={notification.id} 
+          className={`notification-item ${notification.read ? 'read' : 'unread'} priority-${notification.priority}`}
+        >
+          <div className="notification-content">
+            {notification.icon && <div className="notification-icon">{notification.icon}</div>}
+            <div className="notification-text">{notification.text}</div>
+            <div className="notification-time">
+              {new Date(notification.ts).toLocaleString()}
+            </div>
+          </div>
+          <div className="notification-actions">
+            <button 
+              className="btn btn-sm btn-outline-secondary rounded-pill"
+              onClick={(e) => {
+                e.stopPropagation();
+                markAsRead(notification.id);
+              }}
+              title="Mark as read"
+              aria-label="Mark as read"
+              disabled={notification.read}
+            >
+              ✓
+            </button>
+            <button 
+              className="btn btn-sm btn-outline-danger rounded-pill"
+              onClick={(e) => {
+                e.stopPropagation();
+                deleteNotification(notification.id);
+              }}
+              title="Delete notification"
+              aria-label="Delete notification"
+            >
+              ×
+            </button>
+          </div>
+        </li>
+      );
+    };

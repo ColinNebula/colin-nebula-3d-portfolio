@@ -1,7 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useState, useEffect, useRef } from 'react'
-
-import { Carousel } from "react-bootstrap"
+import { Carousel, Modal, Button, Card, NavDropdown } from "react-bootstrap"
 import shield1 from '../../assets/images/shield1.png';
 import sword from '../../assets/images/sword.png';
 import swordd from '../../assets/images/swordd.png';
@@ -14,7 +13,6 @@ import maskO from '../../assets/images/maskO.png';
 
 import wireM from '../../assets/images/wireM.png';
 import contents from '../../assets/images/contents.png';
-import { Modal, Button, Card, NavDropdown } from 'react-bootstrap';
 export default function BootstrapCarousel() {
   const [lgShow, setLgShow] = useState(false);
   const [lgShow1, setLgShow1] = useState(false);
@@ -76,13 +74,30 @@ export default function BootstrapCarousel() {
 
   const noteOpen = (label) => { try { console.info('analytics','open_link', label); } catch(e){} };
 
-  const copyToClipboard = async (text) => {
+  const copyToClipboard = async (text, successMessage = 'Copied!') => {
     try {
-      if (navigator.clipboard?.writeText) await navigator.clipboard.writeText(text);
-      else { const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); }
-      setShareMsg('Copied!');
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else { 
+        const ta = document.createElement('textarea'); 
+        ta.value = text; 
+        document.body.appendChild(ta); 
+        ta.select(); 
+        document.execCommand('copy'); 
+        document.body.removeChild(ta); 
+      }
+      setShareMsg(successMessage);
       setTimeout(() => setShareMsg(''), 1400);
-    } catch { setShareMsg('Copy failed'); setTimeout(() => setShareMsg(''), 1400); }
+    } catch { 
+      setShareMsg('Copy failed'); 
+      setTimeout(() => setShareMsg(''), 1400); 
+    }
+  };
+
+  // Function to get canonical URLs for each video
+  const getVideoUrl = (reelKey) => {
+    const baseUrl = 'https://www.youtube.com/watch?v=';
+    return baseUrl + REELS[reelKey];
   };
 
   // keyboard shortcuts: 1..4 open respective modals (ignore typing in inputs)
@@ -102,227 +117,323 @@ export default function BootstrapCarousel() {
   }, []);
 
   return (
-
     <div>
+      {/* Share notification */}
+      {shareMsg && (
+        <div 
+          style={{
+            position: 'fixed',
+            top: '20px',
+            right: '20px',
+            background: '#28a745',
+            color: 'white',
+            padding: '10px 15px',
+            borderRadius: '5px',
+            zIndex: 9999
+          }}
+          role="alert"
+          aria-live="polite"
+        >
+          {shareMsg}
+        </div>
+      )}
 
-    <>
+      {/* Modal for Mask of Malice */}
       <Modal
         fullscreen={true}
         show={lgShow}
-        onHide={() => { setLgShow(false); pauseYouTube(maskIframeRef); try { lastActiveRef.current && lastActiveRef.current.focus && lastActiveRef.current.focus(); } catch(e){} }}
-        aria-labelledby="example-modal-sizes-title-lg"
+        onHide={() => { 
+          setLgShow(false); 
+          pauseYouTube(maskIframeRef); 
+          try { 
+            lastActiveRef.current && lastActiveRef.current.focus && lastActiveRef.current.focus(); 
+          } catch(e){} 
+        }}
+        aria-labelledby="mask-modal-title"
       >
         <Modal.Header closeButton>
-          <Modal.Title id="example-modal-sizes-title-lg">
+          <Modal.Title id="mask-modal-title">
             Mask of Malice
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-        <p>
-         
-        Mask of malice is an original concept for a project currently in progress.
-        Blender was used to model, uv, and texture the objects. 
-        Painting was done in photoshop
-        <br/>
-        <br/>
-        <div className="ratio ratio-21x9">
-        <iframe
-          ref={maskIframeRef}
-          loading="lazy"
-          width="100%"
-          height="560"
-          src={getEmbedSrc(REELS.mask)}
-          title="Mask of Malice video"
-          frameBorder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
-          allowFullScreen
-        />
-        </div>
-        </p>
-        <br/>
-        <Card.Img loading="lazy" src={maskO} className="rounded" alt="Card image" />
-        <a href="https://react-bootstrap.github.io/components/modal/"></a>
-        <br/>
-        <br/>
-        <br/>
-        <Modal.Title id="example-modal-sizes-title-lg">
-            Mask of Malice
-          </Modal.Title>
           <p>
-          Some of the 2D maps used were generated using Adobe Photoshop, 
-          Blender was used to model, uv, and texture the objects.
-          Sculpting was done in Zbrush, and normal maps were extracted using Xnormal 
-        
-        
+            Mask of malice is an original concept for a project currently in progress.
+            Blender was used to model, uv, and texture the objects. 
+            Painting was done in photoshop
           </p>
           <br/>
-          <Card.Img loading="lazy" src={wireM} className="rounded" alt="Card image" />
-          <a href="https://react-bootstrap.github.io/components/modal/"></a>
+          <div className="ratio ratio-21x9">
+            <iframe
+              ref={maskIframeRef}
+              loading="lazy"
+              width="100%"
+              height="560"
+              src={getEmbedSrc(REELS.mask)}
+              title="Mask of Malice video"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+              allowFullScreen
+            />
+          </div>
+          
+          {/* Action buttons */}
+          <div className="mt-3 d-flex flex-wrap gap-2">
+            <button 
+              className="btn btn-sm btn-outline-secondary" 
+              onClick={() => copyToClipboard(getVideoUrl('mask'), 'Mask video link copied!')}
+            >
+              Copy Link
+            </button>
+            <a 
+              className="btn btn-sm btn-outline-primary" 
+              href={getVideoUrl('mask')} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              onClick={() => noteOpen(getVideoUrl('mask'))}
+            >
+              Watch on YouTube
+            </a>
+          </div>
+
           <br/>
+          <Card.Img loading="lazy" src={maskO} className="rounded" alt="Mask of Malice concept art" />
+          
+          <br/><br/><br/>
+          <Modal.Title>
+            Mask of Malice - Technical Details
+          </Modal.Title>
+          <p>
+            Some of the 2D maps used were generated using Adobe Photoshop, 
+            Blender was used to model, uv, and texture the objects.
+            Sculpting was done in Zbrush, and normal maps were extracted using Xnormal 
+          </p>
+          <br/>
+          <Card.Img loading="lazy" src={wireM} className="rounded" alt="Wireframe model" />
         </Modal.Body>
       </Modal>
-    </>
 
-    <>
+      {/* Modal for VFX Reel */}
       <Modal
         fullscreen={true}
         show={lgShow1}
-        onHide={() => { setLgShow1(false); pauseYouTube(vfxIframeRef); try { lastActiveRef.current && lastActiveRef.current.focus && lastActiveRef.current.focus(); } catch(e){} }}
-        aria-labelledby="example-modal-sizes-title-lg"
+        onHide={() => { 
+          setLgShow1(false); 
+          pauseYouTube(vfxIframeRef); 
+          try { 
+            lastActiveRef.current && lastActiveRef.current.focus && lastActiveRef.current.focus(); 
+          } catch(e){} 
+        }}
+        aria-labelledby="vfx-modal-title"
       >
         <Modal.Header closeButton>
-          <Modal.Title className="ti-tle" id="example-modal-sizes-title-lg">
-          VFX Reel 2024
+          <Modal.Title className="ti-tle" id="vfx-modal-title">
+            VFX Reel 2024
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-        
-        <br />
-        <p>
-          Thank you for viewing my most recent VFX reel. All objects were created in Blender.
-          After Effects was used for camera and motion tracking of the raw footage.
-        </p>
-        <div className="ratio ratio-16x9">
-          <iframe
-            ref={vfxIframeRef}
-            loading="lazy"
-            width="100%"
-            height="560"
-            src={getEmbedSrc(REELS.vfx)}
-            title="VFX Reel video"
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
-            allowFullScreen
-          />
-        </div>
-
-        <br />
-        <br />
-        <Modal.Title className="ti-tle" id="example-modal-sizes-title-lg">
-          Past VFX Projects
-          </Modal.Title>
-          <br />
           <p>
-          This VFX reel displays the work I participated in during my internship. First, the reel shows a 'Gomu' eraser TV commercial, which was a fun project preparing 2D and 3D product placement. I researched the types of products used, created concept art of the positioning of the items, 3D bubbles, 
-          and other aspects to help complete the project. 
-          Photoshop and Maya were used predominantly.
-          <br />
-          <br />
-          Second in the reel is the pilot for the 'Alphas' which is a SYFY TV show and hit series.
-          My job was to very precisely rotoscope the actor Bryant Cartwright, who plays Gary Bell, out of the green screen and into specific environments. 
-          This was accomplished utilizing Nuke primarily.
-
+            Thank you for viewing my most recent VFX reel. All objects were created in Blender.
+            After Effects was used for camera and motion tracking of the raw footage.
           </p>
+          
           <div className="ratio ratio-16x9">
-          <iframe 
-          width="640" 
-          height="360" 
-          src="https://www.youtube.com/embed/tFwtXZw_VzM" 
-          title="YouTube video player" 
-          frameborder="0" 
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-          allowfullscreen>
-          </iframe>
+            <iframe
+              ref={vfxIframeRef}
+              loading="lazy"
+              width="100%"
+              height="560"
+              src={getEmbedSrc(REELS.vfx)}
+              title="VFX Reel video"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+              allowFullScreen
+            />
           </div>
-        
+
+          {/* Action buttons */}
+          <div className="mt-3 d-flex flex-wrap gap-2">
+            <button 
+              className="btn btn-sm btn-outline-secondary" 
+              onClick={() => copyToClipboard(getVideoUrl('vfx'), 'VFX reel link copied!')}
+            >
+              Copy Link
+            </button>
+            <a 
+              className="btn btn-sm btn-outline-primary" 
+              href={getVideoUrl('vfx')} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              onClick={() => noteOpen(getVideoUrl('vfx'))}
+            >
+              Watch on YouTube
+            </a>
+          </div>
+
+          <br/><br/>
+          <Modal.Title className="ti-tle">
+            Past VFX Projects
+          </Modal.Title>
+          <br/>
+          <p>
+            This VFX reel displays the work I participated in during my internship. First, the reel shows a 'Gomu' eraser TV commercial, which was a fun project preparing 2D and 3D product placement. I researched the types of products used, created concept art of the positioning of the items, 3D bubbles, 
+            and other aspects to help complete the project. 
+            Photoshop and Maya were used predominantly.
+            <br/><br/>
+            Second in the reel is the pilot for the 'Alphas' which is a SYFY TV show and hit series.
+            My job was to very precisely rotoscope the actor Bryant Cartwright, who plays Gary Bell, out of the green screen and into specific environments. 
+            This was accomplished utilizing Nuke primarily.
+          </p>
+          
+          <div className="ratio ratio-16x9">
+            <iframe 
+              width="640" 
+              height="360" 
+              src="https://www.youtube.com/embed/tFwtXZw_VzM" 
+              title="Past VFX Projects" 
+              frameBorder="0" 
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+              allowFullScreen>
+            </iframe>
+          </div>
         </Modal.Body>
       </Modal>
-      
-    </>
 
-    <>
+      {/* Modal for Free Rider */}
       <Modal
         fullscreen={true}
         show={lgShow2}
-        onHide={() => { setLgShow2(false); pauseYouTube(freeIframeRef); try { lastActiveRef.current && lastActiveRef.current.focus && lastActiveRef.current.focus(); } catch(e){} }}
-        aria-labelledby="example-modal-sizes-title-lg"
+        onHide={() => { 
+          setLgShow2(false); 
+          pauseYouTube(freeIframeRef); 
+          try { 
+            lastActiveRef.current && lastActiveRef.current.focus && lastActiveRef.current.focus(); 
+          } catch(e){} 
+        }}
+        aria-labelledby="freerider-modal-title"
       >
         <Modal.Header closeButton>
-          <Modal.Title id="example-modal-sizes-title-lg">
+          <Modal.Title id="freerider-modal-title">
             Free Rider Animation
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <p>
-          A short low budget animated film made completely in blender. Very low polygon count for the whole project. 
-          Objects were placed in the scene using Blenders particle engine
+            A short low budget animated film made completely in blender. Very low polygon count for the whole project. 
+            Objects were placed in the scene using Blenders particle engine
           </p>
 
           <div className="ratio ratio-16x9">
-          <iframe
-            ref={freeIframeRef}
-            loading="lazy"
-            width="100%"
-            height="560"
-            src={getEmbedSrc(REELS.freeRider)}
-            title="Free Rider video"
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
-            allowFullScreen
-          />
+            <iframe
+              ref={freeIframeRef}
+              loading="lazy"
+              width="100%"
+              height="560"
+              src={getEmbedSrc(REELS.freeRider)}
+              title="Free Rider video"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+              allowFullScreen
+            />
           </div>
-        
+
+          {/* Action buttons */}
+          <div className="mt-3 d-flex flex-wrap gap-2">
+            <button 
+              className="btn btn-sm btn-outline-secondary" 
+              onClick={() => copyToClipboard(getVideoUrl('freeRider'), 'Free Rider link copied!')}
+            >
+              Copy Link
+            </button>
+            <a 
+              className="btn btn-sm btn-outline-primary" 
+              href={getVideoUrl('freeRider')} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              onClick={() => noteOpen(getVideoUrl('freeRider'))}
+            >
+              Watch on YouTube
+            </a>
+          </div>
         </Modal.Body>
       </Modal>
-    </>
 
-    <>
+      {/* Modal for Sword */}
       <Modal
         fullscreen={true}
         show={lgShow3}
-        onHide={() => { setLgShow3(false); pauseYouTube(swordIframeRef); try { lastActiveRef.current && lastActiveRef.current.focus && lastActiveRef.current.focus(); } catch(e){} }}
-        aria-labelledby="example-modal-sizes-title-lg"
+        onHide={() => { 
+          setLgShow3(false); 
+          pauseYouTube(swordIframeRef); 
+          try { 
+            lastActiveRef.current && lastActiveRef.current.focus && lastActiveRef.current.focus(); 
+          } catch(e){} 
+        }}
+        aria-labelledby="sword-modal-title"
       >
         <Modal.Header closeButton>
-          <Modal.Title id="example-modal-sizes-title-lg">
+          <Modal.Title id="sword-modal-title">
             Sword
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <p>
-          Sword Model. 
-          Blender was used to model, uv, and texture the objects. 
-          The sculpting details were done in ZBrush.
-          The normal map was baked in XNormal, and Photoshop was used for painting.
-          
-          <br/>
-          <br/>
-          <div className="ratio ratio-16x9">
-          <iframe
-            ref={swordIframeRef}
-            loading="lazy"
-            width="100%"
-            height="560"
-            src={getEmbedSrc(REELS.sword)}
-            title="Sword video"
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
-            allowFullScreen
-          />
-          </div>
-
+            Sword Model. 
+            Blender was used to model, uv, and texture the objects. 
+            The sculpting details were done in ZBrush.
+            The normal map was baked in XNormal, and Photoshop was used for painting.
           </p>
           <br/>
-          <Card.Img loading="lazy" src={swordd} className="rounded" alt="Card image" />
-          <a href="https://react-bootstrap.github.io/components/modal/"></a>
+          
+          <div className="ratio ratio-16x9">
+            <iframe
+              ref={swordIframeRef}
+              loading="lazy"
+              width="100%"
+              height="560"
+              src={getEmbedSrc(REELS.sword)}
+              title="Sword video"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+              allowFullScreen
+            />
+          </div>
 
+          {/* Action buttons */}
+          <div className="mt-3 d-flex flex-wrap gap-2">
+            <button 
+              className="btn btn-sm btn-outline-secondary" 
+              onClick={() => copyToClipboard(getVideoUrl('sword'), 'Sword video link copied!')}
+            >
+              Copy Link
+            </button>
+            <a 
+              className="btn btn-sm btn-outline-primary" 
+              href={getVideoUrl('sword')} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              onClick={() => noteOpen(getVideoUrl('sword'))}
+            >
+              Watch on YouTube
+            </a>
+          </div>
+
+          <br/>
+          <Card.Img loading="lazy" src={swordd} className="rounded" alt="Sword model render" />
+          
           <NavDropdown.Divider />
           <br/>
-
           <p>Blender cycles render.</p>
-
+          
           <NavDropdown.Divider />
           <br/>
-          <Card.Img loading="lazy" src={swordInfo} className="rounded" alt="Card image" />
-          <a href="https://react-bootstrap.github.io/components/modal/"></a>
-        
+          <Card.Img loading="lazy" src={swordInfo} className="rounded" alt="Sword technical information" />
         </Modal.Body>
       </Modal>
-    </>
 
-    <Carousel>
-
-    <Carousel.Item>
+      {/* Carousel */}
+      <Carousel>
+        <Carousel.Item>
       <img
         className="d-block w-100 h-100 carousel-fade" data-bs-interval="10000"
         src={maskO}

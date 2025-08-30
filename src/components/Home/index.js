@@ -5,6 +5,8 @@ import sword from '../../assets/images/sword.png';
 import demoR from '../../assets/images/3dModels.png';
 import './Home.css';
 import SocialIcons from '../SocialIcons';
+import { useNotifications } from '../../App';
+import { Link } from 'react-router-dom';
 
 export const Home = () => {
   const [lgShow, setLgShow] = useState(false);
@@ -220,19 +222,9 @@ export const Home = () => {
         document.body.removeChild(ta);
       }
       console.info('analytics', 'copy_link', text);
-      showNotification({
-        message: successMessage,
-        variant: 'success',
-        icon: '✓',
-        duration: 2200
-      });
+      showNotification(successMessage, 'success', 2200);
     } catch (err) {
-      showNotification({
-        message: 'Copy failed',
-        variant: 'danger',
-        icon: '⚠️',
-        duration: 3000
-      });
+      showNotification('Copy failed', 'danger', 3000);
     }
   };
 
@@ -1387,4 +1379,25 @@ export const Home = () => {
   );
 }
 
-export default Home;
+const HomePage = ({ setShowHomePage }) => {
+  return (
+    <Container className="py-5">
+      <Row className="text-center">
+        <Col>
+          <h1>Welcome to Colin Nebula 3D</h1>
+          <p className="lead">Professional 3D Artist & Visual Effects Designer</p>
+          <div className="d-flex gap-3 justify-content-center flex-wrap">
+            <Button as={Link} to="/portfolio" variant="primary" className="rounded-pill">
+              View Portfolio
+            </Button>
+            <Button as={Link} to="/about" variant="outline-primary" className="rounded-pill">
+              Learn More
+            </Button>
+          </div>
+        </Col>
+      </Row>
+    </Container>
+  );
+};
+
+export default HomePage;

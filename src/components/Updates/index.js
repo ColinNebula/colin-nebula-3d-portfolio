@@ -1,191 +1,101 @@
-import React, { useState, useEffect, useMemo, Suspense, useCallback } from 'react';
-import { Container, Row, Col, Card, Button, Badge, Form, Modal, Alert, Spinner } from 'react-bootstrap';
-import './Updates.css';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { Container, Row, Col, Card, Alert, Badge, Form, Modal, Button, Spinner } from 'react-bootstrap';
+import { useNotifications } from '../../App';
 
-// Helper components defined inline for simplicity
+// Skeleton loader component
 const SkeletonLoader = ({ count, viewMode }) => {
   return (
     <div className={`skeleton-container ${viewMode}`}>
-      {Array.from({ length: count }).map((_, index) => (
-        <div key={index} className="skeleton-item">
+      {[...Array(count)].map((_, i) => (
+        <div key={i} className={`skeleton-card ${viewMode === 'list' ? 'skeleton-list' : ''}`}>
           <div className="skeleton-image"></div>
-          <div className="skeleton-title"></div>
-          <div className="skeleton-text"></div>
-          <div className="skeleton-text short"></div>
+          <div className="skeleton-content">
+            <div className="skeleton-title"></div>
+            <div className="skeleton-text"></div>
+            <div className="skeleton-text short"></div>
+          </div>
         </div>
       ))}
     </div>
   );
 };
 
+// Back to top component
 const BackToTop = ({ show }) => {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  return show ? (
-    <button
-      className="back-to-top"
+  if (!show) return null;
+
+  return (
+    <Button
+      className="back-to-top-btn position-fixed"
       onClick={scrollToTop}
+      style={{
+        bottom: '2rem',
+        right: '2rem',
+        zIndex: 1000,
+        borderRadius: '50%',
+        width: '50px',
+        height: '50px'
+      }}
       aria-label="Back to top"
-      title="Back to top"
     >
       <i className="bi bi-arrow-up"></i>
-    </button>
-  ) : null;
+    </Button>
+  );
 };
 
-// Define the UpdateDetailModal component
+// Update detail modal component
 const UpdateDetailModal = ({ show, onHide, update, categories, formatDate, shareUpdate, isBookmarked, toggleBookmark }) => {
-  if (!update) return null;
-  
   return (
-    <Modal
-      show={show}
-      onHide={onHide}
-      size="lg"
-      centered
-      className="update-detail-modal"
-      aria-labelledby="update-detail-title"
-    >
+    <Modal show={show} onHide={onHide} size="lg" centered>
       <Modal.Header closeButton>
-        <Modal.Title id="update-detail-title">
-          <Badge 
-            bg={categories[update.category]?.color || 'secondary'}
-            className="category-badge me-2"
-          >
-            <span className="category-icon me-1">
-              {categories[update.category]?.icon || '📄'}
-            </span>
-            {categories[update.category]?.label || 'Update'}
-          </Badge>
-          {update.title}
-        </Modal.Title>
+        <Modal.Title>{update.title}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <div className="update-detail-meta d-flex justify-content-between align-items-center mb-3">
-          <div className="date-author">
-            <span className="calendar-icon me-2">📅</span> 
-            {formatDate(update.date)}
-          </div>
-          <div className="share-buttons">
-            <Button 
-              variant="link" 
-              className="p-0 me-2 text-muted share-btn"
-              onClick={() => shareUpdate(update, 'twitter')}
-              title="Share on Twitter"
-            >
-              <span className="share-icon">𝕏</span>
-            </Button>
-            <Button 
-              variant="link" 
-              className="p-0 me-2 text-muted share-btn"
-              onClick={() => shareUpdate(update, 'facebook')}
-              title="Share on Facebook"
-            >
-              <span className="share-icon">ⓕ</span>
-            </Button>
-            <Button 
-              variant="link" 
-              className="p-0 text-muted share-btn"
-              onClick={() => shareUpdate(update, 'linkedin')}
-              title="Share on LinkedIn"
-            >
-              <span className="share-icon">ⓘⓝ</span>
-            </Button>
-          </div>
+        <div className="d-flex justify-content-between align-items-center mb-3">
+          <Badge bg={categories[update.category]?.color || 'secondary'}>
+            {categories[update.category]?.icon} {categories[update.category]?.label}
+          </Badge>
+          <small className="text-muted">{formatDate(update.date)}</small>
         </div>
         
         {update.image && (
-          <div className="update-detail-image mb-4">
-            <img src={update.image} alt={update.title} className="img-fluid rounded" />
-          </div>
+          <img src={update.image} alt="" className="img-fluid mb-3 rounded" />
         )}
         
-        <div className="update-detail-content mb-4">
-          <p>{update.content}</p>
-          
-          {update.detailedContent && (
-            <div className="detailed-content" dangerouslySetInnerHTML={{ __html: update.detailedContent }} />
-          )}
-        </div>
+        <div dangerouslySetInnerHTML={{ __html: update.detailedContent || update.content }} />
         
-        {update.gallery && update.gallery.length > 0 && (
-          <div className="update-gallery mb-4">
-            <h5 className="gallery-title">Gallery</h5>
-            <Row>
-              {update.gallery.map((image, index) => (
-                <Col xs={6} md={4} key={index} className="gallery-item">
-                  <img src={image} alt={`${update.title} ${index + 1}`} className="img-fluid rounded" />
-                </Col>
-              ))}
-            </Row>
-          </div>
-        )}
-        
-        {update.tags && update.tags.length > 0 && (
-          <div className="tags-section mt-4">
-            <h6 className="tags-title">Tags:</h6>
-            <div className="tags-list">
-              {update.tags.map(tag => (
-                <Badge 
-                  bg="light" 
-                  text="dark" 
-                  key={tag} 
-                  className="me-2 tag-badge"
-                >
-                  #{tag}
-                </Badge>
-              ))}
-            </div>
+        {update.tags && (
+          <div className="mt-3">
+            {update.tags.map(tag => (
+              <Badge key={tag} bg="light" text="dark" className="me-2">
+                #{tag}
+              </Badge>
+            ))}
           </div>
         )}
       </Modal.Body>
-      <Modal.Footer>
-        <div className="w-100 d-flex justify-content-between">
-          <Button 
-            variant="outline-secondary" 
-            onClick={onHide}
+      <Modal.Footer className="d-flex justify-content-between">
+        <div>
+          <Button
+            variant={isBookmarked ? "warning" : "outline-warning"}
+            onClick={toggleBookmark}
+            className="me-2"
           >
-            Close
+            <i className={`bi ${isBookmarked ? 'bi-bookmark-fill' : 'bi-bookmark'}`}></i>
+            {isBookmarked ? ' Bookmarked' : ' Bookmark'}
           </Button>
-          
-          <div>
-            {update.link && (
-              <Button 
-                variant="outline-primary" 
-                href={update.link} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="me-2"
-              >
-                Read More <span className="external-link-icon ms-1">↗</span>
-              </Button>
-            )}
-            
-            {update.video && (
-              <Button 
-                variant="outline-danger" 
-                href={update.video} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="me-2"
-              >
-                Watch Video <span className="play-icon ms-1">▶</span>
-              </Button>
-            )}
-            
-            {update.registrationLink && (
-              <Button 
-                variant="primary" 
-                href={update.registrationLink} 
-                target="_blank" 
-                rel="noopener noreferrer"
-              >
-                Register Now <span className="calendar-check-icon ms-1">📆</span>
-              </Button>
-            )}
-          </div>
+        </div>
+        <div>
+          <Button variant="outline-secondary" onClick={() => shareUpdate(update, 'twitter')} className="me-2">
+            <i className="bi bi-twitter"></i>
+          </Button>
+          <Button variant="outline-secondary" onClick={() => shareUpdate(update, 'linkedin')}>
+            <i className="bi bi-linkedin"></i>
+          </Button>
         </div>
       </Modal.Footer>
     </Modal>
@@ -397,6 +307,8 @@ const SubscribeModal = ({
 };
 
 const Updates = () => {
+  const { showNotification } = useNotifications();
+  
   // State for updates data
   const [updates, setUpdates] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -617,20 +529,16 @@ const Updates = () => {
     };
 
     fetchUpdates();
-  }, []);
+    showNotification('Updates page loaded', 'info', 2000);
+  }, [showNotification]);
 
   // Format date for display
   const formatDate = (dateString) => {
-    try {
-      const date = new Date(dateString);
-      return date.toLocaleDateString('en-US', { 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-      });
-    } catch (error) {
-      return dateString;
-    }
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
   };
 
   // New state for bookmarked updates (persisted to localStorage)
@@ -672,7 +580,6 @@ const Updates = () => {
 
   // Optimization: Use useMemo for filtered updates
   const enhancedFilteredUpdates = useMemo(() => {
-    // Simplified for this fix
     return updates
       .filter(update => {
         // Apply bookmarks filter if active
@@ -727,9 +634,12 @@ const Updates = () => {
   const toggleBookmark = useCallback((updateId) => {
     setBookmarkedUpdates(prev => {
       const isAlreadyBookmarked = prev.includes(updateId);
-      return isAlreadyBookmarked
+      const newBookmarks = isAlreadyBookmarked
         ? prev.filter(id => id !== updateId)
         : [...prev, updateId];
+      
+      localStorage.setItem('nebula_bookmarked_updates', JSON.stringify(newBookmarks));
+      return newBookmarks;
     });
   }, []);
 
@@ -739,23 +649,24 @@ const Updates = () => {
       const now = new Date().toISOString();
       const existingIndex = prev.findIndex(item => item.id === updateId);
       
+      let newHistory;
       if (existingIndex >= 0) {
-        // Update existing entry
-        const updated = [...prev];
-        updated[existingIndex] = { 
-          ...updated[existingIndex], 
-          viewCount: (updated[existingIndex].viewCount || 0) + 1,
+        newHistory = [...prev];
+        newHistory[existingIndex] = { 
+          ...newHistory[existingIndex], 
+          viewCount: (newHistory[existingIndex].viewCount || 0) + 1,
           lastViewed: now
         };
-        return updated;
       } else {
-        // Add new entry
-        return [...prev, { id: updateId, firstViewed: now, lastViewed: now, viewCount: 1 }];
+        newHistory = [...prev, { id: updateId, firstViewed: now, lastViewed: now, viewCount: 1 }];
       }
+      
+      localStorage.setItem('nebula_update_view_history', JSON.stringify(newHistory));
+      return newHistory;
     });
   }, []);
 
-  // Enhanced detail modal open function with tracking
+  // Open detail modal with tracking
   const openDetailModal = useCallback((update) => {
     setActiveUpdate(update);
     setShowDetailModal(true);
@@ -842,7 +753,10 @@ const Updates = () => {
           variant="info" 
           className="welcome-alert" 
           dismissible 
-          onClose={() => setIsFirstVisit(false)}
+          onClose={() => {
+            setIsFirstVisit(false);
+            localStorage.setItem('nebula_updates_visited', 'true');
+          }}
         >
           <Alert.Heading>Welcome to Updates!</Alert.Heading>
           <p>This is where you'll find the latest news about my projects, events, and releases. 
@@ -1237,49 +1151,32 @@ const Updates = () => {
                   variant="outline-secondary" 
                   onClick={() => handlePageChange(currentPage - 1)} 
                   disabled={currentPage === 1}
-                  className="pagination-arrow"
-                  aria-label="Previous page"
+                  className="me-2"
                 >
-                  <i className="bi bi-chevron-left"></i> Previous
+                  Previous
                 </Button>
                 
-                <ul className="pagination-numbers">
-                  {[...Array(totalPages)].map((_, index) => {
-                    const pageNumber = index + 1;
-                    // Show limited page numbers with ellipsis for better UI
-                    if (
-                      pageNumber === 1 || 
-                      pageNumber === totalPages || 
-                      (pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1)
-                    ) {
-                      return (
-                        <li key={pageNumber} className="page-item">
-                          <Button 
-                            variant={currentPage === pageNumber ? "primary" : "outline-secondary"}
-                            onClick={() => handlePageChange(pageNumber)}
-                            className="pagination-number"
-                            aria-label={`Page ${pageNumber}`}
-                            aria-current={currentPage === pageNumber ? "page" : undefined}
-                          >
-                            {pageNumber}
-                          </Button>
-                        </li>
-                      );
-                    } else if (pageNumber === currentPage - 2 || pageNumber === currentPage + 2) {
-                      return <li key={pageNumber} className="pagination-ellipsis">...</li>;
-                    }
-                    return null;
-                  })}
-                </ul>
+                {[...Array(totalPages)].map((_, index) => {
+                  const pageNumber = index + 1;
+                  return (
+                    <Button 
+                      key={pageNumber}
+                      variant={currentPage === pageNumber ? "primary" : "outline-secondary"}
+                      onClick={() => handlePageChange(pageNumber)}
+                      className="me-1"
+                    >
+                      {pageNumber}
+                    </Button>
+                  );
+                })}
                 
                 <Button 
                   variant="outline-secondary" 
                   onClick={() => handlePageChange(currentPage + 1)} 
                   disabled={currentPage === totalPages}
-                  className="pagination-arrow"
-                  aria-label="Next page"
+                  className="ms-1"
                 >
-                  Next <i className="bi bi-chevron-right"></i>
+                  Next
                 </Button>
               </div>
             </Col>

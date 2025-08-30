@@ -1,826 +1,796 @@
-import React, { useState, useEffect, useRef } from "react";
-import oldBar from "../../assets/images/oldBar.png";
-import oldBarAo from "../../assets/images/oldBarAo.png";
-import shield1 from "../../assets/images/shield1.png";
-import tacticalK from "../../assets/images/tacticalK.png";
-import sword from "../../assets/images/sword.png";
-import swordd from "../../assets/images/swordd.png";
-import 'bootstrap/dist/css/bootstrap.min.css';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Container, Row, Col, Card, Button, Badge, Form, Modal, Spinner, Alert, Carousel } from 'react-bootstrap';
+import { useNotifications } from '../../App';
+import './Portfolio.css';
 
-import swordInfo from "../../assets/images/swordInfo.png";
-import cover1 from "../../assets/images/cover1.png";
-import maskSide from "../../assets/images/maskSide.png";
-import maskO from "../../assets/images/maskO.png";
-import wireM from "../../assets/images/wireM.png";
-import shield from "../../assets/images/shield.png";
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  Button,
-  NavDropdown,
-  Modal,
-} from "react-bootstrap";
-import CardGroup from "react-bootstrap/CardGroup";
-import SocialIcons from "../SocialIcons";
+const Portfolio = () => {
+  const { showNotification } = useNotifications();
+  
+  // State management
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedTechnology, setSelectedTechnology] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [viewMode, setViewMode] = useState('grid');
+  const [sortBy, setSortBy] = useState('newest');
+  const [showProjectModal, setShowProjectModal] = useState(false);
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [imageError, setImageError] = useState({});
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [searchHistory, setSearchHistory] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
-function Portfolio() {
-  const [lgShow, setLgShow] = useState(false);
-  const [lgShow1, setLgShow1] = useState(false);
-  const [lgShow2, setLgShow2] = useState(false);
-  const [lgShow3, setLgShow3] = useState(false);
-  const [showTop, setShowTop] = useState(false);
-  // enhancements (persisted)
-  const [autoplay, setAutoplay] = useState(() => {
-    try { return localStorage.getItem("nebula_autoplay") === "1"; } catch { return false; }
-  });
-  const [muted, setMuted] = useState(() => {
-    try {
-      const v = localStorage.getItem("nebula_muted");
-      return v == null ? true : v === "1";
-    } catch { return true; }
-  });
-  const [showLegend, setShowLegend] = useState(false);
-  const [shareMsg, setShareMsg] = useState("");
-  const ytPrefetched = useRef(false);
-  // persist autoplay/muted
+  // Static data
+  const categories = {
+    all: { label: 'All Projects', icon: '🎯', color: 'primary' },
+    '3d-modeling': { label: '3D Modeling', icon: '🎨', color: 'info' },
+    animation: { label: 'Animation', icon: '🎬', color: 'success' },
+    vfx: { label: 'Visual Effects', icon: '✨', color: 'warning' },
+    'game-assets': { label: 'Game Assets', icon: '🎮', color: 'danger' },
+    architectural: { label: 'Architectural', icon: '🏗️', color: 'secondary' },
+    'motion-graphics': { label: 'Motion Graphics', icon: '🌀', color: 'dark' }
+  };
+
+  const technologies = {
+    all: 'All Technologies',
+    blender: 'Blender',
+    maya: 'Maya',
+    'after-effects': 'After Effects',
+    'zbrush': 'ZBrush',
+    'substance-painter': 'Substance Painter',
+    'unreal-engine': 'Unreal Engine',
+    unity: 'Unity',
+    'cinema-4d': 'Cinema 4D',
+    'davinci-resolve': 'DaVinci Resolve',
+    'premiere-pro': 'Premiere Pro'
+  };
+
+  // Enhanced portfolio data
+  const portfolioData = [
+    {
+      id: 1,
+      title: 'Stellar Guardian Character',
+      description: 'High-poly sci-fi character with complete rigging and animation set. Designed for next-generation gaming applications.',
+      category: '3d-modeling',
+      technologies: ['blender', 'zbrush', 'substance-painter'],
+      images: [
+        'https://via.placeholder.com/800x600?text=Stellar+Guardian+Front',
+        'https://via.placeholder.com/800x600?text=Stellar+Guardian+Side',
+        'https://via.placeholder.com/800x600?text=Stellar+Guardian+Back'
+      ],
+      featured: true,
+      date: '2024-01-15',
+      duration: '3 weeks',
+      client: 'Independent Project',
+      status: 'completed',
+      tags: ['character', 'sci-fi', 'high-poly', 'rigging'],
+      specifications: {
+        polygons: '1.2M triangles',
+        textures: '4K PBR textures',
+        animations: '58 sequences',
+        bones: '120+ bones'
+      },
+      challenges: 'Creating realistic armor mechanics while maintaining performance optimization.',
+      outcome: 'Successfully integrated into multiple game engines with positive feedback from industry professionals.'
+    },
+    {
+      id: 2,
+      title: 'Nebula Starship',
+      description: 'Detailed spacecraft model with modular construction and realistic physics-based design.',
+      category: '3d-modeling',
+      technologies: ['blender', 'substance-painter'],
+      images: [
+        'https://via.placeholder.com/800x600?text=Nebula+Starship+Exterior',
+        'https://via.placeholder.com/800x600?text=Nebula+Starship+Interior',
+        'https://via.placeholder.com/800x600?text=Nebula+Starship+Blueprint'
+      ],
+      date: '2023-11-20',
+      duration: '4 weeks',
+      client: 'Sci-Fi Studios',
+      status: 'completed',
+      tags: ['spaceship', 'modular', 'hard-surface', 'detailed'],
+      specifications: {
+        polygons: '2.1M triangles',
+        textures: '8K detail textures',
+        components: '300+ unique parts',
+        variants: 'High/Low poly versions'
+      }
+    },
+    {
+      id: 3,
+      title: 'Facial Rigging Demo',
+      description: 'Advanced facial rig with realistic expressions and lip-sync capabilities.',
+      category: 'animation',
+      technologies: ['maya', 'zbrush'],
+      images: [
+        'https://via.placeholder.com/800x600?text=Facial+Rig+Neutral',
+        'https://via.placeholder.com/800x600?text=Facial+Rig+Expressions',
+        'https://via.placeholder.com/800x600?text=Facial+Rig+Controls'
+      ],
+      date: '2023-10-10',
+      duration: '2 weeks',
+      client: 'Animation Studio',
+      status: 'completed',
+      tags: ['facial-rig', 'expressions', 'lip-sync', 'controls']
+    },
+    {
+      id: 4,
+      title: 'Space Battle VFX',
+      description: 'Epic space battle sequence with particle effects, explosions, and dynamic lighting.',
+      category: 'vfx',
+      technologies: ['after-effects', 'blender'],
+      images: [
+        'https://via.placeholder.com/800x600?text=Space+Battle+Wide',
+        'https://via.placeholder.com/800x600?text=Space+Battle+Explosion',
+        'https://via.placeholder.com/800x600?text=Space+Battle+Ships'
+      ],
+      featured: true,
+      date: '2023-12-05',
+      duration: '5 weeks',
+      client: 'Project Nebula',
+      status: 'completed',
+      tags: ['space', 'particles', 'explosions', 'compositing']
+    },
+    {
+      id: 5,
+      title: 'Architectural Visualization',
+      description: 'Modern house exterior and interior visualization with realistic lighting and materials.',
+      category: 'architectural',
+      technologies: ['blender', 'substance-painter'],
+      images: [
+        'https://via.placeholder.com/800x600?text=Modern+House+Exterior',
+        'https://via.placeholder.com/800x600?text=Modern+House+Interior',
+        'https://via.placeholder.com/800x600?text=Modern+House+Garden'
+      ],
+      date: '2023-09-15',
+      duration: '3 weeks',
+      client: 'Architecture Firm',
+      status: 'completed',
+      tags: ['architecture', 'realistic', 'lighting', 'materials']
+    },
+    {
+      id: 6,
+      title: 'Game Environment Assets',
+      description: 'Modular environment pieces for fantasy game including rocks, trees, and structures.',
+      category: 'game-assets',
+      technologies: ['blender', 'unity', 'substance-painter'],
+      images: [
+        'https://via.placeholder.com/800x600?text=Game+Environment+Overview',
+        'https://via.placeholder.com/800x600?text=Game+Assets+Details',
+        'https://via.placeholder.com/800x600?text=Game+Assets+Textures'
+      ],
+      date: '2024-02-01',
+      duration: '6 weeks',
+      client: 'Indie Game Studio',
+      status: 'in-progress',
+      tags: ['game-ready', 'modular', 'fantasy', 'optimized']
+    }
+  ];
+
+  // Search suggestions
+  const searchSuggestions = useMemo(() => {
+    const allTags = portfolioData.flatMap(p => p.tags);
+    const uniqueTags = [...new Set(allTags)];
+    return uniqueTags.filter(tag => 
+      tag.toLowerCase().includes(searchQuery.toLowerCase()) && 
+      searchQuery.length > 0
+    ).slice(0, 5);
+  }, [searchQuery]);
+
+  // Load portfolio data
   useEffect(() => {
-    try {
-      localStorage.setItem("nebula_autoplay", autoplay ? "1" : "0");
-      localStorage.setItem("nebula_muted", muted ? "1" : "0");
-    } catch (e) {}
-  }, [autoplay, muted]);
-
-  const prefersReducedMotion =
-    typeof window !== "undefined" &&
-    window.matchMedia &&
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  // preconnect helper (call on hover to speed up iframe loading)
-  const preconnectYouTube = () => {
-    try {
-      if (ytPrefetched.current || typeof document === "undefined") return;
-      const add = (rel, href) => {
-        if (!document.querySelector(`link[rel="${rel}"][href="${href}"]`)) {
-          const l = document.createElement("link");
-          l.rel = rel;
-          l.href = href;
-          l.crossOrigin = "anonymous";
-          document.head.appendChild(l);
+    const loadPortfolio = async () => {
+      setLoading(true);
+      try {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        setProjects(portfolioData);
+        if (showNotification) {
+          showNotification('Portfolio loaded successfully', 'success', 2000);
         }
-      };
-      add("preconnect", "https://www.youtube.com");
-      add("preconnect", "https://www.google.com");
-      ytPrefetched.current = true;
-    } catch (e) {}
-  };
-
-  // share helpers (Twitter / LinkedIn)
-  const openShareWindow = (platform, url) => {
-    try {
-      let shareUrl = "";
-      if (platform === "twitter") {
-        shareUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent("Check out this reel from Colin Nebula")}`;
-      } else if (platform === "linkedin") {
-        shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
-      } else return;
-      window.open(shareUrl, "_blank", "noopener,noreferrer,width=600,height=460");
-      console.info("analytics", "share", platform, url);
-    } catch (e) {}
-  };
-
-  // basic focus-trap for open modals
-  useEffect(() => {
-    const trap = (e) => {
-      if (!(lgShow || lgShow1 || lgShow2 || lgShow3)) return;
-      if (e.key !== "Tab") return;
-      const modal = document.querySelector(".modal.show .modal-content");
-      if (!modal) return;
-      const focusable = Array.from(modal.querySelectorAll('a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])'))
-        .filter((el) => el.offsetWidth || el.offsetHeight || el.getClientRects().length);
-      if (!focusable.length) return;
-      const first = focusable[0], last = focusable[focusable.length - 1];
-      if (e.shiftKey) {
-        if (document.activeElement === first) { e.preventDefault(); last.focus(); }
-      } else {
-        if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+      } catch (error) {
+        console.error('Portfolio loading error:', error);
+        if (showNotification) {
+          showNotification('Failed to load portfolio', 'danger');
+        }
+      } finally {
+        setLoading(false);
       }
     };
-    document.addEventListener("keydown", trap);
-    return () => document.removeEventListener("keydown", trap);
-  }, [lgShow, lgShow1, lgShow2, lgShow3]);
 
-  // canonical ids / urls used below
-  const REELS = {
-    mask: {
-      id: "ZsZYqn04yNQ",
-      url: "https://www.youtube.com/watch?v=ZsZYqn04yNQ",
-    },
-    sword: {
-      id: "hLH3htg2GS0",
-      url: "https://www.youtube.com/watch?v=hLH3htg2GS0",
-    },
+    if (projects.length === 0) {
+      loadPortfolio();
+    }
+  }, [projects.length, showNotification]);
+
+  // Filter and sort projects
+  const filteredProjects = useMemo(() => {
+    return projects
+      .filter(project => {
+        if (selectedCategory !== 'all' && project.category !== selectedCategory) {
+          return false;
+        }
+        
+        if (selectedTechnology !== 'all' && !project.technologies.includes(selectedTechnology)) {
+          return false;
+        }
+        
+        if (searchQuery) {
+          const query = searchQuery.toLowerCase();
+          return (
+            project.title.toLowerCase().includes(query) ||
+            project.description.toLowerCase().includes(query) ||
+            project.tags.some(tag => tag.toLowerCase().includes(query))
+          );
+        }
+        
+        return true;
+      })
+      .sort((a, b) => {
+        switch (sortBy) {
+          case 'newest':
+            return new Date(b.date) - new Date(a.date);
+          case 'oldest':
+            return new Date(a.date) - new Date(b.date);
+          case 'title':
+            return a.title.localeCompare(b.title);
+          case 'featured':
+            if (a.featured && !b.featured) return -1;
+            if (!a.featured && b.featured) return 1;
+            return new Date(b.date) - new Date(a.date);
+          case 'popularity':
+            return (b.metrics?.views || 0) - (a.metrics?.views || 0);
+          case 'awards':
+            return (b.awards?.length || 0) - (a.awards?.length || 0);
+          default:
+            return 0;
+        }
+      });
+  }, [projects, selectedCategory, selectedTechnology, searchQuery, sortBy]);
+
+  // Helper functions
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffTime = Math.abs(now - date);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays < 30) {
+      return `${diffDays} days ago`;
+    } else if (diffDays < 365) {
+      const months = Math.floor(diffDays / 30);
+      return `${months} month${months > 1 ? 's' : ''} ago`;
+    }
+    
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
   };
 
-  const getEmbedSrc = (videoId) => {
-    const params = new URLSearchParams();
-    params.set("rel", "0");
-    if (autoplay) params.set("autoplay", "1");
-    if (muted) params.set("mute", "1");
-    return `https://www.youtube.com/embed/${videoId}?${params.toString()}`;
-  };
-
-  const copyToClipboard = async (text) => {
-    try {
-      if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(text);
-      } else {
-        const ta = document.createElement("textarea");
-        ta.value = text;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand("copy");
-        document.body.removeChild(ta);
-      }
-      setShareMsg("Copied!");
-      console.info("analytics", "copy_link", text);
-      setTimeout(() => setShareMsg(""), 1400);
-    } catch {
-      setShareMsg("Copy failed");
-      setTimeout(() => setShareMsg(""), 1400);
+  const getStatusVariant = (status) => {
+    switch (status) {
+      case 'completed': return 'success';
+      case 'in-progress': return 'warning';
+      case 'planning': return 'info';
+      default: return 'secondary';
     }
   };
 
-  const scrollToTopAndOpen = (openFn, label) => {
-    const behavior = prefersReducedMotion ? "auto" : "smooth";
-    if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior });
-    const delay = prefersReducedMotion ? 0 : 150;
-    setTimeout(() => {
-      console.info("analytics", "open_modal", label);
-      openFn();
-    }, delay);
+  const handleImageError = (projectId, imageIndex = 0) => {
+    setImageError(prev => ({
+      ...prev,
+      [`${projectId}-${imageIndex}`]: true
+    }));
   };
 
-  // keyboard shortcuts (1..4, A, M, L)
-  useEffect(() => {
-    const handler = (e) => {
-      const tag = e.target && e.target.tagName;
-      if (tag === "INPUT" || tag === "TEXTAREA" || e.target.isContentEditable)
-        return;
-      const k = e.key.toLowerCase();
-      if (k === "1") scrollToTopAndOpen(() => setLgShow(true), "mask");
-      if (k === "2") scrollToTopAndOpen(() => setLgShow1(true), "oldBar");
-      if (k === "3") scrollToTopAndOpen(() => setLgShow2(true), "riotShield");
-      if (k === "4") scrollToTopAndOpen(() => setLgShow3(true), "sword");
-      if (k === "a") setAutoplay((s) => !s);
-      if (k === "m") setMuted((s) => !s);
-      if (k === "l") setShowLegend((s) => !s);
-    };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, [autoplay, muted, prefersReducedMotion]);
-
-  useEffect(() => {
-    const onScroll = () => setShowTop(window.scrollY > 240);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-  // current year for footer
-  const currentYear = new Date().getFullYear();
-
-  // helper to scroll to top, respecting reduced-motion preference
-  const scrollToTop = (behavior = "smooth") => {
-    const finalBehavior = prefersReducedMotion ? "auto" : behavior;
-    if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: finalBehavior });
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    if (query && !searchHistory.includes(query)) {
+      setSearchHistory(prev => [query, ...prev.slice(0, 4)]);
+    }
   };
+
+  // Render project card
+  const renderProjectCard = (project) => (
+    <Col key={project.id} xs={12} md={6} lg={4} className="mb-4">
+      <Card 
+        className={`portfolio-card h-100 ${project.featured ? 'featured-project' : ''} ${project.awards ? 'award-winning' : ''}`}
+        onClick={() => {
+          setSelectedProject(project);
+          setShowProjectModal(true);
+          setActiveImageIndex(0);
+        }}
+        style={{ cursor: 'pointer' }}
+      >
+        <div className="card-badges">
+          {project.featured && (
+            <div className="featured-badge">
+              Featured
+            </div>
+          )}
+          {project.awards && project.awards.length > 0 && (
+            <div className="award-badge">
+              Award Winner
+            </div>
+          )}
+          {project.status === 'in-progress' && (
+            <div className="progress-badge">
+              In Progress
+            </div>
+          )}
+        </div>
+        
+        <div className="project-image-container">
+          <Card.Img 
+            variant="top" 
+            src={imageError[`${project.id}-0`] ? 'https://via.placeholder.com/800x600?text=Image+Not+Available' : project.images[0]}
+            alt={project.title}
+            className="project-image"
+            onError={() => handleImageError(project.id, 0)}
+          />
+          <div className="project-overlay">
+            <Button variant="outline-light" className="view-project-btn">
+              View Project
+            </Button>
+            {project.links && (
+              <div className="quick-links">
+                {project.links.demo && (
+                  <Button variant="outline-light" size="sm" className="me-2" title="Demo">
+                    <span>🎮</span>
+                  </Button>
+                )}
+                {project.links.github && (
+                  <Button variant="outline-light" size="sm" title="GitHub">
+                    <span>📂</span>
+                  </Button>
+                )}
+              </div>
+            )}
+          </div>
+          
+          {project.status === 'in-progress' && (
+            <div className="progress-indicator">
+              <div className="progress-bar" style={{ width: '70%' }}></div>
+            </div>
+          )}
+        </div>
+        
+        <Card.Body className="d-flex flex-column">
+          <div className="mb-2">
+            <Badge 
+              bg={categories[project.category]?.color} 
+              className="me-2"
+              data-category={project.category}
+            >
+              {categories[project.category]?.icon} {categories[project.category]?.label}
+            </Badge>
+            <Badge 
+              bg={getStatusVariant(project.status)} 
+              variant="outline"
+              data-status={project.status}
+            >
+              {project.status.replace('-', ' ')}
+            </Badge>
+          </div>
+          
+          <Card.Title className="h5">{project.title}</Card.Title>
+          <Card.Text className="flex-grow-1">
+            {project.description.length > 100 
+              ? `${project.description.substring(0, 100)}...` 
+              : project.description
+            }
+          </Card.Text>
+          
+          <div className="project-tech mb-2">
+            {project.technologies.slice(0, 3).map(tech => (
+              <Badge key={tech} bg="light" text="dark" className="me-1 mb-1">
+                {technologies[tech]}
+              </Badge>
+            ))}
+            {project.technologies.length > 3 && (
+              <Badge bg="light" text="dark">+{project.technologies.length - 3}</Badge>
+            )}
+          </div>
+          
+          {project.metrics && (
+            <div className="project-metrics mb-2">
+              {project.metrics.views && (
+                <small className="text-muted me-3">
+                  👁️ {project.metrics.views}
+                </small>
+              )}
+              {project.metrics.engagement && (
+                <small className="text-success">
+                  📈 {project.metrics.engagement}
+                </small>
+              )}
+            </div>
+          )}
+          
+          <div className="project-meta">
+            <small className="text-muted">
+              📅 {formatDate(project.date)}
+            </small>
+            {project.duration && (
+              <small className="text-muted ms-2">
+                ⏱️ {project.duration}
+              </small>
+            )}
+          </div>
+        </Card.Body>
+      </Card>
+    </Col>
+  );
 
   return (
-    <Container fluid>
-      {/* skip link for keyboard users */}
-      <a href="#main-content" className="visually-hidden focusable" style={{ position: "absolute", left: 8, top: 8, zIndex: 2000 }}>Skip to content</a>
-      <div id="main-content" />
-      <Row>
-        {/* on-screen legend */}
-        {showLegend && (
-          <div
-            style={{
-              position: "fixed",
-              left: 12,
-              bottom: 12,
-              zIndex: 1200,
-              background: "var(--card-bg)",
-              color: "var(--text)",
-              padding: "8px 10px",
-              borderRadius: 6,
-              boxShadow: "0 6px 18px rgba(0,0,0,0.12)",
-            }}
-          >
-            <div style={{ fontSize: 12, marginBottom: 6 }}>
-              <strong>Shortcuts</strong>
-            </div>
-            <div style={{ fontSize: 12 }}>
-              1: Mask • 2: Old Bar • 3: Shield • 4: Sword • A: Autoplay • M:
-              Mute • L: Toggle legend
-            </div>
-            <button
-              className="btn btn-sm btn-link"
-              onClick={() => setShowLegend(false)}
-              aria-label="Close legend"
-            >
-              Close
-            </button>
-          </div>
-        )}
-
-        <div>
-          <>
-            <Modal
-              fullscreen={true}
-              show={lgShow}
-              onHide={() => setLgShow(false)}
-              aria-labelledby="example-modal-sizes-title-lg"
-            >
-              <Modal.Header closeButton>
-                <Modal.Title id="example-modal-sizes-title-lg">
-                  Mask of Malice
-                </Modal.Title>
-              </Modal.Header>
-              <Modal.Body>
-                <p>
-                  Mask of malice is an original concept for a project currently
-                  in progress. Blender was used to model, uv, and texture the
-                  objects. Painting was done in photoshop
-                  <br />
-                  <br />
-                  <div className="ratio ratio-21x9">
-                    <iframe
-                      loading="lazy"
-                      width="100%"
-                      height="560"
-                      src={getEmbedSrc(REELS.mask.id)}
-                      title="Mask of Malice video"
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                      allowFullScreen
-                    />
-                  </div>
-                </p>
-                <br />
-                <Card.Img src={maskO} className="rounded" alt="Card image" />
-                <a href="https://react-bootstrap.github.io/components/modal/"></a>
-                <br />
-                <br />
-                <br />
-                <Modal.Title id="example-modal-sizes-title-lg">
-                  Mask of Malice
-                </Modal.Title>
-                <p>
-                  Some of the 2D maps used were generated using Adobe Photoshop,
-                  Blender was used to model, uv, and texture the objects.
-                  Sculpting was done in ZBrush, and normal maps were extracted
-                  using Xnormal
-                </p>
-                <br />
-                <Card.Img src={wireM} className="rounded" alt="Card image" />
-                <a href="https://react-bootstrap.github.io/components/modal/"></a>
-                {" "}
-                <div style={{ marginTop: 8, display: "flex", gap: 8 }}>
-                  <a onMouseEnter={preconnectYouTube} className="btn btn-sm btn-outline-primary" href={REELS.mask.url} target="_blank" rel="noopener noreferrer">Open on YouTube</a>
-                  <button className="btn btn-sm btn-outline-secondary" onClick={() => copyToClipboard(REELS.mask.url)}>Copy link</button>
-                  <button aria-label="Share mask on Twitter" className="btn btn-sm btn-outline-info" onClick={() => openShareWindow("twitter", REELS.mask.url)}>Tweet</button>
-                  <button aria-label="Share mask on LinkedIn" className="btn btn-sm btn-outline-info" onClick={() => openShareWindow("linkedin", REELS.mask.url)}>LinkedIn</button>
-                  <span className="visually-hidden" aria-live="polite">{shareMsg}</span>
-                  <div style={{ marginLeft: "auto" }}>
-                    <label style={{ marginRight: 8, fontSize: 12 }}>
-                      <input type="checkbox" checked={autoplay} onChange={() => setAutoplay((s) => !s)} /> Autoplay
-                    </label>
-                    <label style={{ fontSize: 12 }}>
-                      <input type="checkbox" checked={muted} onChange={() => setMuted((s) => !s)} /> Mute
-                    </label>
-                  </div>
-                </div>
-                <br />
-              </Modal.Body>
-            </Modal>
-          </>
-        </div>
-        <div>
-          <>
-            <Modal
-              fullscreen={true}
-              show={lgShow1}
-              onHide={() => setLgShow1(false)}
-              aria-labelledby="example-modal-sizes-title-lg"
-            >
-              <Modal.Header closeButton>
-                <Modal.Title id="example-modal-sizes-title-lg">
-                  Old 20th Century Bar
-                </Modal.Title>
-              </Modal.Header>
-              <Modal.Body>
-                <p>
-                  Model of a old 20 Century bar at night time. Maya was used to
-                  model, uv, and texture the objects. Painting was done in
-                  photoshop
-                </p>
-                <Card.Img src={oldBar} className="rounded" alt="Card image" />
-                <a href="https://react-bootstrap.github.io/components/modal/"></a>
-                <br />
-                <br />
-                <p>Low poly count on all objects</p>
-                <br />
-                <br />
-                <Card.Img src={oldBarAo} className="rounded" alt="Card image" />
-                <a href="https://react-bootstrap.github.io/components/modal/"></a>
-                {" "}
-                <div style={{ marginTop: 8, display: "flex", gap: 8 }}>
-                  {" "}
-                  <a
-                    className="btn btn-sm btn-outline-primary"
-                    href="#"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Open
-                  </a>
-                  {" "}
-                  <button
-                    className="btn btn-sm btn-outline-secondary"
-                    onClick={() => copyToClipboard(window.location.href)}
-                  >
-                    Copy link
-                  </button>
-                  {" "}
-                </div>
-
-                <br />
-                <br />
-              </Modal.Body>
-            </Modal>
-          </>
-        </div>
-
-        <div>
-          <>
-            <Modal
-              fullscreen={true}
-              show={lgShow2}
-              onHide={() => setLgShow2(false)}
-              aria-labelledby="example-modal-sizes-title-lg"
-            >
-              <Modal.Header closeButton>
-                <Modal.Title id="example-modal-sizes-title-lg">
-                  3D Riot Shield
-                </Modal.Title>
-              </Modal.Header>
-              <Modal.Body>
-                <p>
-                  Model of a crowd control shield. Blender was used to model,
-                  uv, and texture the objects. Painting was done in Adobe
-                  photoshop.
-                </p>
-                <Card.Img src={shield1} className="rounded" alt="Card image" />
-                <a href="https://react-bootstrap.github.io/components/modal/"></a>
-                {" "}
-                <div style={{ marginTop: 8, display: "flex", gap: 8 }}>
-                  {" "}
-                  <a
-                    className="btn btn-sm btn-outline-primary"
-                    href="#"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Open
-                  </a>
-                  {" "}
-                  <button
-                    className="btn btn-sm btn-outline-secondary"
-                    onClick={() => copyToClipboard(window.location.href)}
-                  >
-                    Copy link
-                  </button>
-                  {" "}
-                </div>
-              </Modal.Body>
-            </Modal>
-          </>
-        </div>
-
-        <div>
-          <>
-            <Modal
-              fullscreen={true}
-              show={lgShow3}
-              onHide={() => setLgShow3(false)}
-              aria-labelledby="example-modal-sizes-title-lg"
-            >
-              <Modal.Header closeButton>
-                <Modal.Title id="example-modal-sizes-title-lg">
-                  Sword
-                </Modal.Title>
-              </Modal.Header>
-              <Modal.Body>
-                <p>
-                  Sword Model. Blender was used to model, uv, and texture the
-                  objects. The sculpting details were done in ZBrush. The normal
-                  map was baked in XNormal, and Photoshop was used for painting.
-                  <br />
-                  <br />
-                  <div className="ratio ratio-16x9">
-                    <iframe
-                      loading="lazy"
-                      width="100%"
-                      height="560"
-                      src={getEmbedSrc(REELS.sword.id)}
-                      title="Sword video"
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                      allowFullScreen
-                    />
-                  </div>
-                </p>
-                <br />
-                <Card.Img src={swordd} className="rounded" alt="Card image" />
-                <a href="https://react-bootstrap.github.io/components/modal/"></a>
-                {" "}
-                <div style={{ marginTop: 8, display: "flex", gap: 8 }}>
-                  {" "}
-                  <a
-                    className="btn btn-sm btn-outline-primary"
-                    href={REELS.sword.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Open on YouTube
-                  </a>
-                  {" "}
-                  <button
-                    className="btn btn-sm btn-outline-secondary"
-                    onClick={() => copyToClipboard(REELS.sword.url)}
-                  >
-                    Copy link
-                  </button>
-                  {" "}
-                  <span className="visually-hidden" aria-live="polite">
-                    {shareMsg}
-                  </span>
-                  {" "}
-                  <div style={{ marginLeft: "auto" }}>
-                    {" "}
-                    <label style={{ marginRight: 8, fontSize: 12 }}>
-                      {" "}
-                      <input
-                        type="checkbox"
-                        checked={autoplay}
-                        onChange={() => setAutoplay((s) => !s)}
-                      />{" "}
-                      Autoplay {" "}
-                    </label>
-                    {" "}
-                    <label style={{ fontSize: 12 }}>
-                      {" "}
-                      <input
-                        type="checkbox"
-                        checked={muted}
-                        onChange={() => setMuted((s) => !s)}
-                      />{" "}
-                      Mute {" "}
-                    </label>
-                    {" "}
-                  </div>
-                  {" "}
-                </div>
-                <NavDropdown.Divider />
-                <br />
-                <p>Blender cycles render.</p>
-                <NavDropdown.Divider />
-                <br />
-                <Card.Img
-                  src={swordInfo}
-                  className="rounded"
-                  alt="Card image"
-                />
-                <a href="https://react-bootstrap.github.io/components/modal/"></a>
-              </Modal.Body>
-            </Modal>
-          </>
-        </div>
-        <br />
-        <br />
-        <h2 class="top_text"> Welcome to My Portfolio</h2>
-        <p class="top-p">
-          {" "}
-          Here is a collection of objects modeled using various industry 3D
-          softwares
-        </p>
-        <NavDropdown.Divider />
-        <Col>
-          <CardGroup>
-            <Card
-              className="bg-dark text-white shadow-lg"
-              style={{ color: "#000", width: "auto" }}
-            >
-              <Card.Img
-                variant="top"
-                src={cover1}
-                className="rounded"
-                alt="Card image"
-              />
-              <Card.Body>
-                <Card.Title className="ti-tle">Mask of Malice</Card.Title>
-                <Card.Text>
-                  This mask was modeled in Blender. ZBrush was used to add more
-                  details{" "}
-                </Card.Text>
-              </Card.Body>
-              {" "}
-              <Card.Footer>
-                {" "}
-                {" "}
-                {" "}
-              </Card.Footer>
-              {" "}
-              <Card.Footer>
-                {" "}
-                <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                  {" "}
-                  <Button
-                    variant="outline-warning"
-                    size="sm"
-                    onClick={() =>
-                      scrollToTopAndOpen(() => setLgShow(true), "mask")
-                    }
-                  >
-                    View here
-                  </Button>
-                  {" "}
-                  <button
-                    className="btn btn-sm btn-outline-secondary"
-                    onClick={() => copyToClipboard(REELS.mask.url)}
-                  >
-                    Copy
-                  </button>
-                  {" "}
-                  <a
-                    className="btn btn-sm btn-outline-primary"
-                    href={REELS.mask.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Open
-                  </a>
-                  {" "}
-                </div>
-                {" "}
-              </Card.Footer>
-              <br />
-            </Card>
-
-            <Card
-              className="bg-dark text-white shadow-lg"
-              style={{ color: "#000", width: "auto" }}
-            >
-              <Card.Img src={oldBarAo} className="rounded" alt="Card image" />
-              <Card.Body>
-                <Card.Title className="ti-tle">Old Bar</Card.Title>
-                <Card.Text>
-                  Utilizing my 3D knowledge to build complicated scenes{" "}
-                </Card.Text>
-              </Card.Body>
-              {" "}
-              <Card.Footer>
-                {" "}
-               {" "}
-                {" "}
-              </Card.Footer>
-              {" "}
-              <Card.Footer>
-                {" "}
-                <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                  {" "}
-                  <Button
-                    variant="outline-warning"
-                    size="sm"
-                    onClick={() =>
-                      scrollToTopAndOpen(() => setLgShow1(true), "oldBar")
-                    }
-                  >
-                    View here
-                  </Button>
-                  {" "}
-                  <button
-                    className="btn btn-sm btn-outline-secondary"
-                    onClick={() => copyToClipboard(window.location.href)}
-                  >
-                    Copy
-                  </button>
-                  {" "}
-                  <a
-                    className="btn btn-sm btn-outline-primary"
-                    href={window.location.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Open
-                  </a>
-                  {" "}
-                </div>
-                {" "}
-              </Card.Footer>
-              <br />
-            </Card>
-
-            <Card
-              className="bg-dark text-white shadow-lg"
-              style={{ color: "#000", width: "auto" }}
-            >
-              <Card.Img src={shield} className="rounded" alt="Card image" />
-              <Card.Body>
-                <Card.Title className="ti-tle">Riot Shield</Card.Title>
-                <Card.Text>A shield modeled in Blender</Card.Text>
-              </Card.Body>
-              {" "}
-              <Card.Footer>
-                {" "}
-                {" "}
-                {" "}
-              </Card.Footer>
-              {" "}
-              <Card.Footer>
-                {" "}
-                <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                  {" "}
-                  <Button
-                    variant="outline-warning"
-                    size="sm"
-                    onClick={() =>
-                      scrollToTopAndOpen(() => setLgShow2(true), "riotShield")
-                    }
-                  >
-                    View here
-                  </Button>
-                  {" "}
-                  <button
-                    className="btn btn-sm btn-outline-secondary"
-                    onClick={() => copyToClipboard(window.location.href)}
-                  >
-                    Copy
-                  </button>
-                  {" "}
-                  <a
-                    className="btn btn-sm btn-outline-primary"
-                    href={window.location.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Open
-                  </a>
-                </div>
-              </Card.Footer>
-              <br />
-            </Card>
-          </CardGroup>
-          <br />
-          <NavDropdown.Divider />
-          <br />
-          <h2 class="middle_text"> Industry software used on all projects</h2>
-          <p class="mid-p">
-            Software used include Maya, Blender, Nuke, Fusion, Adobe After
-            Effects, Adobe Photoshop, and Zbrush
+    <Container fluid className="portfolio-container py-5">
+      {/* Header with Statistics */}
+      <Row className="mb-5">
+        <Col className="text-center">
+          <h1 className="display-4 fw-bold mb-3">Portfolio</h1>
+          <p className="lead text-muted mb-4">
+            Showcasing professional 3D work, visual effects, and creative projects
           </p>
-
-          <CardGroup>
-            <Card
-              className="bg-dark text-white shadow-lg"
-              style={{ color: "#000", width: "auto" }}
-            >
-              <Card.Img src={sword} className="rounded" alt="Card image" />
-              <Card.Body>
-                <Card.Title className="ti-tle">Sword</Card.Title>
-                <Card.Text>
-                  This sword is a 3D model. It was designed, modeled, textured
-                  using Blender{" "}
-                </Card.Text>
-              </Card.Body>
-              <Card.Footer>
-                {" "}
-              </Card.Footer>
-              <Card.Footer>
-                <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                  <Button
-                    variant="outline-warning"
-                    size="sm"
-                    onClick={() =>
-                      scrollToTopAndOpen(() => setLgShow3(true), "sword")
-                    }
-                  >
-                    View here
-                  </Button>
-                  <button
-                    className="btn btn-sm btn-outline-secondary"
-                    onClick={() => copyToClipboard(REELS.sword.url)}
-                  >
-                    Copy
-                  </button>
-                  <a
-                    className="btn btn-sm btn-outline-primary"
-                    href={REELS.sword.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Open
-                  </a>
-                </div>
-              </Card.Footer>
-              <br />
-            </Card>
-
-            <Card
-              className="bg-dark text-white shadow-lg"
-              style={{ color: "#000", width: "auto" }}
-            >
-              <Card.Img src={maskSide} className="rounded" alt="Card image" />
-              <Card.Body>
-                <Card.Title className="ti-tle">3D Model</Card.Title>
-                <Card.Text>
-                  3D face mask modeled, UV, and textured in Blender. Added
-                  details and sculpting using ZBrush{" "}
-                </Card.Text>
-              </Card.Body>
-              <Card.Footer>
-                <Button variant="outline-warning" size="sm">
-                  View here
-                </Button>{" "}
-              </Card.Footer>
-              <br />
-            </Card>
-
-            <Card
-              className="bg-dark text-white shadow-lg"
-              style={{ color: "#000", width: "auto" }}
-            >
-              <Card.Img src={tacticalK} className="rounded" alt="Card image" />
-              <Card.Body>
-                <Card.Title className="ti-tle">Tactical Knife </Card.Title>
-                <Card.Text>
-                  Tactical knife 3D model. Modeled, UV, and textured using Maya
-                  3D software
-                </Card.Text>
-              </Card.Body>
-              <Card.Footer>
-                <Button variant="outline-warning" size="sm">
-                  View here
-                </Button>{" "}
-              </Card.Footer>
-              <br />
-            </Card>
-          </CardGroup>
-        </Col>
-      </Row>
-      <br />
-
-      <NavDropdown.Divider />
-
-      {/* Footer Section (semantic & accessible) */}
-      {/* <footer id="site-footer" role="contentinfo" className="footer" aria-label="Site footer">
-        <Container fluid>
-          <Row className="align-items-center py-3">
-            <Col md={8} className="text-md-start text-center">
-              <div className="rights">© {currentYear} Colin Nebula</div>
+          
+          <Row className="portfolio-stats mb-4">
+            <Col md={3} sm={6}>
+              <div className="stat-item">
+                <h3 className="stat-number">{portfolioData.length}</h3>
+                <p className="stat-label">Total Projects</p>
+              </div>
             </Col>
-            <Col md={4} className="icons text-md-end text-center" aria-label="Social links">
-              <SocialIcons />
+            <Col md={3} sm={6}>
+              <div className="stat-item">
+                <h3 className="stat-number">{portfolioData.filter(p => p.featured).length}</h3>
+                <p className="stat-label">Featured Works</p>
+              </div>
+            </Col>
+            <Col md={3} sm={6}>
+              <div className="stat-item">
+                <h3 className="stat-number">{portfolioData.filter(p => p.awards).length}</h3>
+                <p className="stat-label">Award Winners</p>
+              </div>
+            </Col>
+            <Col md={3} sm={6}>
+              <div className="stat-item">
+                <h3 className="stat-number">{Object.keys(categories).length - 1}</h3>
+                <p className="stat-label">Categories</p>
+              </div>
             </Col>
           </Row>
-        </Container>
-      </footer> */}
+        </Col>
+      </Row>
 
-      {showTop && (
-        <button
-          onClick={() => scrollToTop()}
-          aria-label="Back to top"
-          title="Back to top"
-          style={{
-            position: "fixed",
-            right: 20,
-            bottom: 30,
-            zIndex: 999,
-            padding: "10px 14px",
-            borderRadius: 6,
-            border: "none",
-            background: "var(--primary)",
-            color: "#fff",
-            cursor: "pointer",
-            boxShadow: "0 6px 18px rgba(0,0,0,0.2)",
-          }}
+      {/* Enhanced Filters */}
+      <Row className="mb-4">
+        <Col md={3} className="mb-3">
+          <Form.Group>
+            <Form.Label>Category</Form.Label>
+            <Form.Select 
+              value={selectedCategory} 
+              onChange={(e) => setSelectedCategory(e.target.value)}
+            >
+              {Object.entries(categories).map(([key, { label, icon }]) => (
+                <option key={key} value={key}>{icon} {label}</option>
+              ))}
+            </Form.Select>
+          </Form.Group>
+        </Col>
+        
+        <Col md={3} className="mb-3">
+          <Form.Group>
+            <Form.Label>Technology</Form.Label>
+            <Form.Select 
+              value={selectedTechnology} 
+              onChange={(e) => setSelectedTechnology(e.target.value)}
+            >
+              {Object.entries(technologies).map(([key, label]) => (
+                <option key={key} value={key}>{label}</option>
+              ))}
+            </Form.Select>
+          </Form.Group>
+        </Col>
+        
+        <Col md={4} className="mb-3">
+          <Form.Group>
+            <Form.Label>Search</Form.Label>
+            <div className="search-container position-relative">
+              <Form.Control
+                type="text"
+                placeholder="Search projects, tags, technologies..."
+                value={searchQuery}
+                onChange={(e) => handleSearch(e.target.value)}
+                onFocus={() => setShowSuggestions(true)}
+                onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+              />
+              <div className="search-icon">🔍</div>
+              
+              {showSuggestions && searchSuggestions.length > 0 && (
+                <div className="search-suggestions">
+                  {searchSuggestions.map(suggestion => (
+                    <div 
+                      key={suggestion}
+                      className="suggestion-item"
+                      onClick={() => handleSearch(suggestion)}
+                    >
+                      🏷️ {suggestion}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </Form.Group>
+        </Col>
+        
+        <Col md={2} className="mb-3">
+          <Form.Group>
+            <Form.Label>Sort By</Form.Label>
+            <Form.Select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+              <option value="newest">Newest</option>
+              <option value="oldest">Oldest</option>
+              <option value="title">Title</option>
+              <option value="featured">Featured</option>
+              <option value="popularity">Most Popular</option>
+              <option value="awards">Most Awarded</option>
+            </Form.Select>
+          </Form.Group>
+        </Col>
+      </Row>
+
+      {/* View Mode Toggle */}
+      <Row className="mb-4 align-items-center">
+        <Col>
+          <div className="d-flex justify-content-between align-items-center">
+            <div>
+              <span className="text-muted">
+                {filteredProjects.length} project{filteredProjects.length !== 1 ? 's' : ''} found
+              </span>
+            </div>
+            <div className="btn-group" role="group">
+              <Button
+                variant={viewMode === 'grid' ? 'primary' : 'outline-primary'}
+                size="sm"
+                onClick={() => setViewMode('grid')}
+              >
+                ⊞ Grid
+              </Button>
+              <Button
+                variant={viewMode === 'list' ? 'primary' : 'outline-primary'}
+                size="sm"
+                onClick={() => setViewMode('list')}
+              >
+                ☰ List
+              </Button>
+            </div>
+          </div>
+        </Col>
+      </Row>
+
+      {/* Projects Display */}
+      {loading ? (
+        <div className="text-center py-5">
+          <Spinner animation="border" role="status" variant="primary">
+            <span className="visually-hidden">Loading...</span>
+          </Spinner>
+          <p className="mt-3">Loading amazing projects...</p>
+        </div>
+      ) : (
+        <>
+          {filteredProjects.length === 0 ? (
+            <Alert variant="info" className="text-center">
+              <Alert.Heading>No projects found</Alert.Heading>
+              <p>Try adjusting your filters or search terms.</p>
+              <Button 
+                variant="outline-primary" 
+                onClick={() => {
+                  setSelectedCategory('all');
+                  setSelectedTechnology('all');
+                  setSearchQuery('');
+                }}
+              >
+                Clear All Filters
+              </Button>
+            </Alert>
+          ) : (
+            <div className={`projects-display ${viewMode}`}>
+              <Row>
+                {filteredProjects.map(project => renderProjectCard(project))}
+              </Row>
+            </div>
+          )}
+        </>
+      )}
+
+      {/* Enhanced Project Modal */}
+      {selectedProject && (
+        <Modal 
+          show={showProjectModal} 
+          onHide={() => setShowProjectModal(false)}
+          size="xl"
+          centered
+          className="project-modal"
         >
-          <span aria-hidden="true">↑</span>
-          <span className="visually-hidden">Back to top</span>
-        </button>
+          <Modal.Header closeButton className="border-0">
+            <Modal.Title className="d-flex align-items-center">
+              {selectedProject.title}
+              {selectedProject.awards && (
+                <Badge bg="warning" className="ms-2">
+                  🏆 Award Winner
+                </Badge>
+              )}
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body className="p-0">
+            <Row className="g-0">
+              <Col md={8}>
+                <div className="project-images p-4">
+                  {selectedProject.images.length > 1 ? (
+                    <Carousel 
+                      activeIndex={activeImageIndex} 
+                      onSelect={(selectedIndex) => setActiveImageIndex(selectedIndex)}
+                      className="project-carousel"
+                    >
+                      {selectedProject.images.map((image, index) => (
+                        <Carousel.Item key={index}>
+                          <img 
+                            src={imageError[`${selectedProject.id}-${index}`] ? 'https://via.placeholder.com/800x600?text=Image+Not+Available' : image}
+                            alt={`${selectedProject.title} ${index + 1}`}
+                            className="d-block w-100 rounded"
+                            onError={() => handleImageError(selectedProject.id, index)}
+                            style={{ cursor: 'zoom-in' }}
+                          />
+                        </Carousel.Item>
+                      ))}
+                    </Carousel>
+                  ) : (
+                    <img 
+                      src={selectedProject.images[0]} 
+                      alt={selectedProject.title}
+                      className="img-fluid rounded w-100"
+                      style={{ cursor: 'zoom-in' }}
+                    />
+                  )}
+                </div>
+              </Col>
+              
+              <Col md={4} className="p-4">
+                <div className="project-details">
+                  <div className="mb-3">
+                    <Badge bg={categories[selectedProject.category]?.color} className="me-2">
+                      {categories[selectedProject.category]?.icon} {categories[selectedProject.category]?.label}
+                    </Badge>
+                    <Badge bg={getStatusVariant(selectedProject.status)}>
+                      {selectedProject.status.replace('-', ' ')}
+                    </Badge>
+                  </div>
+                  
+                  <p className="mb-4">{selectedProject.description}</p>
+                  
+                  {/* Enhanced project information */}
+                  {selectedProject.awards && (
+                    <div className="awards mb-4">
+                      <h6><i className="bi bi-trophy"></i> Awards & Recognition</h6>
+                      <ul className="list-unstyled">
+                        {selectedProject.awards.map((award, index) => (
+                          <li key={index} className="award-item">
+                            <i className="bi bi-award text-warning"></i> {award}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {selectedProject.metrics && (
+                    <div className="metrics mb-4">
+                      <h6><i className="bi bi-graph-up"></i> Performance Metrics</h6>
+                      <div className="metrics-grid">
+                        {Object.entries(selectedProject.metrics).map(([key, value]) => (
+                          <div key={key} className="metric-item">
+                            <strong>{key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}:</strong>
+                            <span className="metric-value">{value}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  <div className="project-info mb-4">
+                    <h6>Project Information</h6>
+                    <table className="table table-sm">
+                      <tbody>
+                        <tr>
+                          <td><strong>Date:</strong></td>
+                          <td>{formatDate(selectedProject.date)}</td>
+                        </tr>
+                        {selectedProject.duration && (
+                          <tr>
+                            <td><strong>Duration:</strong></td>
+                            <td>{selectedProject.duration}</td>
+                          </tr>
+                        )}
+                        {selectedProject.client && (
+                          <tr>
+                            <td><strong>Client:</strong></td>
+                            <td>{selectedProject.client}</td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                  
+                  <div className="technologies mb-4">
+                    <h6>Technologies Used</h6>
+                    <div>
+                      {selectedProject.technologies.map(tech => (
+                        <Badge key={tech} bg="primary" className="me-2 mb-2">
+                          {technologies[tech]}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  {selectedProject.specifications && (
+                    <div className="specifications mb-4">
+                      <h6>Technical Specifications</h6>
+                      <ul className="list-unstyled">
+                        {Object.entries(selectedProject.specifications).map(([key, value]) => (
+                          <li key={key}>
+                            <strong>{key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}:</strong> {value}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  
+                  <div className="tags">
+                    <h6>Tags</h6>
+                    <div>
+                      {selectedProject.tags.map(tag => (
+                        <Badge key={tag} bg="light" text="dark" className="me-1 mb-1">
+                          #{tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </Col>
+            </Row>
+          </Modal.Body>
+          <Modal.Footer className="border-0">
+            <div className="modal-footer-content w-100">
+              <div className="footer-links">
+                {selectedProject.links && (
+                  <>
+                    {selectedProject.links.demo && (
+                      <Button variant="outline-primary" href={selectedProject.links.demo} target="_blank">
+                        🎮 View Demo
+                      </Button>
+                    )}
+                    {selectedProject.links.github && (
+                      <Button variant="outline-dark" href={selectedProject.links.github} target="_blank">
+                        📂 Source Code
+                      </Button>
+                    )}
+                  </>
+                )}
+              </div>
+              <div className="footer-actions">
+                <Button variant="secondary" onClick={() => setShowProjectModal(false)}>
+                  Close
+                </Button>
+                <Button variant="primary">
+                  📤 Share Project
+                </Button>
+              </div>
+            </div>
+          </Modal.Footer>
+        </Modal>
       )}
     </Container>
   );
-}
+};
 
 export default Portfolio;
+

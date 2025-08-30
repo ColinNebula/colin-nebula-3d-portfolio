@@ -1,16 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Container } from 'react-bootstrap';
 import Nav from 'react-bootstrap/Nav';
 import logoM from '../../assets/images/logoM.png';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import { Button, Modal } from 'react-bootstrap';
-import { Link, NavLink, useLocation } from 'react-router-dom';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Navigation.css'; 
+import { useNotifications } from '../../App';
 
 function Navigation(props) {
     const location = useLocation();
+    const navigate = useNavigate();
     const [expanded, setExpanded] = useState(false);
     const [themeAnnounce, setThemeAnnounce] = useState('');
     
@@ -30,6 +32,7 @@ function Navigation(props) {
     });
     const [showNotifications, setShowNotifications] = useState(false);
     const [notifAnnounce, setNotifAnnounce] = useState('');
+    const { showNotification } = useNotifications();
     
     // Filter out expired notifications
     const activeNotifications = notifications.filter(n => 
@@ -153,7 +156,7 @@ function Navigation(props) {
           </div>
           <div className="notification-actions">
             <button 
-              className="btn btn-sm btn-outline-secondary"
+              className="btn btn-sm btn-outline-secondary rounded-pill"
               onClick={(e) => {
                 e.stopPropagation();
                 markAsRead(notification.id);
@@ -165,7 +168,7 @@ function Navigation(props) {
               ✓
             </button>
             <button 
-              className="btn btn-sm btn-outline-danger"
+              className="btn btn-sm btn-outline-danger rounded-pill"
               onClick={(e) => {
                 e.stopPropagation();
                 deleteNotification(notification.id);
@@ -306,7 +309,9 @@ function Navigation(props) {
     }, [theme, prefersReducedMotion]);
 
     // cycle theme: light -> dark -> auto -> light
-    const toggleTheme = () => setTheme(prev => prev === 'light' ? 'dark' : prev === 'dark' ? 'auto' : 'light');
+    const toggleTheme = useCallback(() => {
+      setTheme(prev => prev === 'light' ? 'dark' : prev === 'dark' ? 'auto' : 'light');
+    }, []);
     
     // keyboard shortcut: 't' toggles theme (ignore typing in inputs)
     useEffect(() => {
@@ -319,29 +324,51 @@ function Navigation(props) {
       };
       window.addEventListener('keydown', handler);
       return () => window.removeEventListener('keydown', handler);
-    }, []);
+    }, [toggleTheme]);
+
+    // Navigate to account page
+    const navigateToAccount = () => {
+      setShowNotifications(false);
+      navigate('/account');
+      showNotification('Navigating to account settings', 'info', 2000);
+    };
+
+    // Navigate to updates page
+    const navigateToUpdates = () => {
+      setShowNotifications(false);
+      navigate('/updates');
+      showNotification('Navigating to updates', 'info', 2000);
+    };
+
+    // Handle system notifications
+    const handleSystemNotifications = () => {
+      setShowNotifications(false);
+      showNotification('System notifications settings opened', 'info', 3000);
+    };
 
     return (
       <Navbar
         expanded={expanded}
         onToggle={setExpanded}
-        bg="dark"
+        bg={appliedTheme === 'light' ? 'light' : 'dark'}
         expand="md"
-        variant="dark"
+        variant={appliedTheme === 'light' ? 'light' : 'dark'}
         sticky="top"
         collapseOnSelect
         role="navigation"
         aria-label="Main navigation"
         className={isSticky ? 'navbar navbar-scrolled' : 'navbar'}
         style={{
-          transition: prefersReducedMotion ? 'none' : 'box-shadow 200ms, padding 200ms',
+          transition: prefersReducedMotion ? 'none' : 'box-shadow 200ms, padding 200ms, background-color 200ms',
           boxShadow: isSticky ? '0 8px 24px rgba(0,0,0,0.20)' : 'none',
           paddingTop: isSticky ? 6 : undefined,
           paddingBottom: isSticky ? 6 : undefined,
+          backgroundColor: appliedTheme === 'light' ? '#f8f9fa' : '#212529',
+          borderBottom: appliedTheme === 'light' ? '1px solid #dee2e6' : '1px solid #495057'
         }}
       >
         <Container>
-          <Navbar.Brand as={Link} to="/">
+          <Navbar.Brand as={Link} to="/" style={{ color: appliedTheme === 'light' ? '#212529' : '#ffffff' }}>
             <img src={logoM} width="90px" height="40px" alt="logo" />
             Colin Nebula 3D 
           </Navbar.Brand>
@@ -352,6 +379,7 @@ function Navigation(props) {
                 as={NavLink} 
                 to="/"
                 className={({isActive}) => isActive ? "mx-2 navActive" : "mx-2"}
+                style={{ color: appliedTheme === 'light' ? '#212529' : '#ffffff' }}
                 end
               >
                 Home
@@ -361,6 +389,7 @@ function Navigation(props) {
                 as={NavLink} 
                 to="/portfolio"
                 className={({isActive}) => isActive ? "mx-2 navActive" : "mx-2"}
+                style={{ color: appliedTheme === 'light' ? '#212529' : '#ffffff' }}
               >
                 Portfolio
               </Nav.Link>
@@ -369,6 +398,7 @@ function Navigation(props) {
                 as={NavLink} 
                 to="/artwork"
                 className={({isActive}) => isActive ? "mx-2 navActive" : "mx-2"}
+                style={{ color: appliedTheme === 'light' ? '#212529' : '#ffffff' }}
               >
                 Artwork
               </Nav.Link>
@@ -377,6 +407,7 @@ function Navigation(props) {
                 as={NavLink} 
                 to="/animation"
                 className={({isActive}) => isActive ? "mx-2 navActive" : "mx-2"}
+                style={{ color: appliedTheme === 'light' ? '#212529' : '#ffffff' }}
               >
                 Animation
               </Nav.Link>
@@ -385,11 +416,18 @@ function Navigation(props) {
                 as={NavLink} 
                 to="/video-editing"
                 className={({isActive}) => isActive ? "mx-2 navActive" : "mx-2"}
+                style={{ color: appliedTheme === 'light' ? '#212529' : '#ffffff' }}
               >
                 VFX
               </Nav.Link>
 
-              <NavDropdown title="More" id="nav-more" align="end" menuVariant="dark" aria-label="More links">
+              <NavDropdown 
+                title="More" 
+                id="nav-more" 
+                align="end" 
+                menuVariant={appliedTheme === 'light' ? 'light' : 'dark'} 
+                aria-label="More links"
+              >
                 <NavDropdown.Item as={Link} to="/privacy-policy">Privacy Policy</NavDropdown.Item>
                 <NavDropdown.Item href="mailto:colinnebula@gmail.com" title="Email Colin">Contact</NavDropdown.Item>
                 <NavDropdown.Item as={Link} to="/resume" title="View Resume">Resume</NavDropdown.Item>
@@ -406,6 +444,14 @@ function Navigation(props) {
                     aria-label={`Notifications (${unreadCount} unread)`}
                     aria-expanded={showNotifications}
                     aria-controls="notification-panel"
+                    style={{
+                      background: 'transparent',
+                      border: `1px solid ${appliedTheme === 'light' ? '#6c757d' : '#adb5bd'}`,
+                      color: appliedTheme === 'light' ? '#212529' : '#ffffff',
+                      borderRadius: '20px',
+                      padding: '6px 10px',
+                      cursor: 'pointer'
+                    }}
                   >
                     <span className={`notification-icon ${unreadCount > 0 ? 'has-unread' : ''}`}>
                       🔔
@@ -423,14 +469,68 @@ function Navigation(props) {
                       className={`notification-panel ${expandedNotifs ? 'expanded' : ''}`}
                       role="dialog"
                       aria-label="Notifications"
+                      style={{
+                        position: 'absolute',
+                        top: '100%',
+                        right: 0,
+                        width: '320px',
+                        maxHeight: '400px',
+                        backgroundColor: appliedTheme === 'light' ? '#ffffff' : '#343a40',
+                        color: appliedTheme === 'light' ? '#212529' : '#ffffff',
+                        border: `1px solid ${appliedTheme === 'light' ? '#dee2e6' : '#495057'}`,
+                        borderRadius: '16px',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                        zIndex: 1050,
+                        overflow: 'hidden'
+                      }}
                     >
                       <div className="notification-header">
                         <h3>Notifications</h3>
                         <div className="notification-actions">
+                          <Button
+                            variant="link"
+                            className="p-0 me-2 btn-updates-link rounded-pill"
+                            onClick={navigateToUpdates}
+                            title="View all updates"
+                            style={{ 
+                              color: appliedTheme === 'light' ? '#0d6efd' : '#86b7fe',
+                              textDecoration: 'none'
+                            }}
+                          >
+                            📈 Updates
+                          </Button>
+                          <Button
+                            variant="link"
+                            className="p-0 me-2 btn-account-link rounded-pill"
+                            onClick={navigateToAccount}
+                            title="Go to account settings"
+                            style={{ 
+                              color: appliedTheme === 'light' ? '#0d6efd' : '#86b7fe',
+                              textDecoration: 'none'
+                            }}
+                          >
+                            👤 Account
+                          </Button>
+                          <Button
+                            variant="link"
+                            className="p-0 me-2 btn-system-link rounded-pill"
+                            onClick={handleSystemNotifications}
+                            title="System notification settings"
+                            style={{ 
+                              color: appliedTheme === 'light' ? '#0d6efd' : '#86b7fe',
+                              textDecoration: 'none'
+                            }}
+                          >
+                            ⚙️ System
+                          </Button>
                           <button
-                            className="btn btn-sm btn-outline-secondary"
+                            className="btn btn-sm btn-outline-secondary rounded-pill"
                             onClick={() => setShowNotifications(false)}
                             aria-label="Close notifications"
+                            style={{
+                              borderColor: appliedTheme === 'light' ? '#6c757d' : '#adb5bd',
+                              color: appliedTheme === 'light' ? '#6c757d' : '#adb5bd'
+                            }}
                           >
                             ✕
                           </button>
@@ -442,9 +542,21 @@ function Navigation(props) {
                           {notificationCategories.map(category => (
                             <button
                               key={category}
-                              className={`category-btn ${notifCategory === category ? 'active' : ''}`}
+                              className={`category-btn rounded-pill ${notifCategory === category ? 'active' : ''}`}
                               onClick={() => setNotifCategory(category)}
                               aria-pressed={notifCategory === category}
+                              style={{
+                                backgroundColor: notifCategory === category 
+                                  ? (appliedTheme === 'light' ? '#0d6efd' : '#0a58ca')
+                                  : 'transparent',
+                                color: notifCategory === category 
+                                  ? '#ffffff'
+                                  : (appliedTheme === 'light' ? '#212529' : '#ffffff'),
+                                border: `1px solid ${appliedTheme === 'light' ? '#dee2e6' : '#495057'}`,
+                                padding: '0.25rem 0.75rem',
+                                margin: '0.125rem',
+                                fontSize: '0.8rem'
+                              }}
                             >
                               {category.charAt(0).toUpperCase() + category.slice(1)}
                             </button>
@@ -453,16 +565,27 @@ function Navigation(props) {
                         
                         <div className="notification-management">
                           <button
-                            className="btn btn-sm btn-outline-primary"
+                            className="btn btn-sm btn-outline-primary rounded-pill"
                             onClick={markAllRead}
                             disabled={unreadCount === 0}
+                            style={{
+                              borderColor: appliedTheme === 'light' ? '#0d6efd' : '#86b7fe',
+                              color: appliedTheme === 'light' ? '#0d6efd' : '#86b7fe',
+                              opacity: unreadCount === 0 ? 0.5 : 1
+                            }}
                           >
                             Mark all read
                           </button>
                           <button
-                            className="btn btn-sm btn-outline-danger"
+                            className="btn btn-sm btn-outline-danger rounded-pill"
                             onClick={clearNotifications}
                             disabled={filteredNotifications.length === 0}
+                            style={{
+                              borderColor: appliedTheme === 'light' ? '#dc3545' : '#ea868f',
+                              color: appliedTheme === 'light' ? '#dc3545' : '#ea868f',
+                              opacity: filteredNotifications.length === 0 ? 0.5 : 1,
+                              marginLeft: '0.5rem'
+                            }}
                           >
                             Clear all
                           </button>
@@ -471,12 +594,22 @@ function Navigation(props) {
                       
                       <div className="notification-list-container">
                         {filteredNotifications.length === 0 ? (
-                          <div className="empty-state">
-                            <div className="empty-icon">🔔</div>
+                          <div className="empty-state" style={{
+                            padding: '2rem 1rem',
+                            textAlign: 'center',
+                            color: appliedTheme === 'light' ? '#6c757d' : '#adb5bd'
+                          }}>
+                            <div className="empty-icon" style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🔔</div>
                             <p>No notifications to display</p>
                           </div>
                         ) : (
-                          <ul className="notification-list">
+                          <ul className="notification-list" style={{
+                            listStyle: 'none',
+                            padding: 0,
+                            margin: 0,
+                            maxHeight: '200px',
+                            overflowY: 'auto'
+                          }}>
                             {filteredNotifications.map(notification => renderNotificationItem(notification))}
                           </ul>
                         )}
@@ -488,12 +621,12 @@ function Navigation(props) {
                 {/* Theme toggle button */}
                 <button
                   type="button"
-                  className="nav-button"
+                  className={`btn btn-sm btn-outline-${appliedTheme === 'light' ? 'dark' : 'light'} rounded-pill`}
                   onClick={toggleTheme}
                   aria-pressed={appliedTheme === 'dark'}
                   aria-label={`Toggle theme (preference: ${theme}; applied: ${appliedTheme}). Press T to toggle.`}
                   title={`Theme: ${theme === 'auto' ? 'Auto (follows system)' : (theme === 'light' ? 'Light' : 'Dark')} — press T to toggle`}
-                  style={{ padding: '6px 10px' }}
+                  style={{ padding: '6px 10px', marginLeft: '8px' }}
                 >
                   {theme === 'auto' ? '🌓 Auto' : (appliedTheme === 'light' ? '🌞 Light' : '🌙 Dark')}
                 </button>
@@ -501,7 +634,7 @@ function Navigation(props) {
                 {/* Login/Logout button */}
                 <button
                    type="button"
-                   className="btn btn-sm btn-outline-light ms-2"
+                   className={`btn btn-sm btn-outline-${appliedTheme === 'light' ? 'primary' : 'light'} ms-2 rounded-pill`}
                    onClick={() => { authToken ? logout() : setShowLogin(true); }}
                    aria-label={authToken ? 'Logout' : 'Login'}
                  >
@@ -523,7 +656,7 @@ function Navigation(props) {
                            value={loginEmail} 
                            onChange={e => setLoginEmail(e.target.value)} 
                            placeholder="you@example.com" 
-                           className="form-control" 
+                           className="form-control rounded-pill" 
                            required 
                          />
                          <label htmlFor="login-password" className="visually-hidden">Password</label>
@@ -534,12 +667,12 @@ function Navigation(props) {
                              value={loginPassword} 
                              onChange={e => setLoginPassword(e.target.value)} 
                              placeholder="Password" 
-                             className="form-control" 
+                             className="form-control rounded-pill" 
                              required 
                            />
                            <button 
                              type="button" 
-                             className="btn btn-outline-secondary" 
+                             className="btn btn-outline-secondary rounded-pill" 
                              onClick={() => setShowPassword(s => !s)} 
                              aria-pressed={showPassword} 
                              aria-label={showPassword ? 'Hide password' : 'Show password'}
@@ -571,12 +704,13 @@ function Navigation(props) {
                        </div>
                      </Modal.Body>
                      <Modal.Footer>
-                       <Button variant="secondary" onClick={() => setShowLogin(false)}>
+                       <Button variant="secondary" className="rounded-pill" onClick={() => setShowLogin(false)}>
                          Cancel
                        </Button>
                        <Button 
                          type="submit" 
                          variant="primary" 
+                         className="rounded-pill"
                          disabled={loginBusy || !loginValid}
                        >
                          {loginBusy ? (
@@ -602,3 +736,4 @@ function Navigation(props) {
 }
 
 export default Navigation;
+

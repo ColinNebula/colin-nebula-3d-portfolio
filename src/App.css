@@ -1,3 +1,190 @@
+/* Global theme variables and styles */
+
+:root {
+  /* Default light theme values */
+  --bs-body-bg: #ffffff;
+  --bs-body-color: #212529;
+  --card-bg: #ffffff;
+  --card-border: #dee2e6;
+  --text-color: #212529;
+  --text-muted: #6c757d;
+  --border-color: #dee2e6;
+  --input-bg: #ffffff;
+  --input-border: #ced4da;
+  --modal-bg: #ffffff;
+  --modal-backdrop: rgba(0,0,0,0.5);
+}
+
+/* Dark theme variables */
+[data-theme="dark"] {
+  --bs-body-bg: #121212;
+  --bs-body-color: #ffffff;
+  --card-bg: #1e1e1e;
+  --card-border: #343a40;
+  --text-color: #ffffff;
+  --text-muted: #adb5bd;
+  --border-color: #495057;
+  --input-bg: #2d3339;
+  --input-border: #495057;
+  --modal-bg: #1e1e1e;
+  --modal-backdrop: rgba(0,0,0,0.8);
+}
+
+/* Apply theme styles globally */
+body {
+  background-color: var(--bs-body-bg) !important;
+  color: var(--bs-body-color) !important;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Card components */
+.card {
+  background-color: var(--card-bg) !important;
+  border-color: var(--card-border) !important;
+  color: var(--text-color) !important;
+}
+
+.card-body {
+  background-color: var(--card-bg) !important;
+  color: var(--text-color) !important;
+}
+
+/* Text utilities */
+.text-muted {
+  color: var(--text-muted) !important;
+}
+
+/* Form controls */
+.form-control {
+  background-color: var(--input-bg) !important;
+  border-color: var(--input-border) !important;
+  color: var(--text-color) !important;
+}
+
+.form-control:focus {
+  background-color: var(--input-bg) !important;
+  border-color: var(--input-focus-border) !important;
+  color: var(--text-color) !important;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Modal components */
+.modal-content {
+  background-color: var(--modal-bg) !important;
+  color: var(--text-color) !important;
+  border-color: var(--card-border) !important;
+}
+
+.modal-header {
+  border-bottom-color: var(--border-color) !important;
+}
+
+.modal-footer {
+  border-top-color: var(--border-color) !important;
+}
+
+/* Dropdown menus */
+.dropdown-menu {
+  background-color: var(--card-bg) !important;
+  border-color: var(--card-border) !important;
+}
+
+.dropdown-item {
+  color: var(--text-color) !important;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+  background-color: var(--border-color) !important;
+  color: var(--text-color) !important;
+}
+
+/* Tables */
+.table {
+  color: var(--text-color) !important;
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) > td,
+.table-striped > tbody > tr:nth-of-type(odd) > th {
+  background-color: var(--border-color) !important;
+}
+
+/* Borders */
+.border {
+  border-color: var(--border-color) !important;
+}
+
+/* List groups */
+.list-group-item {
+  background-color: var(--card-bg) !important;
+  border-color: var(--card-border) !important;
+  color: var(--text-color) !important;
+}
+
+/* Alerts */
+.alert {
+  border-color: var(--card-border) !important;
+}
+
+/* Container and layout fixes */
+.app-container {
+  min-height: 100vh;
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
+}
+
+/* Smooth transitions for theme changes */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Dark theme specific adjustments */
+.dark-theme {
+  /* Custom scrollbar for dark theme */
+  scrollbar-width: thin;
+  scrollbar-color: #495057 #1e1e1e;
+}
+
+.dark-theme::-webkit-scrollbar {
+  width: 8px;
+}
+
+.dark-theme::-webkit-scrollbar-track {
+  background: #1e1e1e;
+}
+
+.dark-theme::-webkit-scrollbar-thumb {
+  background-color: #495057;
+  border-radius: 4px;
+}
+
+.dark-theme::-webkit-scrollbar-thumb:hover {
+  background-color: #6c757d;
+}
+
+/* Light theme specific adjustments */
+.light-theme {
+  scrollbar-width: thin;
+  scrollbar-color: #ced4da #ffffff;
+}
+
+.light-theme::-webkit-scrollbar {
+  width: 8px;
+}
+
+.light-theme::-webkit-scrollbar-track {
+  background: #ffffff;
+}
+
+.light-theme::-webkit-scrollbar-thumb {
+  background-color: #ced4da;
+  border-radius: 4px;
+}
+
+.light-theme::-webkit-scrollbar-thumb:hover {
+  background-color: #adb5bd;
+}
+
 /* App-wide styles */
 :root {
   /* Default light theme variables (also defined in Home.css) */
@@ -180,4 +367,144 @@ main {
   justify-content: center;
   gap: 15px;
   margin-top: 20px;
+}
+
+/* Global notification animations */
+.notification-toast {
+  animation: slideInRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* App container styles */
+.app-container {
+  min-height: 100vh;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Theme-specific styles */
+.dark-theme {
+  background-color: #121212;
+  color: #ffffff;
+}
+
+.light-theme {
+  background-color: #ffffff;
+  color: #212529;
+}
+
+/* Landing page styles */
+.landing-page {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+[data-theme="dark"] .landing-page {
+  background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+}
+
+/* Loading spinner styles */
+.loading-spinner-container {
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
+}
+
+/* Error boundary styles */
+.error-boundary-container {
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
+}
+
+/* Global form control theming */
+.form-control {
+  background-color: var(--input-bg);
+  border-color: var(--input-border);
+  color: var(--text-color);
+}
+
+.form-control:focus {
+  background-color: var(--input-bg);
+  border-color: var(--input-focus-border);
+  color: var(--text-color);
+}
+
+/* Card theming */
+.card {
+  background-color: var(--card-bg);
+  border-color: var(--card-border);
+  color: var(--text-color);
+}
+
+/* Modal theming */
+.modal-content {
+  background-color: var(--modal-bg);
+  color: var(--text-color);
+}
+
+/* Ensure proper text contrast */
+.text-muted {
+  color: var(--text-muted) !important;
+}
+
+/* Responsive notification container */
+@media (max-width: 768px) {
+  .notification-container {
+    left: 1rem;
+    right: 1rem;
+    top: 1rem;
+  }
+  
+  .notification-toast {
+    min-width: auto;
+    max-width: 100%;
+  }
+}
+
+/* Global responsive fixes */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+/* Dark theme notification adjustments */
+.dark-theme .notification-toast {
+  background-color: var(--card-bg);
+  border-color: var(--card-border);
+  color: var(--text-color);
+}
+
+.dark-theme .alert-success {
+  background-color: rgba(81, 207, 102, 0.1);
+  border-color: rgba(81, 207, 102, 0.2);
+  color: #51cf66;
+}
+
+.dark-theme .alert-danger {
+  background-color: rgba(255, 107, 107, 0.1);
+  border-color: rgba(255, 107, 107, 0.2);
+  color: #ff6b6b;
+}
+
+.dark-theme .alert-info {
+  background-color: rgba(34, 184, 207, 0.1);
+  border-color: rgba(34, 184, 207, 0.2);
+  color: #22b8cf;
+}
+
+.dark-theme .alert-warning {
+  background-color: rgba(255, 212, 59, 0.1);
+  border-color: rgba(255, 212, 59, 0.2);
+  color: #ffd43b;
 }

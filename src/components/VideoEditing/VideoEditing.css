@@ -1,0 +1,75 @@
+.video-editing-container {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.bg-gradient-dark {
+  background: linear-gradient(0deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0) 100%);
+}
+
+.portfolio-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.portfolio-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.3) !important;
+}
+
+.portfolio-card:hover .card-overlay {
+  opacity: 1 !important;
+}
+
+.portfolio-card:hover .transition-transform {
+  transform: scale(1.05);
+}
+
+.transition-transform {
+  transition: transform 0.3s ease;
+}
+
+.transition-opacity {
+  transition: opacity 0.3s ease;
+}
+
+.object-fit-cover {
+  object-fit: cover;
+  object-position: center;
+}
+
+.lh-relaxed {
+  line-height: 1.75;
+}
+
+@media (max-width: 768px) {
+  .video-editing-container {
+    padding-top: 1rem;
+  }
+  
+  .featured-showcase .position-absolute.bottom-0 {
+    position: relative !important;
+    background: rgba(0,0,0,0.8) !important;
+  }
+  
+  .portfolio-card:hover {
+    transform: none;
+  }
+}
+
+/* Toast notification styling */
+.toast {
+  border: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Bootstrap Icons fallback */
+.bi::before {
+  font-family: "Bootstrap Icons", "Font Awesome 5 Free", sans-serif;
+}

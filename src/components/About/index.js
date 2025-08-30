@@ -1,157 +1,158 @@
 import React from 'react';
-import { Container, Row, Col, Card, ProgressBar, Badge } from 'react-bootstrap';
-import ProfilePic from '../../assets/images/profile.jpg';
-import './About.css'; // Will create this file for custom styling
+import { Container, Row, Col, Card, Badge, Button } from 'react-bootstrap';
+import './About.css';
 
-function About() {
-    // Technical skills with proficiency levels
-    const technicalSkills = [
-        { name: 'JavaScript', level: 90 },
-        { name: 'React.js', level: 85 },
-        { name: 'Node.js', level: 80 },
-        { name: 'MongoDB', level: 75 },
-        { name: 'Express.js', level: 80 },
-        { name: 'HTML/CSS', level: 90 },
-        { name: 'Responsive Design', level: 85 },
+const About = () => {
+    const skills = [
+        { name: 'Blender', level: 95, category: '3D Modeling' },
+        { name: 'Maya', level: 90, category: '3D Animation' },
+        { name: 'ZBrush', level: 85, category: 'Sculpting' },
+        { name: 'After Effects', level: 88, category: 'Motion Graphics' },
+        { name: 'Photoshop', level: 92, category: 'Texturing' },
+        { name: 'Substance Painter', level: 87, category: 'Texturing' },
+        { name: 'Unity', level: 80, category: 'Game Engine' },
+        { name: 'Unreal Engine', level: 75, category: 'Game Engine' }
     ];
-    
-    // Professional skills/strengths
-    const professionalSkills = [
-        'Problem Solving', 'User Experience', 'Team Collaboration', 
-        'Communication', 'Adaptability', 'Project Management', 'Client Relations'
+
+    const experiences = [
+        {
+            title: 'Senior 3D Artist',
+            company: 'Digital Studio Pro',
+            period: '2022 - Present',
+            description: 'Leading 3D animation projects and mentoring junior artists.'
+        },
+        {
+            title: '3D Animator',
+            company: 'Creative Solutions Inc.',
+            period: '2020 - 2022',
+            description: 'Created character animations and visual effects for commercial projects.'
+        }
     ];
 
     return (
         <section className="about-section py-5">
             <Container>
                 {/* Header */}
-                <Row className="mb-5 text-center">
-                    <Col>
-                        <h1 className="about-header display-4">About Me</h1>
-                        <div className="header-underline mx-auto"></div>
+                <Row className="mb-5">
+                    <Col lg={8} className="mx-auto text-center">
+                        <h1 className="display-4 fw-bold mb-4">About Colin</h1>
+                        <p className="lead text-muted">
+                            Passionate 3D artist with over 5 years of experience creating stunning 
+                            digital content and bringing creative visions to life.
+                        </p>
                     </Col>
                 </Row>
-                
-                {/* Main Content Area */}
-                <Row className="align-items-center mb-5">
-                    {/* Profile Image Column */}
-                    <Col lg={5} className="mb-4 mb-lg-0">
-                        <div className="profile-image-container">
-                            <img
-                                src={ProfilePic}
-                                alt="Colin - 3D Artist and Developer"
-                                className="profile-image"
-                            />
-                            <div className="image-border-effect"></div>
-                        </div>
-                    </Col>
-                    
-                    {/* Bio Column */}
-                    <Col lg={7}>
-                        <div className="bio-content">
-                            <h2 className="section-title">My Journey</h2>
-                            <p className="bio-text">
-                                Hi, I'm Colin, a full-stack web developer and 3D artist based in Toronto, Canada. 
-                                My journey into tech started at the end of 2020 when I lost my corporate sales job due to the pandemic. 
-                                I took the opportunity to reinvent myself and pursue a new and challenging career in web development.
-                            </p>
-                            <p className="bio-text">
-                                I'm leveraging my telecommunications sales background to build a more intuitive user experience on the web. 
-                                I recently earned a certificate in full-stack web development from the University of Toronto, 
-                                with newly developed skills in JavaScript, CSS, React.js, and responsive web design.
-                            </p>
-                            <p className="bio-text">
-                                Known as an innovative problem solver passionate about developing apps, with a focus on the MERN technology stack. 
-                                I'm excited to apply my skills as part of a fast-paced, quality-driven team to build better experiences on the web.
-                            </p>
-                            
-                            <div className="personal-interests mt-4">
-                                <h3 className="subsection-title">When I'm Not Coding</h3>
-                                <p className="bio-text">
-                                    I enjoy cooking, spending time with my family, and keeping fit. I've been on a fitness journey since the start of the pandemic and I'm in the best shape of my life. I weight train daily and go for 10km runs several times a week.
+
+                {/* Bio Section */}
+                <Row className="mb-5">
+                    <Col lg={6} className="mb-4">
+                        <Card className="h-100 border-0 shadow-sm">
+                            <Card.Body className="p-4">
+                                <h3 className="h4 mb-3">My Journey</h3>
+                                <p className="text-muted">
+                                    Started as a hobbyist animator and evolved into a professional 3D artist 
+                                    specializing in character animation, environmental design, and visual effects. 
+                                    I'm passionate about pushing the boundaries of digital art and storytelling.
                                 </p>
-                            </div>
-                        </div>
+                                <p className="text-muted">
+                                    My work spans across various industries including gaming, film, and advertising, 
+                                    always striving to create compelling visual narratives that engage and inspire audiences.
+                                </p>
+                            </Card.Body>
+                        </Card>
+                    </Col>
+                    <Col lg={6} className="mb-4">
+                        <Card className="h-100 border-0 shadow-sm">
+                            <Card.Body className="p-4">
+                                <h3 className="h4 mb-3">Philosophy</h3>
+                                <p className="text-muted">
+                                    I believe that great 3D art combines technical excellence with creative storytelling. 
+                                    Every project is an opportunity to learn something new and push creative boundaries.
+                                </p>
+                                <p className="text-muted">
+                                    Whether it's a complex character rig or a simple motion graphics piece, 
+                                    I approach each project with attention to detail and passion for the craft.
+                                </p>
+                            </Card.Body>
+                        </Card>
                     </Col>
                 </Row>
-                
+
                 {/* Skills Section */}
-                <Row className="skills-section">
-                    <Col lg={12} className="mb-4">
-                        <h2 className="section-title text-center mb-5">My Skills & Expertise</h2>
-                    </Col>
-                    
-                    {/* Technical Skills */}
-                    <Col lg={6} className="mb-4">
-                        <Card className="skills-card h-100">
-                            <Card.Body>
-                                <h3 className="subsection-title">Technical Skills</h3>
-                                {technicalSkills.map((skill, index) => (
-                                    <div key={index} className="skill-item mb-3">
-                                        <div className="d-flex justify-content-between mb-1">
-                                            <span className="skill-name">{skill.name}</span>
-                                            <span className="skill-percentage">{skill.level}%</span>
+                <Row className="mb-5">
+                    <Col>
+                        <h2 className="h3 mb-4 text-center">Technical Skills</h2>
+                        <Row>
+                            {skills.map((skill, index) => (
+                                <Col lg={3} md={4} sm={6} key={index} className="mb-3">
+                                    <div className="skill-item p-3 text-center">
+                                        <h5 className="h6 mb-2">{skill.name}</h5>
+                                        <Badge bg="primary" className="mb-2">{skill.category}</Badge>
+                                        <div className="progress" style={{ height: '6px' }}>
+                                            <div 
+                                                className="progress-bar bg-primary" 
+                                                style={{ width: `${skill.level}%` }}
+                                                role="progressbar"
+                                                aria-valuenow={skill.level}
+                                                aria-valuemin="0"
+                                                aria-valuemax="100"
+                                                aria-label={`${skill.name} skill level: ${skill.level}%`}
+                                            />
                                         </div>
-                                        <ProgressBar 
-                                            now={skill.level} 
-                                            variant={skill.level > 80 ? "success" : "primary"} 
-                                            className="skill-bar"
-                                        />
+                                        <small className="text-muted">{skill.level}%</small>
                                     </div>
-                                ))}
-                            </Card.Body>
-                        </Card>
-                    </Col>
-                    
-                    {/* Professional Skills */}
-                    <Col lg={6} className="mb-4">
-                        <Card className="skills-card h-100">
-                            <Card.Body>
-                                <h3 className="subsection-title">Professional Strengths</h3>
-                                <div className="professional-skills">
-                                    {professionalSkills.map((skill, index) => (
-                                        <Badge 
-                                            key={index} 
-                                            pill 
-                                            bg="primary" 
-                                            className="professional-skill-badge"
-                                        >
-                                            {skill}
-                                        </Badge>
-                                    ))}
-                                </div>
-                                
-                                <div className="mt-4">
-                                    <h4 className="experience-title">My Approach</h4>
-                                    <ul className="approach-list">
-                                        <li>Focusing on intuitive and responsive user interfaces</li>
-                                        <li>Balancing creativity with technical functionality</li>
-                                        <li>Building applications with performance and accessibility in mind</li>
-                                        <li>Bringing ideas to life through both code and 3D visualization</li>
-                                        <li>Continuously learning and adapting to new technologies</li>
-                                    </ul>
-                                </div>
-                            </Card.Body>
-                        </Card>
+                                </Col>
+                            ))}
+                        </Row>
                     </Col>
                 </Row>
-                
-                {/* Call to Action */}
-                <Row className="mt-4 text-center">
+
+                {/* Experience Section */}
+                <Row className="mb-5">
                     <Col>
-                        <div className="cta-container">
-                            <h3 className="cta-title">Interested in working together?</h3>
-                            <p className="cta-text">Check out my portfolio or contact me to discuss opportunities.</p>
-                            <div className="cta-buttons">
-                                <a href="/portfolio" className="btn btn-primary me-3">View Portfolio</a>
-                                <a href="/resume" className="btn btn-outline-primary">See Resume</a>
-                            </div>
-                        </div>
+                        <h2 className="h3 mb-4 text-center">Experience</h2>
+                        <Row>
+                            {experiences.map((exp, index) => (
+                                <Col lg={6} key={index} className="mb-4">
+                                    <Card className="border-0 shadow-sm">
+                                        <Card.Body className="p-4">
+                                            <h4 className="h5 mb-2">{exp.title}</h4>
+                                            <h5 className="h6 text-primary mb-2">{exp.company}</h5>
+                                            <Badge bg="secondary" className="mb-3">{exp.period}</Badge>
+                                            <p className="text-muted mb-0">{exp.description}</p>
+                                        </Card.Body>
+                                    </Card>
+                                </Col>
+                            ))}
+                        </Row>
+                    </Col>
+                </Row>
+
+                {/* CTA Section */}
+                <Row>
+                    <Col lg={8} className="mx-auto text-center">
+                        <Card className="border-0 bg-primary text-white">
+                            <Card.Body className="p-4">
+                                <h3 className="h4 mb-3">Let's Work Together</h3>
+                                <p className="mb-4">
+                                    Interested in collaborating on your next project? 
+                                    I'm always excited to work on new and challenging creative endeavors.
+                                </p>
+                                <Button 
+                                    variant="light" 
+                                    size="lg" 
+                                    className="rounded-pill px-4"
+                                    href="mailto:colinnebula@gmail.com"
+                                >
+                                    Get In Touch
+                                </Button>
+                            </Card.Body>
+                        </Card>
                     </Col>
                 </Row>
             </Container>
         </section>
     );
-}
+};
 
 export default About;
