@@ -4,7 +4,7 @@ import Nav from 'react-bootstrap/Nav';
 import logoM from '../../assets/images/logoM.png';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
-import { Button, Modal } from 'react-bootstrap';
+import { Button, Modal, Badge } from 'react-bootstrap';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Navigation.css'; 
@@ -33,6 +33,60 @@ function Navigation(props) {
     const unreadCount = activeNotifications.filter(n => 
       (Date.now() - n.createdAt) < tenMinutes
     ).length;
+
+    // Quick actions for notifications
+    const [showQuickActions, setShowQuickActions] = useState(false);
+    
+    const quickActions = [
+      {
+        label: 'Test Notification',
+        icon: '🧪',
+        action: () => {
+          showNotification('This is a test notification', 'info', 3000, {
+            category: 'system',
+            icon: '🧪',
+            priority: 'normal'
+          });
+          setShowQuickActions(false);
+        }
+      },
+      {
+        label: 'Success Message',
+        icon: '✅',
+        action: () => {
+          showNotification('Operation completed successfully!', 'success', 3000, {
+            category: 'system',
+            icon: '✅',
+            priority: 'high'
+          });
+          setShowQuickActions(false);
+        }
+      },
+      {
+        label: 'Warning Alert',
+        icon: '⚠️',
+        action: () => {
+          showNotification('This is a warning message', 'warning', 4000, {
+            category: 'system',
+            icon: '⚠️',
+            priority: 'high'
+          });
+          setShowQuickActions(false);
+        }
+      },
+      {
+        label: 'Error Message',
+        icon: '❌',
+        action: () => {
+          showNotification('Something went wrong!', 'error', 5000, {
+            category: 'system',
+            icon: '❌',
+            priority: 'urgent'
+          });
+          setShowQuickActions(false);
+        }
+      }
+    ];
 
     // Notification categories
     const notificationCategories = ['all', 'system', 'account', 'updates'];
@@ -115,6 +169,141 @@ function Navigation(props) {
       dismissNotification(notificationId);
     };
     
+    // Enhanced category management with counts and actions
+    const getCategoryCount = (category) => {
+      if (category === 'all') return activeNotifications.length;
+      return activeNotifications.filter(n => n.category === category).length;
+    };
+
+    const getCategoryUnreadCount = (category) => {
+      const tenMinutes = 10 * 60 * 1000;
+      const categoryNotifications = category === 'all' 
+        ? activeNotifications 
+        : activeNotifications.filter(n => n.category === category);
+      
+      return categoryNotifications.filter(n => 
+        (Date.now() - n.createdAt) < tenMinutes
+      ).length;
+    };
+
+    // Category-specific actions
+    const handleCategoryAction = (category, action) => {
+      const categoryNotifications = category === 'all' 
+        ? activeNotifications 
+        : activeNotifications.filter(n => n.category === category);
+
+      switch (action) {
+        case 'markAllRead':
+          categoryNotifications.forEach(n => dismissNotification(n.id));
+          showNotification(
+            `Marked all ${category} notifications as read`, 
+            'success', 
+            2000, 
+            { category: 'system', icon: '✅' }
+          );
+          break;
+        
+        case 'clearAll':
+          categoryNotifications.forEach(n => dismissNotification(n.id));
+          showNotification(
+            `Cleared all ${category} notifications`, 
+            'success', 
+            2000, 
+            { category: 'system', icon: '🗑️' }
+          );
+          break;
+        
+        case 'export':
+          try {
+            const exportData = {
+              category: category,
+              notifications: categoryNotifications,
+              exportDate: new Date().toISOString(),
+              totalCount: categoryNotifications.length
+            };
+            
+            const dataStr = JSON.stringify(exportData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `${category}-notifications-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            
+            showNotification(
+              `Exported ${category} notifications`, 
+              'success', 
+              3000, 
+              { category: 'system', icon: '📥' }
+            );
+          } catch (error) {
+            showNotification(
+              `Failed to export ${category} notifications`, 
+              'error', 
+              3000, 
+              { category: 'system', icon: '❌' }
+            );
+          }
+          break;
+        
+        default:
+          break;
+      }
+    };
+
+    // Enhanced category selection with feedback
+    const handleCategorySelect = (category) => {
+      setNotifCategory(category);
+      const count = getCategoryCount(category);
+      const unreadCount = getCategoryUnreadCount(category);
+      
+      // Special handling for account category - navigate to Account component
+      if (category === 'account') {
+        navigateToAccount();
+        return;
+      }
+      
+      // Special handling for updates category - navigate to Updates component  
+      if (category === 'updates') {
+        navigateToUpdates();
+        return;
+      }
+      
+      showNotification(
+        `Viewing ${category} notifications (${count} total, ${unreadCount} unread)`, 
+        'info', 
+        2000, 
+        { category: 'system', icon: '📂' }
+      );
+    };
+
+    // Category-specific quick actions
+    const [showCategoryActions, setShowCategoryActions] = useState(null);
+
+    const getCategoryIcon = (category) => {
+      switch (category) {
+        case 'all': return '📋';
+        case 'system': return '⚙️';
+        case 'account': return '👤';
+        case 'updates': return '📈';
+        default: return '📌';
+      }
+    };
+
+    const getCategoryDescription = (category) => {
+      switch (category) {
+        case 'all': return 'All notifications from every category';
+        case 'system': return 'System alerts, settings, and technical notifications';
+        case 'account': return 'Account-related notifications and security alerts';
+        case 'updates': return 'Application updates, feature announcements, and changelog';
+        default: return 'Miscellaneous notifications';
+      }
+    };
+
     // Filter notifications based on category
     const filteredNotifications = activeNotifications.filter(n => 
       notifCategory === 'all' || n.category === notifCategory
@@ -145,13 +334,22 @@ function Navigation(props) {
           </div>
           <div className="notification-actions">
             <button 
-              className="btn btn-sm btn-outline-secondary rounded-pill"
+              className="btn btn-sm btn-outline-success rounded-pill"
               onClick={(e) => {
                 e.stopPropagation();
                 markAsRead(notification.id);
+                showNotification('Notification marked as read', 'success', 1500, {
+                  category: 'system',
+                  icon: '✅'
+                });
               }}
-              title="Dismiss notification"
-              aria-label="Dismiss notification"
+              title="Mark as read"
+              aria-label="Mark notification as read"
+              style={{
+                padding: '0.125rem 0.375rem',
+                fontSize: '0.7rem',
+                marginRight: '0.25rem'
+              }}
             >
               ✓
             </button>
@@ -160,9 +358,17 @@ function Navigation(props) {
               onClick={(e) => {
                 e.stopPropagation();
                 deleteNotification(notification.id);
+                showNotification('Notification deleted', 'info', 1500, {
+                  category: 'system',
+                  icon: '🗑️'
+                });
               }}
               title="Delete notification"
               aria-label="Delete notification"
+              style={{
+                padding: '0.125rem 0.375rem',
+                fontSize: '0.7rem'
+              }}
             >
               ×
             </button>
@@ -323,7 +529,7 @@ function Navigation(props) {
       setShowNotifications(false);
       navigate('/account');
       showNotification('Navigating to account settings', 'info', 2000, { 
-        category: 'navigation', 
+        category: 'account', 
         icon: '👤' 
       });
     };
@@ -332,19 +538,117 @@ function Navigation(props) {
     const navigateToUpdates = () => {
       setShowNotifications(false);
       navigate('/updates');
-      showNotification('Navigating to updates', 'info', 2000, { 
+      showNotification('Navigating to updates page', 'info', 2000, { 
         category: 'navigation', 
         icon: '📈' 
       });
     };
 
-    // Handle system notifications
+    // Handle system notifications - open system settings
     const handleSystemNotifications = () => {
       setShowNotifications(false);
-      showNotification('System notifications settings opened', 'info', 3000, { 
+      // For demo purposes, show notification settings
+      showNotification('System notification settings accessed', 'success', 3000, { 
         category: 'system', 
         icon: '⚙️' 
       });
+      
+      // You could also navigate to a system settings page if it exists
+      // navigate('/system-settings');
+      
+      // Or open browser notification permissions dialog
+      if ('Notification' in window && Notification.permission === 'default') {
+        Notification.requestPermission().then(permission => {
+          if (permission === 'granted') {
+            showNotification('Browser notifications enabled', 'success', 3000, {
+              category: 'system',
+              icon: '✅'
+            });
+          } else {
+            showNotification('Browser notifications denied', 'warning', 3000, {
+              category: 'system', 
+              icon: '⚠️'
+            });
+          }
+        });
+      }
+    };
+
+    // Enhanced mark all read with confirmation
+    const markAllReadEnhanced = () => {
+      if (unreadCount === 0) {
+        showNotification('No unread notifications to mark', 'info', 2000, {
+          category: 'system',
+          icon: 'ℹ️'
+        });
+        return;
+      }
+      
+      markAllRead();
+      showNotification(`Marked ${unreadCount} notifications as read`, 'success', 2000, {
+        category: 'system',
+        icon: '✅'
+      });
+    };
+
+    // Enhanced clear all with confirmation
+    const clearAllNotificationsEnhanced = () => {
+      if (filteredNotifications.length === 0) {
+        showNotification('No notifications to clear', 'info', 2000, {
+          category: 'system',
+          icon: 'ℹ️'
+        });
+        return;
+      }
+      
+      const count = filteredNotifications.length;
+      clearNotifications();
+      showNotification(`Cleared ${count} notifications`, 'success', 2000, {
+        category: 'system',
+        icon: '🗑️'
+      });
+    };
+
+    // Refresh notifications function
+    const refreshNotifications = () => {
+      // In a real app, this would fetch from an API
+      showNotification('Notifications refreshed', 'success', 1500, {
+        category: 'system',
+        icon: '🔄'
+      });
+    };
+
+    // Export notifications function
+    const exportNotifications = () => {
+      try {
+        const exportData = {
+          notifications: activeNotifications,
+          exportDate: new Date().toISOString(),
+          totalCount: activeNotifications.length
+        };
+        
+        const dataStr = JSON.stringify(exportData, null, 2);
+        const dataBlob = new Blob([dataStr], {type: 'application/json'});
+        const url = URL.createObjectURL(dataBlob);
+        
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `notifications-export-${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        
+        showNotification('Notifications exported successfully', 'success', 3000, {
+          category: 'system',
+          icon: '📥'
+        });
+      } catch (error) {
+        showNotification('Failed to export notifications', 'error', 3000, {
+          category: 'system',
+          icon: '❌'
+        });
+      }
     };
 
     return (
@@ -488,6 +792,77 @@ function Navigation(props) {
                       <div className="notification-header">
                         <h3>Notifications</h3>
                         <div className="notification-actions">
+                          <div className="dropdown" style={{ position: 'relative', display: 'inline-block' }}>
+                            <Button
+                              variant="link"
+                              className="p-0 me-2 btn-quick-actions rounded-pill"
+                              onClick={() => setShowQuickActions(!showQuickActions)}
+                              title="Quick actions"
+                              style={{ 
+                                color: appliedTheme === 'light' ? '#6f42c1' : '#b085f5',
+                                textDecoration: 'none',
+                                fontSize: '0.85rem'
+                              }}
+                            >
+                              ⚡ Actions
+                            </Button>
+                            {showQuickActions && (
+                              <div 
+                                className="dropdown-menu show"
+                                style={{
+                                  position: 'absolute',
+                                  top: '100%',
+                                  right: 0,
+                                  backgroundColor: appliedTheme === 'light' ? '#ffffff' : '#343a40',
+                                  border: `1px solid ${appliedTheme === 'light' ? '#dee2e6' : '#495057'}`,
+                                  borderRadius: '8px',
+                                  boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                                  zIndex: 1060,
+                                  minWidth: '160px',
+                                  padding: '0.5rem 0'
+                                }}
+                              >
+                                {quickActions.map((action, index) => (
+                                  <button
+                                    key={index}
+                                    className="dropdown-item"
+                                    onClick={action.action}
+                                    style={{
+                                      background: 'transparent',
+                                      border: 'none',
+                                      padding: '0.5rem 1rem',
+                                      width: '100%',
+                                      textAlign: 'left',
+                                      color: appliedTheme === 'light' ? '#212529' : '#ffffff',
+                                      fontSize: '0.8rem',
+                                      cursor: 'pointer'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                      e.target.style.backgroundColor = appliedTheme === 'light' ? '#f8f9fa' : '#495057';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                      e.target.style.backgroundColor = 'transparent';
+                                    }}
+                                  >
+                                    {action.icon} {action.label}
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                          <Button
+                            variant="link"
+                            className="p-0 me-2 btn-refresh-link rounded-pill"
+                            onClick={refreshNotifications}
+                            title="Refresh notifications"
+                            style={{ 
+                              color: appliedTheme === 'light' ? '#198754' : '#75b798',
+                              textDecoration: 'none',
+                              fontSize: '0.85rem'
+                            }}
+                          >
+                            🔄 Refresh
+                          </Button>
                           <Button
                             variant="link"
                             className="p-0 me-2 btn-updates-link rounded-pill"
@@ -495,7 +870,8 @@ function Navigation(props) {
                             title="View all updates"
                             style={{ 
                               color: appliedTheme === 'light' ? '#0d6efd' : '#86b7fe',
-                              textDecoration: 'none'
+                              textDecoration: 'none',
+                              fontSize: '0.85rem'
                             }}
                           >
                             📈 Updates
@@ -507,7 +883,8 @@ function Navigation(props) {
                             title="Go to account settings"
                             style={{ 
                               color: appliedTheme === 'light' ? '#0d6efd' : '#86b7fe',
-                              textDecoration: 'none'
+                              textDecoration: 'none',
+                              fontSize: '0.85rem'
                             }}
                           >
                             👤 Account
@@ -519,14 +896,18 @@ function Navigation(props) {
                             title="System notification settings"
                             style={{ 
                               color: appliedTheme === 'light' ? '#0d6efd' : '#86b7fe',
-                              textDecoration: 'none'
+                              textDecoration: 'none',
+                              fontSize: '0.85rem'
                             }}
                           >
                             ⚙️ System
                           </Button>
                           <button
                             className="btn btn-sm btn-outline-secondary rounded-pill"
-                            onClick={() => setShowNotifications(false)}
+                            onClick={() => {
+                              setShowNotifications(false);
+                              setShowQuickActions(false);
+                            }}
                             aria-label="Close notifications"
                             style={{
                               borderColor: appliedTheme === 'light' ? '#6c757d' : '#adb5bd',
@@ -540,55 +921,177 @@ function Navigation(props) {
                       
                       <div className="notification-controls">
                         <div className="notification-categories">
-                          {notificationCategories.map(category => (
-                            <button
-                              key={category}
-                              className={`category-btn rounded-pill ${notifCategory === category ? 'active' : ''}`}
-                              onClick={() => setNotifCategory(category)}
-                              aria-pressed={notifCategory === category}
-                              style={{
-                                backgroundColor: notifCategory === category 
-                                  ? (appliedTheme === 'light' ? '#0d6efd' : '#0a58ca')
-                                  : 'transparent',
-                                color: notifCategory === category 
-                                  ? '#ffffff'
-                                  : (appliedTheme === 'light' ? '#212529' : '#ffffff'),
-                                border: `1px solid ${appliedTheme === 'light' ? '#dee2e6' : '#495057'}`,
-                                padding: '0.25rem 0.75rem',
-                                margin: '0.125rem',
-                                fontSize: '0.8rem'
-                              }}
-                            >
-                              {category.charAt(0).toUpperCase() + category.slice(1)}
-                            </button>
-                          ))}
+                          {notificationCategories.map(category => {
+                            const categoryCount = getCategoryCount(category);
+                            const unreadCount = getCategoryUnreadCount(category);
+                            const isActive = notifCategory === category;
+                            
+                            return (
+                              <div key={category} className="d-flex align-items-center me-2">
+                                <button
+                                  className={`category-btn rounded-pill ${isActive ? 'active' : ''}`}
+                                  onClick={() => handleCategorySelect(category)}
+                                  aria-pressed={isActive}
+                                  title={getCategoryDescription(category)}
+                                  style={{
+                                    backgroundColor: isActive 
+                                      ? (appliedTheme === 'light' ? '#0d6efd' : '#0a58ca')
+                                      : 'transparent',
+                                    color: isActive 
+                                      ? '#ffffff'
+                                      : (appliedTheme === 'light' ? '#212529' : '#ffffff'),
+                                    border: `1px solid ${appliedTheme === 'light' ? '#dee2e6' : '#495057'}`,
+                                    padding: '0.25rem 0.75rem',
+                                    margin: '0.125rem',
+                                    fontSize: '0.8rem',
+                                    position: 'relative',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.25rem'
+                                  }}
+                                >
+                                  <span className="category-icon" style={{ fontSize: '0.9em' }}>
+                                    {getCategoryIcon(category)}
+                                  </span>
+                                  <span className="category-label">
+                                    {category.charAt(0).toUpperCase() + category.slice(1)}
+                                  </span>
+                                  {categoryCount > 0 && (
+                                    <Badge 
+                                      bg={unreadCount > 0 ? 'danger' : 'secondary'}
+                                      pill
+                                      className="ms-1"
+                                      style={{
+                                        fontSize: '0.65rem',
+                                        minWidth: '1.2em',
+                                        textAlign: 'center'
+                                      }}
+                                    >
+                                      {categoryCount}
+                                    </Badge>
+                                  )}
+                                </button>
+                                
+                                {isActive && categoryCount > 0 && (
+                                  <div className="dropdown">
+                                    <button 
+                                      className="btn btn-sm btn-outline-secondary dropdown-toggle"
+                                      type="button"
+                                      data-bs-toggle="dropdown"
+                                      aria-expanded="false"
+                                      title="Category Actions"
+                                      style={{
+                                        fontSize: '0.7rem',
+                                        padding: '0.125rem 0.25rem',
+                                        marginLeft: '0.25rem'
+                                      }}
+                                    >
+                                      ⋮
+                                    </button>
+                                    
+                                    <ul className="dropdown-menu dropdown-menu-end" style={{ fontSize: '0.8rem' }}>
+                                      <li className="dropdown-header">
+                                        {getCategoryIcon(category)} {category.charAt(0).toUpperCase() + category.slice(1)} Actions
+                                      </li>
+                                      
+                                      {unreadCount > 0 && (
+                                        <li>
+                                          <button 
+                                            className="dropdown-item"
+                                            onClick={() => handleCategoryAction(category, 'markAllRead')}
+                                          >
+                                            <i className="fas fa-check-circle text-success me-2"></i>
+                                            Mark All Read ({unreadCount})
+                                          </button>
+                                        </li>
+                                      )}
+                                      
+                                      <li>
+                                        <button 
+                                          className="dropdown-item text-warning"
+                                          onClick={() => handleCategoryAction(category, 'clearAll')}
+                                        >
+                                          <i className="fas fa-trash-alt me-2"></i>
+                                          Clear All ({categoryCount})
+                                        </button>
+                                      </li>
+                                      
+                                      <li>
+                                        <button 
+                                          className="dropdown-item"
+                                          onClick={() => handleCategoryAction(category, 'export')}
+                                        >
+                                          <i className="fas fa-download text-info me-2"></i>
+                                          Export ({categoryCount})
+                                        </button>
+                                      </li>
+                                      
+                                      <li><hr className="dropdown-divider" /></li>
+                                      
+                                      <li>
+                                        <button 
+                                          className="dropdown-item text-muted small"
+                                          onClick={() => setShowCategoryActions(!showCategoryActions)}
+                                        >
+                                          <i className="fas fa-info-circle me-2"></i>
+                                          Category Info
+                                        </button>
+                                      </li>
+                                    </ul>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
                         </div>
                         
                         <div className="notification-management">
                           <button
                             className="btn btn-sm btn-outline-primary rounded-pill"
-                            onClick={markAllRead}
+                            onClick={markAllReadEnhanced}
                             disabled={unreadCount === 0}
+                            title={unreadCount > 0 ? `Mark ${unreadCount} notifications as read` : 'No unread notifications'}
                             style={{
                               borderColor: appliedTheme === 'light' ? '#0d6efd' : '#86b7fe',
                               color: appliedTheme === 'light' ? '#0d6efd' : '#86b7fe',
-                              opacity: unreadCount === 0 ? 0.5 : 1
+                              opacity: unreadCount === 0 ? 0.5 : 1,
+                              fontSize: '0.75rem',
+                              padding: '0.25rem 0.5rem'
                             }}
                           >
-                            Mark all read
+                            ✓ Mark all read
                           </button>
                           <button
                             className="btn btn-sm btn-outline-danger rounded-pill"
-                            onClick={clearNotifications}
+                            onClick={clearAllNotificationsEnhanced}
                             disabled={filteredNotifications.length === 0}
+                            title={filteredNotifications.length > 0 ? `Clear ${filteredNotifications.length} notifications` : 'No notifications to clear'}
                             style={{
                               borderColor: appliedTheme === 'light' ? '#dc3545' : '#ea868f',
                               color: appliedTheme === 'light' ? '#dc3545' : '#ea868f',
                               opacity: filteredNotifications.length === 0 ? 0.5 : 1,
-                              marginLeft: '0.5rem'
+                              marginLeft: '0.25rem',
+                              fontSize: '0.75rem',
+                              padding: '0.25rem 0.5rem'
                             }}
                           >
-                            Clear all
+                            🗑️ Clear all
+                          </button>
+                          <button
+                            className="btn btn-sm btn-outline-info rounded-pill"
+                            onClick={exportNotifications}
+                            disabled={activeNotifications.length === 0}
+                            title={activeNotifications.length > 0 ? `Export ${activeNotifications.length} notifications` : 'No notifications to export'}
+                            style={{
+                              borderColor: appliedTheme === 'light' ? '#0dcaf0' : '#9eeaf9',
+                              color: appliedTheme === 'light' ? '#0dcaf0' : '#9eeaf9',
+                              opacity: activeNotifications.length === 0 ? 0.5 : 1,
+                              marginLeft: '0.25rem',
+                              fontSize: '0.75rem',
+                              padding: '0.25rem 0.5rem'
+                            }}
+                          >
+                            📥 Export
                           </button>
                         </div>
                       </div>

@@ -168,6 +168,7 @@
   flex-wrap: wrap;
   gap: 0.25rem;
   margin-bottom: 1rem;
+  align-items: center;
 }
 
 .category-btn {
@@ -178,10 +179,67 @@
   font-size: 0.8rem;
   cursor: pointer;
   transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  position: relative;
 }
 
 .category-btn:hover {
   opacity: 0.8;
+  transform: translateY(-1px);
+}
+
+.category-btn.active {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.category-icon {
+  font-size: 0.9em;
+  opacity: 0.8;
+}
+
+.category-label {
+  font-weight: 500;
+}
+
+.category-count {
+  font-size: 0.65rem !important;
+  font-weight: 600;
+  min-width: 1.2em;
+  height: 1.2em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+/* Enhanced dropdown styling for category actions */
+.dropdown-menu {
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  border: 1px solid rgba(0,0,0,0.1);
+  min-width: 200px;
+}
+
+.dropdown-item {
+  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+  background-color: rgba(0,0,0,0.05);
+  transform: translateX(2px);
+}
+
+.dropdown-header {
+  font-weight: 600;
+  color: var(--text-color);
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+  margin-bottom: 0.25rem;
 }
 
 .notification-management {
