@@ -10,6 +10,15 @@
   margin-top: 3rem;
 }
 
+/* Wider cards optimization */
+.portfolio-grid .col-lg-8 {
+  margin-bottom: 2rem;
+}
+
+.portfolio-grid .col-lg-8:last-child {
+  margin-bottom: 0;
+}
+
 /* Use Bootstrap Grid for portfolio cards */
 .portfolio-grid .row {
   /* Remove custom grid, use Bootstrap's responsive grid system */
@@ -73,7 +82,7 @@
 }
 
 .portfolio-card .card-img-top {
-  height: 250px;
+  height: 300px;
   object-fit: cover;
   transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   width: 100%;
@@ -344,6 +353,16 @@
 @media (max-width: 1200px) {
   .portfolio-grid .row > [class*="col-"] {
     margin-bottom: 1.5rem;
+  }
+  
+  /* Stack cards vertically on smaller screens */
+  .portfolio-grid .col-lg-8 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+  
+  .portfolio-grid .col-lg-8.offset-lg-2 {
+    margin-left: 0;
   }
 }
 

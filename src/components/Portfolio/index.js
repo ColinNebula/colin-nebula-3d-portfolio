@@ -354,7 +354,7 @@ const Portfolio = () => {
   const renderProjectCard = (project) => (
     <Card 
       key={project.id}
-      className={`portfolio-card h-100 fade-in-up ${project.featured ? 'featured-project' : ''} ${project.awards ? 'award-winning' : ''}`}
+      className={`portfolio-card h-100 fade-in-up ${project.featured ? 'featured-project' : ''} ${project.awards ? 'award-winning' : ''} ${viewMode === 'list' ? 'list-view-card' : ''}`}
       onClick={() => {
         setSelectedProject(project);
         setShowProjectModal(true);
@@ -461,20 +461,24 @@ const Portfolio = () => {
           
           <Card.Title className="h5">{project.title}</Card.Title>
           <Card.Text className="flex-grow-1">
-            {project.description.length > 100 
-              ? `${project.description.substring(0, 100)}...` 
-              : project.description
+            {viewMode === 'list' 
+              ? (project.description.length > 150 
+                  ? `${project.description.substring(0, 150)}...` 
+                  : project.description)
+              : (project.description.length > 100 
+                  ? `${project.description.substring(0, 100)}...` 
+                  : project.description)
             }
           </Card.Text>
           
           <div className="project-tech mb-2">
-            {project.technologies.slice(0, 3).map(tech => (
+            {project.technologies.slice(0, viewMode === 'list' ? 4 : 3).map(tech => (
               <Badge key={tech} bg="light" text="dark" className="me-1 mb-1">
                 {technologies[tech]}
               </Badge>
             ))}
-            {project.technologies.length > 3 && (
-              <Badge bg="light" text="dark">+{project.technologies.length - 3}</Badge>
+            {project.technologies.length > (viewMode === 'list' ? 4 : 3) && (
+              <Badge bg="light" text="dark">+{project.technologies.length - (viewMode === 'list' ? 4 : 3)}</Badge>
             )}
           </div>
           
@@ -500,6 +504,11 @@ const Portfolio = () => {
             {project.duration && (
               <small className="text-muted ms-2">
                 ⏱️ {project.duration}
+              </small>
+            )}
+            {viewMode === 'list' && project.client && (
+              <small className="text-muted ms-2">
+                👤 {project.client}
               </small>
             )}
           </div>
@@ -678,7 +687,7 @@ const Portfolio = () => {
             </Alert>
           ) : (
             <div className={`projects-display ${viewMode}`}>
-              <div className="portfolio-grid">
+              <div className={`portfolio-${viewMode}`}>
                 {filteredProjects.map((project, index) => 
                   <div key={project.id} className={`fade-in-up delay-${Math.min(index % 6, 3)}`}>
                     {renderProjectCard(project)}
