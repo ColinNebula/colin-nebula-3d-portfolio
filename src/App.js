@@ -229,12 +229,12 @@ const Account = createLazyComponent(() => import('./components/Account'), 'Accou
 const Footer = createLazyComponent(() => import('./components/Footer'), 'Footer');
 
 function App() {
-  const [showLandingPage, setShowLandingPage] = useState(true);
   const location = useLocation();
 
-  // Check if we're on the home page and should show landing
-  const isHomePage = location.pathname === '/';
-  const shouldShowLanding = isHomePage && showLandingPage;
+  // Check if we should show fullscreen landing (hide header/footer)
+  const knownRoutes = ['/home', '/about', '/portfolio', '/animation', '/artwork', '/video-editing', '/resume', '/updates', '/account', '/privacy-policy'];
+  const isKnownRoute = knownRoutes.some(route => location.pathname.startsWith(route));
+  const shouldShowLanding = !isKnownRoute; // Show landing page for root and unknown routes
 
   // Improved theme handling with localStorage persistence
   const [darkMode, setDarkMode] = useState(() => {
@@ -329,14 +329,14 @@ function App() {
 
   return (
     <NotificationProvider>
-        <div className={`app-container ${darkMode ? 'dark-theme' : 'light-theme'}`} data-theme={darkMode ? 'dark' : 'light'}>
+        <div className={`app-container ${darkMode ? 'dark-theme' : 'light-theme'} ${shouldShowLanding ? 'fullscreen-landing' : ''}`} data-theme={darkMode ? 'dark' : 'light'}>
           {!shouldShowLanding && <Navigation toggleDarkMode={toggleDarkMode} darkMode={darkMode} />}
-          <main>
+          <main className={shouldShowLanding ? 'fullscreen-main' : ''}>
             <ErrorBoundary>
               <Suspense fallback={<LoadingSpinner />}>
                 <Routes>
                   <Route path="/" element={<LandingPage />} />
-                  <Route path="/home" element={<Home setShowHomePage={setShowLandingPage} />} />
+                  <Route path="/home" element={<Home />} />
                   <Route path="/about" element={<About />} />
                   <Route path="/portfolio" element={<Portfolio />} />
                   <Route path="/animation" element={<Animation />} />

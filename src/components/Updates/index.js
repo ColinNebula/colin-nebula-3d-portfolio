@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { Container, Row, Col, Card, Alert, Badge, Form, Modal, Button, Spinner } from 'react-bootstrap';
+import { Container, Row, Col, Alert, Badge, Form, Modal, Button, Spinner } from 'react-bootstrap';
 import { useNotifications } from '../../App';
 import './Updates.css';
 
@@ -18,33 +18,6 @@ const SkeletonLoader = ({ count, viewMode }) => {
         </div>
       ))}
     </div>
-  );
-};
-
-// Back to top component
-const BackToTop = ({ show }) => {
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  if (!show) return null;
-
-  return (
-    <Button
-      className="back-to-top-btn position-fixed"
-      onClick={scrollToTop}
-      style={{
-        bottom: '2rem',
-        right: '2rem',
-        zIndex: 1000,
-        borderRadius: '50%',
-        width: '50px',
-        height: '50px'
-      }}
-      aria-label="Back to top"
-    >
-      <i className="bi bi-arrow-up"></i>
-    </Button>
   );
 };
 
@@ -450,7 +423,13 @@ const Updates = () => {
   const [subscribeSuccess, setSubscribeSuccess] = useState(false);
   const [activeUpdate, setActiveUpdate] = useState(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
-  const [viewMode, setViewMode] = useState('cards'); // 'cards' or 'list'
+  const [viewMode, setViewMode] = useState(() => {
+    try {
+      return localStorage.getItem('nebula_updates_view_mode') || 'list';
+    } catch {
+      return 'list';
+    }
+  }); // 'cards' or 'list' - default to list view with localStorage persistence
   
   // Sample update categories with associated icons/colors
   const categories = {
@@ -512,34 +491,23 @@ const Updates = () => {
     }
   }, []); // Empty dependency array since enhancedSampleUpdates is constant
 
-  // Fetch updates (simulated API call with sample data)
+  // Initialize updates on mount
   useEffect(() => {
-    const fetchUpdates = async () => {
-      setLoading(true);
-      try {
-        // Simulate API call delay
-        await new Promise(resolve => setTimeout(resolve, 800));
-        
-        // In a real app, this would be an API call
-        // const response = await fetch('/api/updates');
-        // const data = await response.json();
-        
-        setUpdates(enhancedSampleUpdates);
-        setError(null);
-      } catch (err) {
-        setError('Failed to load updates. Please try again later.');
-        console.error('Error fetching updates:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchUpdates();
     showNotification('Updates page loaded', 'info', 2000, {
       category: 'navigation',
       icon: '📄'
     });
-  }, [showNotification, enhancedSampleUpdates]);
+  }, [fetchUpdates, showNotification]);
+
+  // Persist viewMode preference to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('nebula_updates_view_mode', viewMode);
+    } catch (error) {
+      console.warn('Failed to save view mode preference:', error);
+    }
+  }, [viewMode]);
 
   // Format date for display
   const formatDate = (dateString) => {
@@ -578,14 +546,6 @@ const Updates = () => {
   
   // Accessibility improvements - focus management
   const listRef = React.useRef(null);
-  const [activeItemIndex, setActiveItemIndex] = useState(-1);
-  
-  // Track scrolling for "back to top" button
-  const [showBackToTop, setShowBackToTop] = useState(false);
-
-  // For react-intersection-observer (used for animations)
-  const inView = true; // Simplified for this fix
-  const observerRef = React.useRef(null);
 
   // Optimization: Use useMemo for filtered updates
   const enhancedFilteredUpdates = useMemo(() => {
@@ -723,41 +683,10 @@ const Updates = () => {
     }
   };
 
-  // Keyboard navigation for updates list
-  const handleKeyNavigation = useCallback((e, updates) => {
-    if (updates.length === 0) return;
-    
-    // Arrow keys for navigation
-    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-      e.preventDefault();
-      setActiveItemIndex(prevIndex => {
-        let newIndex;
-        if (e.key === 'ArrowDown') {
-          newIndex = prevIndex < updates.length - 1 ? prevIndex + 1 : 0;
-        } else {
-          newIndex = prevIndex > 0 ? prevIndex - 1 : updates.length - 1;
-        }
-        
-        // Scroll the item into view if needed
-        const items = listRef.current?.querySelectorAll('.update-card, .update-list-item');
-        if (items && items[newIndex]) {
-          items[newIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
-        
-        return newIndex;
-      });
-    }
-    
-    // Enter key to open detail
-    if (e.key === 'Enter' && activeItemIndex >= 0 && activeItemIndex < updates.length) {
-      openDetailModal(updates[activeItemIndex]);
-    }
-  }, [activeItemIndex, openDetailModal]);
-
   return (
     <Container id="updates-container" className="updates-container py-5">
       {/* Professional Hero Section */}
-      <div className="updates-hero" ref={observerRef}>
+      <div className="updates-hero">
         <div className="updates-hero-content fade-in">
           <h1 className="updates-title">Latest Updates</h1>
           <p className="updates-subtitle">
@@ -891,9 +820,9 @@ const Updates = () => {
         ) : viewMode === 'cards' ? (
           <div className="update-list">
             {currentItems.map((update, index) => (
-              <Card 
+              <div 
                 key={update.id}
-                className={`update-card h-100 ${update.featured ? 'featured-update' : ''} ${activeItemIndex === index ? 'active-card' : ''} ${update.isBookmarked ? 'bookmarked' : ''}`}
+                className={`update-card fade-in ${update.featured ? 'featured-update' : ''} ${update.isBookmarked ? 'bookmarked' : ''}`}
                 tabIndex={0}
                 onKeyPress={(e) => {
                   if (e.key === 'Enter') openDetailModal(update);
@@ -901,6 +830,7 @@ const Updates = () => {
                 onClick={() => openDetailModal(update)}
                 aria-label={`Update: ${update.title}`}
                 data-testid={`update-card-${update.id}`}
+                style={{animationDelay: `${index * 100}ms`}}
               >
                   {/* Bookmark button */}
                   <Button 
@@ -927,7 +857,7 @@ const Updates = () => {
                       <img
                         src={update.image} 
                         alt="" // Decorative image, title describes content
-                        className="update-image card-img-top" 
+                        className="update-image" 
                         loading="lazy" // Lazy load images
                       />
                       <div className="image-overlay">
@@ -942,7 +872,7 @@ const Updates = () => {
                     </div>
                   )}
                   
-                  <Card.Body className="d-flex flex-column">
+                  <div className="card-body d-flex flex-column">
                     {!update.image && (
                       <div className="mb-3">
                         <Badge 
@@ -966,13 +896,13 @@ const Updates = () => {
                       </small>
                     </div>
                     
-                    <Card.Title className="update-title">{update.title}</Card.Title>
+                    <h3 className="update-title">{update.title}</h3>
                     
-                    <Card.Text className="update-excerpt">
+                    <p className="update-excerpt">
                       {update.content.length > 120 
                         ? `${update.content.substring(0, 120)}...` 
                         : update.content}
-                    </Card.Text>
+                    </p>
                     
                     {/* Push footer to bottom of card */}
                     <div className="mt-auto">
@@ -1057,8 +987,8 @@ const Updates = () => {
                         </div>
                       </div>
                     </div>
-                  </Card.Body>
-                </Card>
+                  </div>
+                </div>
             ))}
           </div>
         ) : (
@@ -1066,7 +996,7 @@ const Updates = () => {
           <div className="update-list-view">
             {currentItems.map((update, index) => (
               <div 
-                className={`update-list-item ${update.featured ? 'featured-update' : ''} ${activeItemIndex === index ? 'active-item' : ''} ${update.isBookmarked ? 'bookmarked' : ''}`}
+                className={`update-list-item ${update.featured ? 'featured-update' : ''} ${update.isBookmarked ? 'bookmarked' : ''}`}
                 onClick={() => openDetailModal(update)}
                 onKeyPress={(e) => {
                   if (e.key === 'Enter') openDetailModal(update);
@@ -1226,9 +1156,6 @@ const Updates = () => {
         message={subscribeMessage}
         handleSubscribe={handleSubscribe}
       />
-
-      {/* Back to top button */}
-      <BackToTop show={showBackToTop} />
 
       {/* Update Detail Modal with enhanced functionality */}
       {showDetailModal && activeUpdate && (
