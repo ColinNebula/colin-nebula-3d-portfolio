@@ -73,6 +73,17 @@
   padding: 2rem 0 4rem;
 }
 
+/* Animation Grid Layout */
+.animation-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin-top: 2rem;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .project-card {
   border: none;
   border-radius: 16px;
@@ -80,6 +91,10 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   background: white;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  min-height: 450px;
+  display: flex;
+  flex-direction: column;
 }
 
 .project-card:hover {
@@ -98,10 +113,29 @@
   object-fit: cover;
   transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   width: 100%;
+  flex-shrink: 0;
 }
 
 .project-card:hover .project-image {
   transform: scale(1.05);
+}
+
+/* Card Body Layout */
+.project-card .card-body {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  padding: 1.5rem;
+}
+
+.project-card .card-title {
+  flex-grow: 0;
+  margin-bottom: 1rem;
+}
+
+.project-card .card-text {
+  flex-grow: 1;
+  margin-bottom: 1.5rem;
 }
 
 .project-overlay {
@@ -197,6 +231,8 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  margin-top: auto;
+  flex-shrink: 0;
 }
 
 /* Enhanced Modal */
@@ -377,6 +413,26 @@
 }
 
 /* Responsive Design */
+@media (max-width: 1200px) {
+  .animation-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    max-width: 800px;
+  }
+}
+
+@media (max-width: 992px) {
+  .animation-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    max-width: 700px;
+  }
+  
+  .project-card {
+    min-height: 420px;
+  }
+}
+
 @media (max-width: 768px) {
   .animation-header {
     padding: 2rem 0;
@@ -389,6 +445,16 @@
   
   .stat-number {
     font-size: 2rem;
+  }
+  
+  .animation-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    max-width: 400px;
+  }
+  
+  .project-card {
+    min-height: 400px;
   }
   
   .project-overlay {

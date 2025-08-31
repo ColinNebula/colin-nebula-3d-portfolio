@@ -1,12 +1,12 @@
-import React, {useState, useEffect, useRef} from "react";
+import React, {useState, useEffect, useRef, useCallback} from "react";
 // import OldBar from '../../assets/images/ACL_Bar_Dis4.jpeg';
 import logoD from '../../assets/images/logoD.png';
 import nbg from '../../assets/images/nbg.png';
 import byte3 from '../../assets/images/byte3.png';
-import { Card, Container, Button, Col, Row, CardGroup, NavDropdown, Modal } from 'react-bootstrap';
-import SocialIcons from '../SocialIcons';
+import { Card, Container, Button, Col, Row, NavDropdown, Modal } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNotifications } from '../../App';
+import './VideoEditing.css';
 
 function VfxVideoEditing() {
   const [lgShow, setLgShow] = useState(false);
@@ -39,15 +39,12 @@ function VfxVideoEditing() {
   };
 
   const [showTop, setShowTop] = useState(false);
-  const currentYear = new Date().getFullYear();
-    // accessibility announcement for filter changes
-    const [announce, setAnnounce] = useState('');
-  
-    useEffect(() => {
-      const onScroll = () => setShowTop(window.scrollY > 240);
-      window.addEventListener('scroll', onScroll);
-      return () => window.removeEventListener('scroll', onScroll);
-    }, []);
+
+  useEffect(() => {
+    const onScroll = () => setShowTop(window.scrollY > 240);
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   const getEmbedSrc = (id) => {
     const params = new URLSearchParams();
@@ -85,26 +82,32 @@ function VfxVideoEditing() {
         document.execCommand('copy');
         document.body.removeChild(ta);
       }
-      showNotification('Link copied to clipboard!', 'success');
+      showNotification('Link copied to clipboard!', 'success', 2000, {
+        category: 'system',
+        icon: '📋'
+      });
       console.info('analytics', 'copy_link', text);
     } catch {
-      showNotification('Failed to copy link', 'danger');
+      showNotification('Failed to copy link', 'danger', 3000, {
+        category: 'system',
+        icon: '❌'
+      });
     }
   };
 
-  const scrollToTop = (behavior = 'smooth') => {
+  const scrollToTop = useCallback((behavior = 'smooth') => {
     const finalBehavior = prefersReducedMotion ? 'auto' : behavior;
     if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: finalBehavior });
-  };
+  }, [prefersReducedMotion]);
 
-  const scrollToTopAndOpen = (openFn, label) => {
+  const scrollToTopAndOpen = useCallback((openFn, label) => {
     scrollToTop();
     const delay = prefersReducedMotion ? 0 : 150;
     setTimeout(() => {
       console.info('analytics', 'open_modal', label);
       openFn();
     }, delay);
-  };
+  }, [prefersReducedMotion, scrollToTop]);
 
   // keyboard shortcuts: 1 -> demo, 2 -> recent, a -> autoplay, m -> mute, l -> legend
   useEffect(() => {
@@ -120,7 +123,7 @@ function VfxVideoEditing() {
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [autoplay, muted, prefersReducedMotion]);
+  }, [autoplay, muted, prefersReducedMotion, scrollToTopAndOpen]);
 
 
     return (
@@ -149,103 +152,232 @@ function VfxVideoEditing() {
 
         {/* Modal for VFX Demo Reel */}
         <Modal
-          size="lg"
+          size="xl"
           show={lgShow}
           onHide={() => { 
             setLgShow(false); 
             pauseYouTube(demoIframeRef); 
             try { lastActiveRef.current && lastActiveRef.current.focus && lastActiveRef.current.focus(); } catch(e){} 
           }}
+          dialogClassName="modal-video-player"
+          contentClassName="modal-dark"
           aria-labelledby="demo-modal-title"
+          centered
         >
-          <Modal.Header closeButton>
-            <Modal.Title id="demo-modal-title">
-              VFX Demo Reel
-            </Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <p>
-              This VFX demo reel displays the work I participated in during my internship. First, the reel shows a 'Gomu' eraser TV commercial, which was a fun project preparing 2D and 3D product placement. I researched the types of products used, created concept art of the positioning of the items, 3D bubbles, 
-              and other aspects to help complete the project. 
-              Photoshop and Maya were used predominantly.
-            </p>
-            <div className="ratio ratio-16x9">
-              <iframe
-                ref={demoIframeRef}
-                loading="lazy"
-                width="100%"
-                height="480"
-                src={getEmbedSrc(REEL.demo.id)}
-                title="VFX Demo Reel"
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
-                allowFullScreen
-              />
+          <Modal.Header closeButton className="border-0 pb-0">
+            <div className="modal-title-wrapper">
+              <Modal.Title id="demo-modal-title" className="fw-bold">
+                VFX Demo Reel
+              </Modal.Title>
+              <p className="text-muted mb-0 small">Commercial & TV production showcase</p>
             </div>
-            <div className="mt-3 d-flex flex-wrap gap-2 align-items-center">
-              <a className="btn btn-sm btn-outline-primary" href={REEL.demo.url} target="_blank" rel="noopener noreferrer">Open on YouTube</a>
-              <button className="btn btn-sm btn-outline-secondary" onClick={() => copyToClipboard(REEL.demo.url)}>Copy link</button>
-              <div className="ms-auto d-flex gap-3">
-                <label className="d-flex align-items-center">
-                  <input type="checkbox" checked={autoplay} onChange={() => setAutoplay(v => !v)} className="me-1" /> 
-                  <small>Autoplay</small>
-                </label>
-                <label className="d-flex align-items-center">
-                  <input type="checkbox" checked={muted} onChange={() => setMuted(v => !v)} className="me-1" /> 
-                  <small>Mute</small>
-                </label>
+          </Modal.Header>
+          <Modal.Body className="pt-3">
+            <div className="video-player-wrapper mb-4">
+              <div className="ratio ratio-16x9 shadow-lg">
+                <iframe
+                  ref={demoIframeRef}
+                  loading="lazy"
+                  width="100%"
+                  height="480"
+                  src={getEmbedSrc(REEL.demo.id)}
+                  title="VFX Demo Reel"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+                  allowFullScreen
+                />
               </div>
             </div>
-            <p className="mt-3">
-              Second in the reel is the pilot for the 'Alphas' which is a SYFY TV show and hit series.
-              My job was to very precisely rotoscope the actor Bryant Cartwright, who plays Gary Bell, out of the green screen and into specific environments. 
-              This was accomplished utilizing Nuke primarily.
-            </p>
+            
+            <div className="project-details-container">
+              <div className="project-meta mb-4">
+                <div className="d-flex flex-wrap align-items-center mb-3 gap-2">
+                  <span className="badge bg-primary px-3 py-2">Commercial VFX</span>
+                  <span className="badge bg-secondary px-3 py-2">TV Production</span>
+                  <span className="text-muted ms-auto small">
+                    <i className="bi bi-clock me-1"></i> Duration: 2:35
+                  </span>
+                </div>
+                
+                <div className="player-controls d-flex flex-wrap gap-3 align-items-center mb-4">
+                  <a 
+                    className="btn btn-primary rounded-pill" 
+                    href={REEL.demo.url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                  >
+                    <i className="bi bi-youtube me-2"></i>Open on YouTube
+                  </a>
+                  <button 
+                    className="btn btn-outline-secondary rounded-pill" 
+                    onClick={() => copyToClipboard(REEL.demo.url)}
+                  >
+                    <i className="bi bi-link-45deg me-2"></i>Copy link
+                  </button>
+                  <div className="ms-auto d-flex gap-3">
+                    <label className="form-check form-switch">
+                      <input 
+                        type="checkbox" 
+                        className="form-check-input" 
+                        checked={autoplay} 
+                        onChange={() => setAutoplay(v => !v)} 
+                      /> 
+                      <span className="form-check-label">Autoplay</span>
+                    </label>
+                    <label className="form-check form-switch">
+                      <input 
+                        type="checkbox" 
+                        className="form-check-input" 
+                        checked={muted} 
+                        onChange={() => setMuted(v => !v)} 
+                      /> 
+                      <span className="form-check-label">Mute</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="project-description">
+                <h5 className="mb-3 border-bottom pb-2">Project Overview</h5>
+                <p className="text-muted">
+                  This VFX demo reel displays the work I participated in during my internship. First, the reel shows a 'Gomu' eraser TV commercial, which was a fun project preparing 2D and 3D product placement. I researched the types of products used, created concept art of the positioning of the items, 3D bubbles, 
+                  and other aspects to help complete the project. 
+                  Photoshop and Maya were used predominantly.
+                </p>
+                
+                <h5 className="mt-4 mb-3 border-bottom pb-2">Technical Details</h5>
+                <p className="text-muted">
+                  Second in the reel is the pilot for the 'Alphas' which is a SYFY TV show and hit series.
+                  My job was to very precisely rotoscope the actor Bryant Cartwright, who plays Gary Bell, out of the green screen and into specific environments. 
+                  This was accomplished utilizing Nuke primarily.
+                </p>
+                
+                <div className="tools-used mt-4">
+                  <h6 className="text-muted small">SOFTWARE & TOOLS</h6>
+                  <div className="d-flex flex-wrap gap-2 mt-2">
+                    <span className="badge bg-light text-dark">Maya</span>
+                    <span className="badge bg-light text-dark">Photoshop</span>
+                    <span className="badge bg-light text-dark">Nuke</span>
+                    <span className="badge bg-light text-dark">After Effects</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </Modal.Body>
         </Modal>
 
         {/* Modal for Recent VFX Reel */}
         <Modal
-          size="lg"
+          size="xl"
           show={lgShow2}
           onHide={() => { 
             setLgShow2(false); 
             pauseYouTube(vfxIframeRef); 
             try { lastActiveRef.current && lastActiveRef.current.focus && lastActiveRef.current.focus(); } catch(e){} 
           }}
+          dialogClassName="modal-video-player"
+          contentClassName="modal-dark"
           aria-labelledby="recent-modal-title"
+          centered
         >
-          <Modal.Header closeButton>
-            <Modal.Title id="recent-modal-title">
-              VFX Reel 2024
-            </Modal.Title>
+          <Modal.Header closeButton className="border-0 pb-0">
+            <div className="modal-title-wrapper">
+              <Modal.Title id="recent-modal-title" className="fw-bold">
+                VFX Reel 2024
+              </Modal.Title>
+              <p className="text-muted mb-0 small">Latest professional visual effects showcase</p>
+            </div>
           </Modal.Header>
-          <Modal.Body>
-            <p>
-              This VFX reel represents my recent work in the visual effects field
-            </p>
-            <div className="ratio ratio-16x9">
-              <iframe
-                ref={vfxIframeRef}
-                loading="lazy"
-                width="100%"
-                height="480"
-                src={getEmbedSrc(REEL.recent.id)}
-                title="VFX Reel 2024"
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
-                allowFullScreen
-              />
+          <Modal.Body className="pt-3">
+            <div className="video-player-wrapper mb-4">
+              <div className="ratio ratio-16x9 shadow-lg">
+                <iframe
+                  ref={vfxIframeRef}
+                  loading="lazy"
+                  width="100%"
+                  height="480"
+                  src={getEmbedSrc(REEL.recent.id)}
+                  title="VFX Reel 2024"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+                  allowFullScreen
+                />
+              </div>
             </div>
-            <div className="mt-3 d-flex flex-wrap gap-2">
-              <a className="btn btn-sm btn-outline-primary" href={REEL.recent.url} target="_blank" rel="noopener noreferrer">Open on YouTube</a>
-              <button className="btn btn-sm btn-outline-secondary" onClick={() => copyToClipboard(REEL.recent.url)}>Copy link</button>
+            
+            <div className="project-details-container">
+              <div className="project-meta mb-4">
+                <div className="d-flex flex-wrap align-items-center mb-3 gap-2">
+                  <span className="badge bg-primary px-3 py-2">3D Integration</span>
+                  <span className="badge bg-secondary px-3 py-2">Motion Tracking</span>
+                  <span className="text-muted ms-auto small">
+                    <i className="bi bi-clock me-1"></i> Published: 2024
+                  </span>
+                </div>
+                
+                <div className="player-controls d-flex flex-wrap gap-3 align-items-center mb-4">
+                  <a 
+                    className="btn btn-primary rounded-pill" 
+                    href={REEL.recent.url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                  >
+                    <i className="bi bi-youtube me-2"></i>Open on YouTube
+                  </a>
+                  <button 
+                    className="btn btn-outline-secondary rounded-pill" 
+                    onClick={() => copyToClipboard(REEL.recent.url)}
+                  >
+                    <i className="bi bi-link-45deg me-2"></i>Copy link
+                  </button>
+                  <div className="ms-auto d-flex gap-3">
+                    <label className="form-check form-switch">
+                      <input 
+                        type="checkbox" 
+                        className="form-check-input" 
+                        checked={autoplay} 
+                        onChange={() => setAutoplay(v => !v)} 
+                      /> 
+                      <span className="form-check-label">Autoplay</span>
+                    </label>
+                    <label className="form-check form-switch">
+                      <input 
+                        type="checkbox" 
+                        className="form-check-input" 
+                        checked={muted} 
+                        onChange={() => setMuted(v => !v)} 
+                      /> 
+                      <span className="form-check-label">Mute</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="project-description">
+                <h5 className="mb-3 border-bottom pb-2">Project Overview</h5>
+                <p className="text-muted">
+                  This VFX reel represents my recent work in the visual effects field, showcasing advanced techniques
+                  and creative problem solving across various projects.
+                </p>
+                
+                <h5 className="mt-4 mb-3 border-bottom pb-2">Technical Approach</h5>
+                <p className="text-muted">
+                  The raw footage was camera and motion tracked using Adobe After effects.
+                  3D elements were modeled and rendered from Blender, 
+                  exported into After Effects for the application of 2D effects and compositing.
+                </p>
+                
+                <div className="tools-used mt-4">
+                  <h6 className="text-muted small">SOFTWARE & TOOLS</h6>
+                  <div className="d-flex flex-wrap gap-2 mt-2">
+                    <span className="badge bg-light text-dark">Blender</span>
+                    <span className="badge bg-light text-dark">After Effects</span>
+                    <span className="badge bg-light text-dark">Camera Tracking</span>
+                    <span className="badge bg-light text-dark">Compositing</span>
+                  </div>
+                </div>
+              </div>
             </div>
-            <p className="mt-3">
-              The raw footage was camera and motion tracked using Adobe After effects.
-              3D elements were modeled and rendered from Blender, 
-              exported into After Effects for the application of 2D effects and compositing.
-            </p>
           </Modal.Body>
         </Modal>
 
@@ -258,47 +390,113 @@ function VfxVideoEditing() {
             pauseYouTube(byteIframeRef); 
             try { lastActiveRef.current && lastActiveRef.current.focus && lastActiveRef.current.focus(); } catch(e){} 
           }}
+          dialogClassName="modal-video-player"
+          contentClassName="modal-dark"
           aria-labelledby="byte-modal-title"
+          centered
         >
-          <Modal.Header closeButton>
-            <Modal.Title id="byte-modal-title">
-              Byte Size Soccer Videos
-            </Modal.Title>
+          <Modal.Header closeButton className="border-0 pb-0">
+            <div className="modal-title-wrapper">
+              <Modal.Title id="byte-modal-title" className="fw-bold">
+                Byte Size Soccer Videos
+              </Modal.Title>
+              <p className="text-muted mb-0 small">Educational sports production</p>
+            </div>
           </Modal.Header>
-          <Modal.Body>
-            <p>
-              A promotional video that takes young players through various drills and techniques to learn how to play soccer. 
-              Raw footage was provided by the client and the finished product is a result of VFX and video editing as well as, 
-              sound incorporation with effects.
-            </p>
-            <div className="ratio ratio-16x9">
-              <iframe
-                ref={byteIframeRef}
-                loading="lazy"
-                width="100%"
-                height="480"
-                src={getEmbedSrc(REEL.byte.id)}
-                title="Byte Size Soccer Videos"
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
-                allowFullScreen
-              />
+          <Modal.Body className="pt-3">
+            <div className="video-player-wrapper mb-4">
+              <div className="ratio ratio-16x9 shadow-lg">
+                <iframe
+                  ref={byteIframeRef}
+                  loading="lazy"
+                  width="100%"
+                  height="480"
+                  src={getEmbedSrc(REEL.byte.id)}
+                  title="Byte Size Soccer Videos"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+                  allowFullScreen
+                />
+              </div>
             </div>
-            <div className="mt-3 d-flex flex-wrap gap-2">
-              <a className="btn btn-sm btn-outline-primary" href={REEL.byte.url} target="_blank" rel="noopener noreferrer">Open on YouTube</a>
-              <button className="btn btn-sm btn-outline-secondary" onClick={() => copyToClipboard(REEL.byte.url)}>Copy link</button>
-            </div>
-            <div className="mt-3">
-              <h5>Project Features:</h5>
-              <ul className="list-unstyled">
-                <li className="mb-2">• Created a marketing style educational video that promotes Olympian, the late Tony Waiters, dispensing valuable soccer techniques to the next generation</li>
-                <li className="mb-2">• For attention grabbing, and to highlight key points, individual 3D objects were added in and animated</li>
-                <li className="mb-2">• Footage was sequenced for a linear development so that young players can learn the technique or drill easily in this flipped curriculum</li>
-                <li className="mb-2">• Planning prior to, customizing the result, and conferring on final shots with the client helped incorporate their vision throughout</li>
-                <li className="mb-2">• Smooth and error-free transition allows for an enjoyable viewing experience</li>
-                <li className="mb-2">• Integration of appealing text and images was done to keep young players engaged in watching the video to the end just in time for their soccer practice</li>
-                <li className="mb-2">• Primary usage of Adobe Suite: Photoshop & After Effects, and Maya</li>
-              </ul>
+            
+            <div className="project-details-container">
+              <div className="project-meta mb-4">
+                <div className="d-flex flex-wrap align-items-center mb-3 gap-2">
+                  <span className="badge bg-success px-3 py-2">Educational</span>
+                  <span className="badge bg-info px-3 py-2">Marketing</span>
+                  <span className="badge bg-secondary px-3 py-2">Sports</span>
+                  <span className="text-muted ms-auto small">
+                    <i className="bi bi-clock me-1"></i> Client Project
+                  </span>
+                </div>
+                
+                <div className="player-controls d-flex flex-wrap gap-3 align-items-center mb-4">
+                  <a 
+                    className="btn btn-primary rounded-pill" 
+                    href={REEL.byte.url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                  >
+                    <i className="bi bi-youtube me-2"></i>Open on YouTube
+                  </a>
+                  <button 
+                    className="btn btn-outline-secondary rounded-pill" 
+                    onClick={() => copyToClipboard(REEL.byte.url)}
+                  >
+                    <i className="bi bi-link-45deg me-2"></i>Copy link
+                  </button>
+                  <div className="ms-auto d-flex gap-3">
+                    <label className="form-check form-switch">
+                      <input 
+                        type="checkbox" 
+                        className="form-check-input" 
+                        checked={autoplay} 
+                        onChange={() => setAutoplay(v => !v)} 
+                      /> 
+                      <span className="form-check-label">Autoplay</span>
+                    </label>
+                    <label className="form-check form-switch">
+                      <input 
+                        type="checkbox" 
+                        className="form-check-input" 
+                        checked={muted} 
+                        onChange={() => setMuted(v => !v)} 
+                      /> 
+                      <span className="form-check-label">Mute</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="project-description">
+                <h5 className="mb-3 border-bottom pb-2">Project Overview</h5>
+                <p className="text-muted">
+                  A promotional video that takes young players through various drills and techniques to learn how to play soccer. 
+                  Raw footage was provided by the client and the finished product is a result of VFX and video editing as well as, 
+                  sound incorporation with effects.
+                </p>
+                
+                <h5 className="mt-4 mb-3 border-bottom pb-2">Project Features</h5>
+                <ul className="feature-list">
+                  <li>Created a marketing style educational video that promotes Olympian, the late Tony Waiters, dispensing valuable soccer techniques to the next generation</li>
+                  <li>For attention grabbing, and to highlight key points, individual 3D objects were added in and animated</li>
+                  <li>Footage was sequenced for a linear development so that young players can learn the technique or drill easily in this flipped curriculum</li>
+                  <li>Planning prior to, customizing the result, and conferring on final shots with the client helped incorporate their vision throughout</li>
+                  <li>Smooth and error-free transition allows for an enjoyable viewing experience</li>
+                  <li>Integration of appealing text and images was done to keep young players engaged in watching the video to the end just in time for their soccer practice</li>
+                </ul>
+                
+                <div className="tools-used mt-4">
+                  <h6 className="text-muted small">SOFTWARE & TOOLS</h6>
+                  <div className="d-flex flex-wrap gap-2 mt-2">
+                    <span className="badge bg-light text-dark">Adobe Suite</span>
+                    <span className="badge bg-light text-dark">Photoshop</span>
+                    <span className="badge bg-light text-dark">After Effects</span>
+                    <span className="badge bg-light text-dark">Maya</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </Modal.Body>
         </Modal>
@@ -346,7 +544,8 @@ function VfxVideoEditing() {
                         className="mb-2 px-4 py-2 fw-semibold"
                         onClick={(e) => { 
                           lastActiveRef.current = e.currentTarget; 
-                          scrollToTopAndOpen(() => setLgShow2(true), 'recent'); 
+                          console.info('analytics', 'open_modal', 'recent');
+                          setLgShow2(true); 
                         }}
                       >
                         <i className="bi bi-play-fill me-2"></i>Watch Reel
@@ -557,6 +756,5 @@ function VfxVideoEditing() {
     </Container>
   )
 }
-
 
 export default VfxVideoEditing;

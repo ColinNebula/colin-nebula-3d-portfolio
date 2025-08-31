@@ -1,0 +1,368 @@
+/* Back to Top Button Styles */
+.back-to-top {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 1040;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+              box-shadow 0.3s ease, 
+              opacity 0.3s ease;
+  animation: fadeIn 0.3s forwards;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  will-change: transform, opacity;
+  overflow: hidden;
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(45deg, #4CAF50, #2196F3);
+  color: #ffffff;
+}
+
+/* Position variants */
+.back-to-top-left {
+  left: 30px;
+  right: auto;
+}
+
+.back-to-top-right {
+  right: 30px;
+  left: auto;
+}
+
+/* Size variants */
+.back-to-top-small {
+  width: 40px;
+  height: 40px;
+}
+
+.back-to-top-small .back-to-top-icon {
+  transform: scale(0.85);
+}
+
+.back-to-top-medium {
+  width: 50px;
+  height: 50px;
+}
+
+.back-to-top-large {
+  width: 60px;
+  height: 60px;
+}
+
+.back-to-top-large .back-to-top-icon {
+  transform: scale(1.2);
+}
+
+/* Color variants - combined with CSS variables for theme support */
+.back-to-top-primary {
+  background: linear-gradient(45deg, #007bff, #0056b3);
+  color: #ffffff;
+}
+
+.back-to-top-secondary {
+  background: linear-gradient(45deg, #6c757d, #495057);
+  color: #ffffff;
+}
+
+.back-to-top-success {
+  background: linear-gradient(45deg, #28a745, #1e7e34);
+  color: #ffffff;
+}
+
+.back-to-top-dark {
+  background: linear-gradient(45deg, #343a40, #212529);
+  color: #ffffff;
+}
+
+.back-to-top-light {
+  background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+  color: #212529;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.back-to-top-transparent {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  color: #ffffff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* Interactive states */
+.back-to-top:hover,
+.back-to-top:focus-visible {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.back-to-top:focus-visible {
+  outline: 2px solid var(--bs-primary, #007bff);
+  outline-offset: 2px;
+}
+
+.back-to-top.animating {
+  transform: translateY(-10px);
+}
+
+.back-to-top:active {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Icon and progress indicator */
+.back-to-top-icon {
+  position: relative;
+  z-index: 2;
+  transition: transform 0.3s ease;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.back-to-top:hover .back-to-top-icon {
+  animation: bounce 1.5s infinite ease-in-out;
+}
+
+.progress-ring {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+  z-index: 1;
+  opacity: 0.4;
+}
+
+.progress-ring-circle {
+  stroke-dasharray: 283;
+  transition: stroke-dashoffset 0.3s ease;
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: transparent;
+}
+
+/* Label styling */
+.back-to-top.with-label {
+  border-radius: 25px;
+  padding: 0 20px;
+  width: auto;
+  min-width: 120px;
+}
+
+.back-to-top-label {
+  margin-left: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+/* Show/Hide states */
+.back-to-top.visible {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.back-to-top.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Theme support */
+[data-theme="dark"] .back-to-top-light {
+  background: linear-gradient(45deg, #495057, #343a40);
+  color: #f8f9fa;
+}
+
+[data-theme="dark"] .back-to-top-transparent {
+  background: rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  .back-to-top {
+    transition: none !important;
+  }
+  
+  .back-to-top,
+  .back-to-top:hover,
+  .back-to-top:focus,
+  .back-to-top.animating,
+  .progress-ring-circle,
+  .back-to-top-icon {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+  
+  .back-to-top:hover {
+    transform: none !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .back-to-top {
+    border: 2px solid currentColor;
+    background: ButtonFace;
+    color: ButtonText;
+  }
+  
+  .back-to-top:hover,
+  .back-to-top:focus-visible {
+    background: Highlight;
+    color: HighlightText;
+  }
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .back-to-top {
+    bottom: 20px;
+    right: 20px;
+    width: 45px;
+    height: 45px;
+  }
+  
+  .back-to-top-left {
+    left: 20px;
+    right: auto;
+  }
+  
+  .back-to-top-medium,
+  .back-to-top-large {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .back-to-top-icon {
+    font-size: 1.1rem;
+  }
+  
+  .back-to-top.with-label {
+    padding: 0 15px;
+    min-width: 100px;
+  }
+  
+  .back-to-top-label {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 576px) {
+  .back-to-top {
+    bottom: 15px;
+    right: 15px;
+    width: 40px;
+    height: 40px;
+  }
+  
+  .back-to-top-left {
+    left: 15px;
+    right: auto;
+  }
+  
+  .back-to-top-medium,
+  .back-to-top-large {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .back-to-top-icon {
+    font-size: 1rem;
+  }
+  
+  .back-to-top.with-label {
+    padding: 0 12px;
+    min-width: 80px;
+  }
+  
+  .back-to-top-label {
+    font-size: 11px;
+  }
+}
+
+/* Print styles */
+@media print {
+  .back-to-top {
+    display: none !important;
+  }
+}
+
+/* Focus trap for keyboard navigation */
+.back-to-top:focus {
+  outline: 3px solid rgba(0, 123, 255, 0.5);
+  outline-offset: 2px;
+}
+
+/* Custom scrollbar progress indicator */
+.back-to-top.with-progress::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    currentColor var(--scroll-progress, 0deg),
+    transparent var(--scroll-progress, 0deg)
+  );
+  opacity: 0.3;
+  pointer-events: none;
+}

@@ -47,6 +47,121 @@ const BackToTop = ({ show }) => {
   );
 };
 
+// Enhanced sample updates with more detailed content - moved outside component
+const enhancedSampleUpdates = [
+  {
+    id: 1,
+    title: "New 3D Character Model Released",
+    content: "I'm excited to announce the release of my latest 3D character model, 'Stellar Guardian'. This high-poly character features detailed armor, realistic facial features, and a complete set of animations.",
+    date: "2023-11-15T10:30:00Z",
+    category: "release",
+    image: "https://via.placeholder.com/800x500?text=Stellar+Guardian+Model",
+    gallery: [
+      "https://via.placeholder.com/800x600?text=Character+Front",
+      "https://via.placeholder.com/800x600?text=Character+Side",
+      "https://via.placeholder.com/800x600?text=Character+Back"
+    ],
+    tags: ["character", "3D model", "animation"],
+    detailedContent: `
+      <p>The <strong>Stellar Guardian</strong> character model represents over 200 hours of detailed work, from concept sketching to final rigging.</p>
+      <h4>Key Features:</h4>
+      <ul>
+        <li>High-resolution textures (4K diffuse, normal, roughness maps)</li>
+        <li>Complete facial rig with blend shapes</li>
+        <li>Modular armor system for customization</li>
+        <li>Motion capture compatible skeleton</li>
+      </ul>
+      <p>This model is available for commercial use and includes source files for Blender, Maya, and 3ds Max.</p>
+    `
+  },
+  {
+    id: 2,
+    title: "Animation Reel Update",
+    content: "Updated my 2023 animation reel with latest character animations and motion graphics work. Features everything from realistic human movement to stylized creature animations.",
+    date: "2023-11-10T14:20:00Z",
+    category: "portfolio",
+    image: "https://via.placeholder.com/800x500?text=Animation+Reel+2023",
+    tags: ["animation", "motion graphics", "reel"],
+    detailedContent: `
+      <p>This year's animation reel showcases a diverse range of projects completed over the past 12 months.</p>
+      <h4>Featured Work:</h4>
+      <ul>
+        <li>Character walk cycles and combat animations</li>
+        <li>Facial animation and lip-sync work</li>
+        <li>Motion graphics for client presentations</li>
+        <li>Experimental procedural animations</li>
+      </ul>
+      <p>Each piece demonstrates different techniques and styles, from photorealistic to highly stylized approaches.</p>
+    `
+  },
+  {
+    id: 3,
+    title: "Tutorial: Advanced Rigging Techniques",
+    content: "New comprehensive tutorial series on advanced character rigging techniques in Blender. Covers everything from basic armatures to advanced constraint systems.",
+    date: "2023-11-05T09:15:00Z",
+    category: "tutorial",
+    image: "https://via.placeholder.com/800x500?text=Rigging+Tutorial+Series",
+    tags: ["tutorial", "rigging", "blender"],
+    detailedContent: `
+      <p>This 10-part tutorial series dives deep into character rigging workflows that I've developed over years of professional work.</p>
+      <h4>Covered Topics:</h4>
+      <ul>
+        <li>Armature setup and bone hierarchy</li>
+        <li>IK/FK switching systems</li>
+        <li>Custom bone shapes and controls</li>
+        <li>Facial rigging with drivers</li>
+        <li>Cloth and hair simulation setup</li>
+      </ul>
+      <p>Perfect for intermediate users looking to take their rigging skills to the next level.</p>
+    `
+  },
+  {
+    id: 4,
+    title: "Client Showcase: Indie Game Assets",
+    content: "Proud to share some of the 3D assets I created for the upcoming indie game 'Neon Nightmares'. This cyberpunk-themed project pushed my skills in both modeling and texturing.",
+    date: "2023-10-28T16:45:00Z",
+    category: "showcase",
+    image: "https://via.placeholder.com/800x500?text=Neon+Nightmares+Assets",
+    gallery: [
+      "https://via.placeholder.com/800x600?text=Cyberpunk+Environment",
+      "https://via.placeholder.com/800x600?text=Neon+Props",
+      "https://via.placeholder.com/800x600?text=Character+Concepts"
+    ],
+    tags: ["game assets", "cyberpunk", "client work"],
+    detailedContent: `
+      <p>Working on <em>Neon Nightmares</em> was an incredible opportunity to explore cyberpunk aesthetics and advanced texturing techniques.</p>
+      <h4>Assets Created:</h4>
+      <ul>
+        <li>15 unique environment props</li>
+        <li>3 main character models</li>
+        <li>Holographic interface elements</li>
+        <li>Atmospheric particle effects</li>
+      </ul>
+      <p>The project required careful optimization for real-time rendering while maintaining visual quality. All assets were delivered on time and within budget constraints.</p>
+    `
+  },
+  {
+    id: 5,
+    title: "Behind the Scenes: VFX Breakdown",
+    content: "Take a look behind the scenes of my latest VFX project. This breakdown shows the complete process from initial concept to final composite.",
+    date: "2023-10-20T11:30:00Z",
+    category: "behind-scenes",
+    image: "https://via.placeholder.com/800x500?text=VFX+Breakdown",
+    tags: ["VFX", "compositing", "breakdown"],
+    detailedContent: `
+      <p>This VFX sequence involved multiple complex elements that required careful planning and execution.</p>
+      <h4>Technical Breakdown:</h4>
+      <ul>
+        <li>3D tracking and camera solving</li>
+        <li>Particle simulation for magical effects</li>
+        <li>Advanced compositing with multiple passes</li>
+        <li>Color grading and final polish</li>
+      </ul>
+      <p>The entire project took approximately 6 weeks from concept to completion, with extensive client feedback integration throughout the process.</p>
+    `
+  }
+];
+
 // Update detail modal component
 const UpdateDetailModal = ({ show, onHide, update, categories, formatDate, shareUpdate, isBookmarked, toggleBookmark }) => {
   return (
@@ -375,136 +490,24 @@ const Updates = () => {
     console.info('Analytics: shared update', platform, update.id);
   };
 
-  // Enhanced sample updates with more detailed content
-  const enhancedSampleUpdates = [
-    {
-      id: 1,
-      title: "New 3D Character Model Released",
-      content: "I'm excited to announce the release of my latest 3D character model, 'Stellar Guardian'. This high-poly character features detailed armor, realistic facial features, and a complete set of animations.",
-      date: "2023-11-15T10:30:00Z",
-      category: "release",
-      image: "https://via.placeholder.com/800x500?text=Stellar+Guardian+Model",
-      gallery: [
-        "https://via.placeholder.com/800x600?text=Character+Front",
-        "https://via.placeholder.com/800x600?text=Character+Side",
-        "https://via.placeholder.com/800x600?text=Character+Back"
-      ],
-      tags: ["character", "3D model", "animation"],
-      detailedContent: `
-        <p>The <strong>Stellar Guardian</strong> character model represents over 200 hours of detailed work, from concept sketching to final rigging.</p>
-        <h4>Key Features:</h4>
-        <ul>
-          <li>High-poly model with over 1.2 million triangles (with LODs available)</li>
-          <li>PBR textures at 4K resolution</li>
-          <li>Full rigging with 120+ bones for detailed animation</li>
-          <li>58 unique animation sequences</li>
-          <li>Compatible with Unreal Engine 5 and Unity</li>
-        </ul>
-        <p>This character was designed for next-generation gaming and cinematic applications, with special attention to detail in the facial expressions and armor mechanics.</p>
-      `
-    },
-    {
-      id: 2,
-      title: "Upcoming Workshop on Environmental Design",
-      content: "Join me for a virtual workshop on creating immersive 3D environments for games and VR applications. We'll cover lighting, texture mapping, and performance optimization techniques.",
-      date: "2023-11-22T14:00:00Z",
-      category: "event",
-      registrationLink: "https://workshop.example.com",
-      tags: ["workshop", "environment", "VR"]
-    },
-    {
-      id: 3,
-      title: "Portfolio Website Updates",
-      content: "I've made significant improvements to my portfolio website, including a new dark mode, better mobile responsiveness, and faster loading times for 3D models.",
-      date: "2023-11-10T09:15:00Z",
-      category: "project",
-      tags: ["website", "portfolio", "UX"]
-    },
-    {
-      id: 4,
-      title: "Featured in Digital Art Magazine",
-      content: "My recent work 'Nebula Voyager' has been featured in this month's issue of Digital Art Magazine. Check out the interview where I discuss my creative process and techniques.",
-      date: "2023-11-05T16:45:00Z",
-      category: "news",
-      link: "https://magazine.example.com/interview",
-      tags: ["interview", "feature", "recognition"]
-    },
-    {
-      id: 5,
-      title: "New Client Project: Sci-Fi Game Assets",
-      content: "I've begun work on an exciting project creating futuristic game assets for an upcoming indie sci-fi game. Stay tuned for behind-the-scenes content and previews.",
-      date: "2023-11-01T11:20:00Z",
-      category: "project",
-      tags: ["client work", "game assets", "sci-fi"]
-    },
-    {
-      id: 6,
-      title: "3D Modeling Course Now Available",
-      content: "After months of preparation, my comprehensive 3D modeling course is now available online. Learn everything from basic principles to advanced techniques at your own pace.",
-      date: "2023-10-25T13:00:00Z",
-      category: "announcement",
-      link: "https://course.example.com",
-      tags: ["course", "education", "tutorials"]
-    },
-    {
-      id: 7,
-      title: "VFX Breakdown: Space Battle Sequence",
-      content: "I've published a detailed breakdown of how I created the space battle visual effects for Project Nebula, including particle systems, compositing techniques, and rendering optimizations.",
-      date: "2023-10-18T15:30:00Z",
-      category: "project",
-      video: "https://youtube.com/example",
-      tags: ["VFX", "breakdown", "tutorial"]
-    },
-    {
-      id: 8,
-      title: "Interactive 3D Web Portfolio Launched",
-      content: "I've launched a new interactive section of my portfolio that allows visitors to explore and interact with my 3D models directly in the browser using Three.js.",
-      date: "2023-12-01T09:00:00Z",
-      category: "release",
-      featured: true,
-      image: "https://via.placeholder.com/800x400?text=Interactive+3D+Portfolio",
-      tags: ["web3d", "threejs", "interactive"],
-      link: "#interactive-portfolio",
-      detailedContent: `
-        <p>After months of development, I'm thrilled to announce the launch of my interactive 3D portfolio section.</p>
-        <p>Using the power of Three.js and WebGL, visitors can now:</p>
-        <ul>
-          <li>Rotate, zoom, and inspect my 3D models in real-time</li>
-          <li>Toggle different lighting conditions</li>
-          <li>View wireframe and texture overlays</li>
-          <li>Play animations</li>
-        </ul>
-        <p>This represents a significant step forward in how I showcase my work, allowing for a more immersive and engaging experience.</p>
-      `
-    },
-    {
-      id: 9,
-      title: "Behind the Scenes: Creating the Nebula Starship",
-      content: "A detailed look at my process for creating the Nebula Starship model, from initial concept sketches to final renders.",
-      date: "2023-12-05T14:30:00Z",
-      category: "project",
-      video: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-      image: "https://via.placeholder.com/800x450?text=Nebula+Starship",
-      tags: ["behind the scenes", "sci-fi", "modeling"],
-      detailedContent: `
-        <p>The Nebula Starship project was one of my most complex undertakings, requiring careful attention to both artistic design and technical constraints.</p>
-        <h4>Design Philosophy</h4>
-        <p>I wanted to create a spacecraft that felt both realistic and visually distinctive. Taking inspiration from contemporary aerospace design and classic sci-fi, the ship features:</p>
-        <ul>
-          <li>Modular construction with visible panel lines and maintenance access points</li>
-          <li>Realistic thruster placement following actual physics principles</li>
-          <li>Interior spaces designed with human ergonomics in mind</li>
-        </ul>
-        <h4>Technical Execution</h4>
-        <p>The model consists of over 300 unique components, each modeled separately and then assembled. The final asset includes:</p>
-        <ul>
-          <li>High and low poly versions (1.5M and 150K triangles respectively)</li>
-          <li>Full interior for close-up shots</li>
-          <li>Procedural damage system for visual effects</li>
-        </ul>
-      `
+  // Fetch updates (simulated API call with sample data)
+  const fetchUpdates = useCallback(async () => {
+    try {
+      setLoading(true);
+      
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      // Use the enhancedSampleUpdates from outside the component
+      setUpdates(enhancedSampleUpdates);
+      setError(null);
+    } catch (err) {
+      setError('Failed to load updates. Please try again.');
+      console.error('Error fetching updates:', err);
+    } finally {
+      setLoading(false);
     }
-  ];
+  }, []); // Empty dependency array since enhancedSampleUpdates is constant
 
   // Fetch updates (simulated API call with sample data)
   useEffect(() => {
@@ -529,8 +532,11 @@ const Updates = () => {
     };
 
     fetchUpdates();
-    showNotification('Updates page loaded', 'info', 2000);
-  }, [showNotification]);
+    showNotification('Updates page loaded', 'info', 2000, {
+      category: 'navigation',
+      icon: '📄'
+    });
+  }, [showNotification, enhancedSampleUpdates]);
 
   // Format date for display
   const formatDate = (dateString) => {

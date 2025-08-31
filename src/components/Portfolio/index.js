@@ -186,12 +186,18 @@ const Portfolio = () => {
         await new Promise(resolve => setTimeout(resolve, 1000));
         setProjects(portfolioData);
         if (showNotification) {
-          showNotification('Portfolio loaded successfully', 'success', 2000);
+          showNotification('Portfolio loaded successfully', 'success', 2000, {
+            category: 'system',
+            icon: '📂'
+          });
         }
       } catch (error) {
         console.error('Portfolio loading error:', error);
         if (showNotification) {
-          showNotification('Failed to load portfolio', 'danger');
+          showNotification('Failed to load portfolio', 'danger', 4000, {
+            category: 'system',
+            icon: '❌'
+          });
         }
       } finally {
         setLoading(false);

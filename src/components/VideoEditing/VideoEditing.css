@@ -1,75 +1,58 @@
-.video-editing-container {
-  padding-top: 2rem;
-  padding-bottom: 2rem;
+/* Video Editing Component Styles */
+.video-editing-container { 
+  padding: 2rem 0; 
 }
 
-.text-gradient {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+/* Card Header Fixes */
+.card-title {
+  display: block !important;
+  visibility: visible !important;
+  color: var(--text-color, #fff) !important;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
 }
 
-.bg-gradient-dark {
-  background: linear-gradient(0deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0) 100%);
+.card-header {
+  display: flex !important;
+  visibility: visible !important;
+  background-color: var(--card-bg, rgba(0, 0, 0, 0.8)) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1rem;
 }
 
-.portfolio-card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+.card-header .card-title {
+  margin: 0;
+  color: var(--text-color, #fff);
 }
 
-.portfolio-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 35px rgba(0,0,0,0.3) !important;
+.portfolio-card .card-title { 
+  color: #ffffff !important; 
+  font-weight: bold !important; 
 }
 
-.portfolio-card:hover .card-overlay {
-  opacity: 1 !important;
+/* Button Styling */
+.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+  transition: all 0.3s ease;
 }
 
-.portfolio-card:hover .transition-transform {
-  transform: scale(1.05);
+.btn-primary:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+  transform: translateY(-2px);
 }
 
-.transition-transform {
-  transition: transform 0.3s ease;
+/* Modal Enhancements */
+.modal-content {
+  background-color: var(--card-bg, rgba(0, 0, 0, 0.9));
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.transition-opacity {
-  transition: opacity 0.3s ease;
+.modal-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.object-fit-cover {
-  object-fit: cover;
-  object-position: center;
-}
-
-.lh-relaxed {
-  line-height: 1.75;
-}
-
-@media (max-width: 768px) {
-  .video-editing-container {
-    padding-top: 1rem;
-  }
-  
-  .featured-showcase .position-absolute.bottom-0 {
-    position: relative !important;
-    background: rgba(0,0,0,0.8) !important;
-  }
-  
-  .portfolio-card:hover {
-    transform: none;
-  }
-}
-
-/* Toast notification styling */
-.toast {
-  border: none;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
-
-/* Bootstrap Icons fallback */
-.bi::before {
-  font-family: "Bootstrap Icons", "Font Awesome 5 Free", sans-serif;
+.modal-title {
+  color: var(--text-color, #fff);
 }

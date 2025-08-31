@@ -16,31 +16,23 @@ function Navigation(props) {
     const [expanded, setExpanded] = useState(false);
     const [themeAnnounce, setThemeAnnounce] = useState('');
     
-    // Simplified notifications state
-    const [notifications, setNotifications] = useState(() => {
-      try { 
-        const stored = JSON.parse(localStorage.getItem('nebula_notifications') || '[]');
-        return stored.map(n => ({
-          ...n,
-          priority: n.priority || 'normal',
-          read: !!n.read,
-          expires: n.expires || null
-        }));
-      } catch { 
-        return []; 
-      }
-    });
+    // Simplified notifications state - use global notifications from context
     const [showNotifications, setShowNotifications] = useState(false);
     const [notifAnnounce, setNotifAnnounce] = useState('');
-    const { showNotification } = useNotifications();
+    const { showNotification, notifications: globalNotifications, dismissNotification, dismissAllNotifications } = useNotifications();
     
-    // Filter out expired notifications
-    const activeNotifications = notifications.filter(n => 
-      !n.expires || new Date(n.expires) > new Date()
-    );
+    // Filter and deduplicate notifications
+    const activeNotifications = globalNotifications.filter(n => {
+      // Remove expired notifications (older than 1 hour for nav display)
+      const oneHour = 60 * 60 * 1000;
+      return (Date.now() - n.createdAt) < oneHour;
+    });
     
-    // Count unread notifications
-    const unreadCount = activeNotifications.filter(n => !n.read).length;
+    // Count unread notifications (notifications from last 10 minutes)
+    const tenMinutes = 10 * 60 * 1000;
+    const unreadCount = activeNotifications.filter(n => 
+      (Date.now() - n.createdAt) < tenMinutes
+    ).length;
 
     // Notification categories
     const notificationCategories = ['all', 'system', 'account', 'updates'];
@@ -89,7 +81,7 @@ function Navigation(props) {
       setLoginValid(errs.length === 0);
     }, [loginEmail, loginPassword]);
     
-    // Persist auth state and notifications to localStorage
+    // Persist auth state to localStorage (removed notifications persistence)
     useEffect(() => {
       try {
         if (authToken) localStorage.setItem('nebula_auth_token', authToken);
@@ -98,41 +90,29 @@ function Navigation(props) {
         else localStorage.removeItem('nebula_auth_user');
       } catch (e) {}
     }, [authToken, authUser]);
- 
-    useEffect(() => {
-      try { localStorage.setItem('nebula_notifications', JSON.stringify(notifications)); } catch (e) {}
-    }, [notifications]);
     
-    // Mark specific notification as read
+    // Mark specific notification as read (using dismissNotification from global context)
     const markAsRead = (notificationId) => {
-      setNotifications(currentNotifications => 
-        currentNotifications.map(n => 
-          n.id === notificationId ? {...n, read: true} : n
-        )
-      );
+      dismissNotification(notificationId);
     };
     
-    // Mark all notifications as read
+    // Mark all notifications as read (clear all from global context)
     const markAllRead = () => {
-      setNotifications(currentNotifications => 
-        currentNotifications.map(n => ({...n, read: true}))
-      );
-      setNotifAnnounce('All notifications marked as read');
-      setTimeout(() => setNotifAnnounce(''), 1200);
-    };
-    
-    // Clear all notifications
-    const clearNotifications = () => {
-      setNotifications([]);
+      dismissAllNotifications();
       setNotifAnnounce('All notifications cleared');
       setTimeout(() => setNotifAnnounce(''), 1200);
     };
     
-    // Delete specific notification
+    // Clear all notifications (same as mark all read in unified system)
+    const clearNotifications = () => {
+      dismissAllNotifications();
+      setNotifAnnounce('All notifications cleared');
+      setTimeout(() => setNotifAnnounce(''), 1200);
+    };
+    
+    // Delete specific notification (same as mark as read in unified system)
     const deleteNotification = (notificationId) => {
-      setNotifications(currentNotifications => 
-        currentNotifications.filter(n => n.id !== notificationId)
-      );
+      dismissNotification(notificationId);
     };
     
     // Filter notifications based on category
@@ -142,16 +122,25 @@ function Navigation(props) {
     
     // Render individual notification item
     const renderNotificationItem = (notification) => {
+      const isRecent = (Date.now() - notification.createdAt) < (10 * 60 * 1000); // 10 minutes
+      
       return (
         <li 
           key={notification.id} 
-          className={`notification-item ${notification.read ? 'read' : 'unread'} priority-${notification.priority}`}
+          className={`notification-item ${isRecent ? 'unread' : 'read'} priority-${notification.priority || 'normal'}`}
         >
           <div className="notification-content">
             {notification.icon && <div className="notification-icon">{notification.icon}</div>}
-            <div className="notification-text">{notification.text}</div>
+            <div className="notification-text">
+              {notification.message}
+              {notification.count > 1 && (
+                <span className="badge bg-primary ms-2 rounded-pill">
+                  {notification.count}
+                </span>
+              )}
+            </div>
             <div className="notification-time">
-              {new Date(notification.ts).toLocaleString()}
+              {new Date(notification.createdAt).toLocaleString()}
             </div>
           </div>
           <div className="notification-actions">
@@ -161,9 +150,8 @@ function Navigation(props) {
                 e.stopPropagation();
                 markAsRead(notification.id);
               }}
-              title="Mark as read"
-              aria-label="Mark as read"
-              disabled={notification.read}
+              title="Dismiss notification"
+              aria-label="Dismiss notification"
             >
               ✓
             </button>
@@ -191,8 +179,10 @@ function Navigation(props) {
         localStorage.removeItem('nebula_auth_token');
         localStorage.removeItem('nebula_auth_user');
         setShowLogin(false);
-        setNotifAnnounce('Logged out');
-        setTimeout(() => setNotifAnnounce(''), 1000);
+        showNotification('Successfully logged out', 'success', 3000, {
+          category: 'account',
+          icon: '👋'
+        });
       } catch (e) {}
     };
 
@@ -229,8 +219,10 @@ function Navigation(props) {
           setLoginEmail('');
           setLoginPassword('');
           setLoginMsg('');
-          setNotifAnnounce('Logged in');
-          setTimeout(() => setNotifAnnounce(''), 1000);
+          showNotification('Successfully logged in', 'success', 3000, {
+            category: 'account',
+            icon: '✅'
+          });
           setLoginBusy(false);
         }, 800);
         
@@ -330,20 +322,29 @@ function Navigation(props) {
     const navigateToAccount = () => {
       setShowNotifications(false);
       navigate('/account');
-      showNotification('Navigating to account settings', 'info', 2000);
+      showNotification('Navigating to account settings', 'info', 2000, { 
+        category: 'navigation', 
+        icon: '👤' 
+      });
     };
 
     // Navigate to updates page
     const navigateToUpdates = () => {
       setShowNotifications(false);
       navigate('/updates');
-      showNotification('Navigating to updates', 'info', 2000);
+      showNotification('Navigating to updates', 'info', 2000, { 
+        category: 'navigation', 
+        icon: '📈' 
+      });
     };
 
     // Handle system notifications
     const handleSystemNotifications = () => {
       setShowNotifications(false);
-      showNotification('System notifications settings opened', 'info', 3000);
+      showNotification('System notifications settings opened', 'info', 3000, { 
+        category: 'system', 
+        icon: '⚙️' 
+      });
     };
 
     return (

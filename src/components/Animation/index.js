@@ -331,23 +331,22 @@ function Animation() {
 
       {/* Enhanced Project Grid */}
       <Container className="projects-section">
-        <Row className="g-4">
+        <div className="animation-grid">
           {animationProjects.map((project, index) => (
-            <Col lg={4} md={6} key={project.id} className="mb-4">
-              <Card className="project-card h-100 shadow-sm">
-                <div className="project-image-container">
-                  <Card.Img 
-                    variant="top" 
-                    src={project.thumbnail} 
-                    alt={`${project.title} thumbnail`}
-                    className="project-image"
-                    loading="lazy"
-                  />
-                  <div className="project-overlay">
-                    <Button 
-                      variant="light" 
-                      size="lg"
-                      className="play-button rounded-pill"
+            <Card key={project.id} className="project-card h-100 shadow-sm">
+              <div className="project-image-container">
+                <Card.Img 
+                  variant="top" 
+                  src={project.thumbnail} 
+                  alt={`${project.title} thumbnail`}
+                  className="project-image"
+                  loading="lazy"
+                />
+                <div className="project-overlay">
+                  <Button 
+                    variant="light" 
+                    size="lg"
+                    className="play-button rounded-pill"
                       onClick={() => openProjectModal(project)}
                     >
                       ▶️ Watch Now
@@ -421,9 +420,8 @@ function Animation() {
                   </div>
                 </Card.Body>
               </Card>
-            </Col>
           ))}
-        </Row>
+        </div>
       </Container>
 
       {/* Unified Enhanced Modal */}

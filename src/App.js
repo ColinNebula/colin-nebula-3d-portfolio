@@ -24,15 +24,38 @@ export const NotificationProvider = ({ children }) => {
     };
   }, []);
 
-  const showNotification = (message, variant = 'success', duration = 4000) => {
+  const showNotification = (message, variant = 'success', duration = 4000, options = {}) => {
+    // Check for duplicate messages in recent notifications (last 5 seconds)
+    const now = Date.now();
+    const isDuplicate = notifications.some(n => 
+      n.message === message && 
+      n.variant === variant && 
+      (now - n.createdAt) < 5000
+    );
+    
+    if (isDuplicate && !options.allowDuplicates) {
+      return null; // Don't show duplicate notification
+    }
+    
     const id = Date.now() + Math.random().toString(36).substring(2, 7);
     
+    const notification = {
+      id,
+      message,
+      variant,
+      createdAt: now,
+      category: options.category || 'system',
+      priority: options.priority || 'normal',
+      persistent: options.persistent || false,
+      icon: options.icon || null
+    };
+    
     setNotifications(prev => [
-      ...prev,
-      { id, message, variant, createdAt: Date.now() }
+      ...prev.slice(-9), // Keep only last 9 notifications to prevent memory bloat
+      notification
     ]);
 
-    if (duration !== Infinity) {
+    if (duration !== Infinity && !options.persistent) {
       const timeoutId = setTimeout(() => {
         dismissNotification(id);
         notificationTimeouts.current.delete(id);
@@ -58,12 +81,72 @@ export const NotificationProvider = ({ children }) => {
     setNotifications([]);
   };
 
+  // Clean up old notifications periodically
+  const cleanupOldNotifications = () => {
+    const now = Date.now();
+    const maxAge = 5 * 60 * 1000; // 5 minutes
+    
+    setNotifications(prev => 
+      prev.filter(n => !n.persistent && (now - n.createdAt) < maxAge)
+    );
+  };
+
+  // Auto-cleanup every minute
+  useEffect(() => {
+    const interval = setInterval(cleanupOldNotifications, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Merge duplicate notifications instead of blocking them
+  const mergeDuplicateNotifications = (newNotification) => {
+    setNotifications(prev => {
+      const existingIndex = prev.findIndex(n => 
+        n.message === newNotification.message && 
+        n.variant === newNotification.variant &&
+        (newNotification.createdAt - n.createdAt) < 3000 // Within 3 seconds
+      );
+      
+      if (existingIndex !== -1) {
+        // Update existing notification timestamp and add count
+        const updated = [...prev];
+        updated[existingIndex] = {
+          ...updated[existingIndex],
+          createdAt: newNotification.createdAt,
+          count: (updated[existingIndex].count || 1) + 1
+        };
+        return updated;
+      } else {
+        // Add new notification
+        return [...prev.slice(-9), newNotification];
+      }
+    });
+  };
+
+  // Utility functions for common notification patterns
+  const showSuccess = (message, options = {}) => 
+    showNotification(message, 'success', 3000, { icon: '✅', ...options });
+    
+  const showError = (message, options = {}) => 
+    showNotification(message, 'danger', 4000, { icon: '❌', ...options });
+    
+  const showInfo = (message, options = {}) => 
+    showNotification(message, 'info', 2500, { icon: 'ℹ️', ...options });
+    
+  const showWarning = (message, options = {}) => 
+    showNotification(message, 'warning', 3500, { icon: '⚠️', ...options });
+
   return (
     <NotificationContext.Provider value={{
       notifications,
       showNotification,
+      showSuccess,
+      showError,
+      showInfo,
+      showWarning,
       dismissNotification,
-      dismissAllNotifications
+      dismissAllNotifications,
+      cleanupOldNotifications,
+      mergeDuplicateNotifications
     }}>
       {children}
       
@@ -86,7 +169,15 @@ export const NotificationProvider = ({ children }) => {
               {notification.variant === 'danger' && <span className="me-2">⚠️</span>}
               {notification.variant === 'info' && <span className="me-2">ℹ️</span>}
               {notification.variant === 'warning' && <span className="me-2">⚠️</span>}
-              <span className="flex-grow-1">{notification.message}</span>
+              {notification.icon && <span className="me-2">{notification.icon}</span>}
+              <span className="flex-grow-1">
+                {notification.message}
+                {notification.count > 1 && (
+                  <span className="badge bg-secondary ms-2 rounded-pill">
+                    {notification.count}
+                  </span>
+                )}
+              </span>
             </div>
             <button 
               type="button" 
@@ -237,34 +328,34 @@ function App() {
   };
 
   return (
-    <ErrorBoundary>
-      <NotificationProvider>
+    <NotificationProvider>
         <div className={`app-container ${darkMode ? 'dark-theme' : 'light-theme'}`} data-theme={darkMode ? 'dark' : 'light'}>
           {!shouldShowLanding && <Navigation toggleDarkMode={toggleDarkMode} darkMode={darkMode} />}
           <main>
-            <Suspense fallback={<LoadingSpinner />}>
-              <Routes>
-                <Route path="/" element={<LandingPage />} />
-                <Route path="/home" element={<Home setShowHomePage={setShowLandingPage} />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/portfolio" element={<Portfolio />} />
-                <Route path="/animation" element={<Animation />} />
-                <Route path="/artwork" element={<Artwork />} />
-                <Route path="/video-editing" element={<VideoEditing />} />
-                <Route path="/resume" element={<Resume />} />
-                <Route path="/updates" element={<Updates />} />
-                <Route path="/account" element={<Account />} />
-                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-                <Route path="*" element={<LandingPage />} />
-              </Routes>
-            </Suspense>
+            <ErrorBoundary>
+              <Suspense fallback={<LoadingSpinner />}>
+                <Routes>
+                  <Route path="/" element={<LandingPage />} />
+                  <Route path="/home" element={<Home setShowHomePage={setShowLandingPage} />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/portfolio" element={<Portfolio />} />
+                  <Route path="/animation" element={<Animation />} />
+                  <Route path="/artwork" element={<Artwork />} />
+                  <Route path="/video-editing" element={<VideoEditing />} />
+                  <Route path="/resume" element={<Resume />} />
+                  <Route path="/updates" element={<Updates />} />
+                  <Route path="/account" element={<Account />} />
+                  <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                  <Route path="*" element={<LandingPage />} />
+                </Routes>
+              </Suspense>
+            </ErrorBoundary>
           </main>
           <Suspense fallback={<div className="pb-5 mb-5" />}>
             {!shouldShowLanding && <Footer />}
           </Suspense>
         </div>
-      </NotificationProvider>
-    </ErrorBoundary>
+    </NotificationProvider>
   );
 }
 
