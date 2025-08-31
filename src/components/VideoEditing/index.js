@@ -1,9 +1,8 @@
 import React, {useState, useEffect, useRef, useCallback} from "react";
-// import OldBar from '../../assets/images/ACL_Bar_Dis4.jpeg';
 import logoD from '../../assets/images/logoD.png';
 import nbg from '../../assets/images/nbg.png';
-import byte3 from '../../assets/images/byte3.png';
-import { Card, Container, Button, Col, Row, NavDropdown, Modal } from 'react-bootstrap';
+import content from '../../assets/images/contents.png';
+import { Card, Container, Button, NavDropdown, Modal } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNotifications } from '../../App';
 import './VideoEditing.css';
@@ -128,7 +127,7 @@ function VfxVideoEditing() {
 
     return (
     <Container fluid className="video-editing-container px-3 px-lg-5">
-      <Row className="justify-content-center">
+      <div className="justify-content-center">
         {/* on-screen legend */}
         {showLegend && (
           <div style={{
@@ -501,15 +500,15 @@ function VfxVideoEditing() {
           </Modal.Body>
         </Modal>
 
-        <Col xs={12} lg={10} xl={8} className="text-center mb-5 px-2">
+        <div className="text-center mb-5 px-2">
           <h1 className="display-4 fw-bold mb-3 text-gradient">VFX and Video Editing</h1>
           <p className="lead fs-5 mb-4 text-muted">
             Professional video production combining 3D software rendering with advanced post-production effects
           </p>
           <hr className="border-2 border-primary w-25 mx-auto mb-5" />
-        </Col>
+        </div>
 
-        <Col xs={12} lg={10} xl={9} className="px-2 px-lg-4">
+        <div className="px-2 px-lg-4">
           {/* Featured VFX Reel 2024 - Enhanced hero section */}
           <div className="featured-showcase mb-5">
             <Card className="bg-dark text-white shadow-lg border-0 overflow-hidden">
@@ -566,8 +565,8 @@ function VfxVideoEditing() {
               </p>
             </div>
 
-            <Row className="g-4 g-lg-5">
-              <Col xs={12} lg={6}>
+            <div className="row">
+              <div className="portfolio-card-wrapper">
                 <Card className="portfolio-card bg-dark text-white shadow-lg border-0 h-100 overflow-hidden">
                   <div className="position-relative">
                     <div className="ratio ratio-16x9">
@@ -643,16 +642,15 @@ function VfxVideoEditing() {
                     </div>
                   </Card.Body>
                 </Card>
-              </Col>
-
-              <Col xs={12} lg={6}>
+              </div>
+              <div className="portfolio-card-wrapper">
                 <Card className="portfolio-card bg-dark text-white shadow-lg border-0 h-100 overflow-hidden">
                   <div className="position-relative">
                     <div className="ratio ratio-16x9">
                       <Card.Img 
                         loading="lazy" 
                         variant="top" 
-                        src={byte3} 
+                        src={content} 
                         className="object-fit-cover transition-transform" 
                         alt="Byte video poster" 
                       />
@@ -721,13 +719,13 @@ function VfxVideoEditing() {
                     </div>
                   </Card.Body>
                 </Card>
-              </Col>
-            </Row>
+              </div>
+            </div>
           </div>
 
           {/* Share message notification - Remove this section since we're using global notifications */}
-        </Col>
-      </Row>
+        </div>
+      </div>
 
       <NavDropdown.Divider className="my-4 my-md-5" />
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Container, Row, Col, Card, Button, Badge, Form, Modal, Spinner, Alert, Carousel } from 'react-bootstrap';
+import { Container, Card, Button, Badge, Form, Modal, Spinner, Alert, Carousel } from 'react-bootstrap';
 import { useNotifications } from '../../App';
 import './Portfolio.css';
 
@@ -46,8 +46,8 @@ const Portfolio = () => {
     'premiere-pro': 'Premiere Pro'
   };
 
-  // Enhanced portfolio data
-  const portfolioData = [
+  // Enhanced portfolio data - memoized for performance
+  const portfolioData = useMemo(() => [
     {
       id: 1,
       title: 'Stellar Guardian Character',
@@ -166,17 +166,20 @@ const Portfolio = () => {
       status: 'in-progress',
       tags: ['game-ready', 'modular', 'fantasy', 'optimized']
     }
-  ];
+  ], []); // Empty dependency array since this data is static
 
-  // Search suggestions
+    // Search suggestions
   const searchSuggestions = useMemo(() => {
-    const allTags = portfolioData.flatMap(p => p.tags);
-    const uniqueTags = [...new Set(allTags)];
-    return uniqueTags.filter(tag => 
-      tag.toLowerCase().includes(searchQuery.toLowerCase()) && 
-      searchQuery.length > 0
-    ).slice(0, 5);
-  }, [searchQuery]);
+    const categories = Object.keys(portfolioData.reduce((acc, project) => {
+      acc[project.category] = true;
+      return acc;
+    }, {}));
+
+    const technologies = [...new Set(portfolioData.flatMap(project => project.technologies))];
+    const tags = [...new Set(portfolioData.flatMap(project => project.tags || []))];
+
+    return [...categories, ...technologies, ...tags].slice(0, 10);
+  }, [portfolioData]);
 
   // Load portfolio data
   useEffect(() => {
@@ -300,14 +303,14 @@ const Portfolio = () => {
 
   // Render project card
   const renderProjectCard = (project) => (
-    <Col key={project.id} xs={12} md={6} lg={4} className="mb-4">
-      <Card 
-        className={`portfolio-card h-100 ${project.featured ? 'featured-project' : ''} ${project.awards ? 'award-winning' : ''}`}
-        onClick={() => {
-          setSelectedProject(project);
-          setShowProjectModal(true);
-          setActiveImageIndex(0);
-        }}
+    <Card 
+      key={project.id}
+      className={`portfolio-card h-100 fade-in-up ${project.featured ? 'featured-project' : ''} ${project.awards ? 'award-winning' : ''}`}
+      onClick={() => {
+        setSelectedProject(project);
+        setShowProjectModal(true);
+        setActiveImageIndex(0);
+      }}
         style={{ cursor: 'pointer' }}
       >
         <div className="card-badges">
@@ -337,18 +340,44 @@ const Portfolio = () => {
             onError={() => handleImageError(project.id, 0)}
           />
           <div className="project-overlay">
-            <Button variant="outline-light" className="view-project-btn">
+            <Button 
+              variant="outline-light" 
+              className="view-project-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedProject(project);
+                setShowProjectModal(true);
+                setActiveImageIndex(0);
+              }}
+            >
               View Project
             </Button>
             {project.links && (
               <div className="quick-links">
                 {project.links.demo && (
-                  <Button variant="outline-light" size="sm" className="me-2" title="Demo">
+                  <Button 
+                    variant="outline-light" 
+                    size="sm" 
+                    className="me-2" 
+                    title="Demo"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.open(project.links.demo, '_blank');
+                    }}
+                  >
                     <span>🎮</span>
                   </Button>
                 )}
                 {project.links.github && (
-                  <Button variant="outline-light" size="sm" title="GitHub">
+                  <Button 
+                    variant="outline-light" 
+                    size="sm" 
+                    title="GitHub"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.open(project.links.github, '_blank');
+                    }}
+                  >
                     <span>📂</span>
                   </Button>
                 )}
@@ -427,82 +456,75 @@ const Portfolio = () => {
           </div>
         </Card.Body>
       </Card>
-    </Col>
   );
 
   return (
     <Container fluid className="portfolio-container py-5">
-      {/* Header with Statistics */}
-      <Row className="mb-5">
-        <Col className="text-center">
-          <h1 className="display-4 fw-bold mb-3">Portfolio</h1>
-          <p className="lead text-muted mb-4">
+      {/* Enhanced Hero Section */}
+      <div className="portfolio-hero">
+        <div className="hero-content">
+          <h1 className="hero-title">Portfolio</h1>
+          <p className="hero-subtitle">
             Showcasing professional 3D work, visual effects, and creative projects
           </p>
           
-          <Row className="portfolio-stats mb-4">
-            <Col md={3} sm={6}>
-              <div className="stat-item">
-                <h3 className="stat-number">{portfolioData.length}</h3>
-                <p className="stat-label">Total Projects</p>
-              </div>
-            </Col>
-            <Col md={3} sm={6}>
-              <div className="stat-item">
-                <h3 className="stat-number">{portfolioData.filter(p => p.featured).length}</h3>
-                <p className="stat-label">Featured Works</p>
-              </div>
-            </Col>
-            <Col md={3} sm={6}>
-              <div className="stat-item">
-                <h3 className="stat-number">{portfolioData.filter(p => p.awards).length}</h3>
-                <p className="stat-label">Award Winners</p>
-              </div>
-            </Col>
-            <Col md={3} sm={6}>
-              <div className="stat-item">
-                <h3 className="stat-number">{Object.keys(categories).length - 1}</h3>
-                <p className="stat-label">Categories</p>
-              </div>
-            </Col>
-          </Row>
-        </Col>
-      </Row>
+          <div className="portfolio-stats">
+            <div className="stat-item">
+              <h3 className="stat-number">{portfolioData.length}</h3>
+              <p className="stat-label">Total Projects</p>
+            </div>
+            <div className="stat-item">
+              <h3 className="stat-number">{portfolioData.filter(p => p.featured).length}</h3>
+              <p className="stat-label">Featured Works</p>
+            </div>
+            <div className="stat-item">
+              <h3 className="stat-number">{portfolioData.filter(p => p.awards).length}</h3>
+              <p className="stat-label">Award Winners</p>
+            </div>
+            <div className="stat-item">
+              <h3 className="stat-number">{Object.keys(categories).length - 1}</h3>
+              <p className="stat-label">Categories</p>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Enhanced Filters */}
-      <Row className="mb-4">
-        <Col md={3} className="mb-3">
+      <div className="search-filters">
+        <div className="filter-group">
           <Form.Group>
             <Form.Label>Category</Form.Label>
             <Form.Select 
               value={selectedCategory} 
               onChange={(e) => setSelectedCategory(e.target.value)}
+              className="filter-select"
             >
               {Object.entries(categories).map(([key, { label, icon }]) => (
                 <option key={key} value={key}>{icon} {label}</option>
               ))}
             </Form.Select>
           </Form.Group>
-        </Col>
+        </div>
         
-        <Col md={3} className="mb-3">
+        <div className="filter-group">
           <Form.Group>
             <Form.Label>Technology</Form.Label>
             <Form.Select 
               value={selectedTechnology} 
               onChange={(e) => setSelectedTechnology(e.target.value)}
+              className="filter-select"
             >
               {Object.entries(technologies).map(([key, label]) => (
                 <option key={key} value={key}>{label}</option>
               ))}
             </Form.Select>
           </Form.Group>
-        </Col>
+        </div>
         
-        <Col md={4} className="mb-3">
+        <div className="filter-group search-container">
           <Form.Group>
             <Form.Label>Search</Form.Label>
-            <div className="search-container position-relative">
+            <div className="position-relative">
               <Form.Control
                 type="text"
                 placeholder="Search projects, tags, technologies..."
@@ -510,7 +532,11 @@ const Portfolio = () => {
                 onChange={(e) => handleSearch(e.target.value)}
                 onFocus={() => setShowSuggestions(true)}
                 onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                className="search-input"
               />
+              <div className="search-icon">
+                🔍
+              </div>
               <div className="search-icon">🔍</div>
               
               {showSuggestions && searchSuggestions.length > 0 && (
@@ -528,12 +554,16 @@ const Portfolio = () => {
               )}
             </div>
           </Form.Group>
-        </Col>
+        </div>
         
-        <Col md={2} className="mb-3">
+        <div className="filter-group">
           <Form.Group>
             <Form.Label>Sort By</Form.Label>
-            <Form.Select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+            <Form.Select 
+              value={sortBy} 
+              onChange={(e) => setSortBy(e.target.value)}
+              className="filter-select"
+            >
               <option value="newest">Newest</option>
               <option value="oldest">Oldest</option>
               <option value="title">Title</option>
@@ -542,15 +572,14 @@ const Portfolio = () => {
               <option value="awards">Most Awarded</option>
             </Form.Select>
           </Form.Group>
-        </Col>
-      </Row>
+        </div>
+      </div>
 
       {/* View Mode Toggle */}
-      <Row className="mb-4 align-items-center">
-        <Col>
-          <div className="d-flex justify-content-between align-items-center">
-            <div>
-              <span className="text-muted">
+      <div className="view-controls mb-4">
+        <div className="d-flex justify-content-between align-items-center">
+          <div>
+            <span className="text-muted">
                 {filteredProjects.length} project{filteredProjects.length !== 1 ? 's' : ''} found
               </span>
             </div>
@@ -571,8 +600,7 @@ const Portfolio = () => {
               </Button>
             </div>
           </div>
-        </Col>
-      </Row>
+        </div>
 
       {/* Projects Display */}
       {loading ? (
@@ -601,9 +629,13 @@ const Portfolio = () => {
             </Alert>
           ) : (
             <div className={`projects-display ${viewMode}`}>
-              <Row>
-                {filteredProjects.map(project => renderProjectCard(project))}
-              </Row>
+              <div className="portfolio-grid">
+                {filteredProjects.map((project, index) => 
+                  <div key={project.id} className={`fade-in-up delay-${Math.min(index % 6, 3)}`}>
+                    {renderProjectCard(project)}
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </>
@@ -629,8 +661,8 @@ const Portfolio = () => {
             </Modal.Title>
           </Modal.Header>
           <Modal.Body className="p-0">
-            <Row className="g-0">
-              <Col md={8}>
+            <div className="project-details-grid g-0">
+              <div className="project-images-section">
                 <div className="project-images p-4">
                   {selectedProject.images.length > 1 ? (
                     <Carousel 
@@ -659,9 +691,9 @@ const Portfolio = () => {
                     />
                   )}
                 </div>
-              </Col>
+              </div>
               
-              <Col md={4} className="p-4">
+              <div className="project-info-section p-4">
                 <div className="project-details">
                   <div className="mb-3">
                     <Badge bg={categories[selectedProject.category]?.color} className="me-2">
@@ -761,8 +793,8 @@ const Portfolio = () => {
                     </div>
                   </div>
                 </div>
-              </Col>
-            </Row>
+              </div>
+            </div>
           </Modal.Body>
           <Modal.Footer className="border-0">
             <div className="modal-footer-content w-100">

@@ -1,0 +1,93 @@
+/* Responsive Design Additions */
+@media (max-width: 1200px) {
+  .portfolio-hero {
+    padding: 4rem 0;
+  }
+  
+  .hero-title {
+    font-size: 2.5rem;
+  }
+  
+  .portfolio-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .portfolio-hero {
+    padding: 3rem 0;
+  }
+  
+  .hero-title {
+    font-size: 2rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+  
+  .portfolio-stats {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .search-filters {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.5rem;
+  }
+  
+  .search-container {
+    max-width: 100%;
+  }
+  
+  .portfolio-card .card-body {
+    padding: 1.5rem;
+  }
+  
+  .portfolio-card .card-title {
+    font-size: 1.3rem;
+  }
+  
+  .project-image {
+    height: 200px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: 1.8rem;
+  }
+  
+  .portfolio-card .card-body {
+    padding: 1rem;
+  }
+  
+  .project-meta {
+    gap: 0.25rem;
+  }
+  
+  .project-badge {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.6rem;
+  }
+  
+  .view-project-btn {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9rem;
+  }
+  
+  .quick-link-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+  
+  .search-filters {
+    padding: 1rem;
+  }
+  
+  .view-controls {
+    padding: 1rem;
+  }
+}
