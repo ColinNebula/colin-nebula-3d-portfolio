@@ -3,9 +3,11 @@ import nbg from '../../assets/images/nbg.png';
 import vfxDemo from '../../assets/images/Sniper_wireCombo0001.jpg';
 import videoProduction from '../../assets/images/byte3.png';
 import motionGraphics from '../../assets/images/shapeAnimation.png';
-import { Card, Container, Button, NavDropdown, Modal } from 'react-bootstrap';
+import { Card, Container, Button, NavDropdown, Modal, Form, InputGroup } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNotifications } from '../../App';
+import VideoPlayer from './VideoPlayer';
+import VideoPlaylist from './VideoPlaylist';
 import './VideoEditing.css';
 
 function VfxVideoEditing() {
@@ -36,6 +38,62 @@ function VfxVideoEditing() {
     demo: { id: 'tFwtXZw_VzM', url: 'https://www.youtube.com/watch?v=tFwtXZw_VzM' },
     recent: { id: 'mPxmNbMpO7A', url: 'https://www.youtube.com/watch?v=mPxmNbMpO7A' },
     byte: { id: '1wI6aDte_1Q', url: 'https://www.youtube.com/watch?v=1wI6aDte_1Q' }
+  };
+
+  // Featured hero video - can be easily changed to any video platform
+  const [heroVideoUrl, setHeroVideoUrl] = useState('https://www.youtube.com/watch?v=mPxmNbMpO7A');
+  const [isHeroPlaying, setIsHeroPlaying] = useState(false);
+  const [customUrl, setCustomUrl] = useState('');
+  const [showCustomInput, setShowCustomInput] = useState(false);
+  
+  // Example video URLs for different platforms
+  const videoExamples = {
+    youtube: 'https://www.youtube.com/watch?v=mPxmNbMpO7A',
+    vimeo: 'https://vimeo.com/76979871', // Example Vimeo video
+    dailymotion: 'https://www.dailymotion.com/video/x7tgad0', // Example DailyMotion video
+    tiktok: 'https://www.tiktok.com/@username/video/1234567890', // Example TikTok (limited embed)
+    instagram: 'https://www.instagram.com/p/ABC123/', // Example Instagram post
+    twitter: 'https://twitter.com/user/status/1234567890', // Example Twitter video
+    // twitch: 'https://www.twitch.tv/videos/123456789', // Example Twitch VOD
+  };
+
+  // Sample playlist for demonstration
+  const [samplePlaylist] = useState([
+    {
+      title: "Colin Nebula 2024 VFX Reel",
+      url: "https://www.youtube.com/watch?v=mPxmNbMpO7A",
+      description: "Latest visual effects showcase",
+      duration: "3:45",
+      thumbnail: vfxDemo
+    },
+    {
+      title: "Byte3 Animation Demo", 
+      url: "https://www.youtube.com/watch?v=1wI6aDte_1Q",
+      description: "3D animation and rigging demo",
+      duration: "2:30",
+      thumbnail: videoProduction
+    },
+    {
+      title: "Motion Graphics Showcase",
+      url: "https://vimeo.com/76979871",
+      description: "Advanced motion graphics techniques",
+      duration: "4:12",
+      thumbnail: motionGraphics
+    }
+  ]);
+
+  const [showPlaylist, setShowPlaylist] = useState(false);
+  const [playlistAutoAdvance, setPlaylistAutoAdvance] = useState(false);
+  const [playlistShuffle, setPlaylistShuffle] = useState(false);
+
+  const handleCustomUrl = () => {
+    if (customUrl.trim()) {
+      setHeroVideoUrl(customUrl.trim());
+      setIsHeroPlaying(false);
+      setShowCustomInput(false);
+      setCustomUrl('');
+      showNotification('Custom video URL loaded!', 'success');
+    }
   };
 
   const [showTop, setShowTop] = useState(false);
@@ -515,53 +573,215 @@ function VfxVideoEditing() {
           <hr className="border-2 border-primary w-50 w-lg-25 mx-auto mb-4 mb-lg-5" />
         </div>
 
-        <div className="px-2 px-lg-4">
+        <div className="px-2 px-lg-4 px-xl-5 px-xxl-0">
           {/* Featured VFX Reel 2024 - Enhanced hero section */}
-          <div className="featured-showcase mb-5">
+          <section className="featured-showcase mb-5" role="banner" aria-labelledby="hero-title">
             <Card className="bg-dark text-white shadow-lg border-0 overflow-hidden">
               <div className="position-relative">
-                <div className="ratio ratio-21x9 ratio-md-16x9">
-                  <Card.Img 
-                    loading="lazy" 
-                    variant="top" 
-                    src={nbg} 
-                    className="object-fit-cover" 
-                    alt="VFX reel poster" 
-                  />
-                </div>
-                <div className="position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-25"></div>
-                <div className="position-absolute bottom-0 start-0 w-100 p-3 p-lg-5 bg-gradient-dark">
-                  <div className="row align-items-end g-3">
-                    <div className="col-md-8">
-                      <h2 className="h2 fw-bold mb-2 text-white">Colin Nebula 2024 VFX Reel</h2>
-                      <p className="fs-6 fs-lg-5 mb-3 text-white-50">
-                        Latest visual effects showcase created with Blender and After Effects
-                      </p>
-                      <div className="d-flex flex-wrap gap-2 align-items-center mb-3">
-                        <span className="badge bg-primary px-2 px-lg-3 py-1 py-lg-2">Blender</span>
-                        <span className="badge bg-secondary px-2 px-lg-3 py-1 py-lg-2">After Effects</span>
-                        <span className="badge bg-success px-2 px-lg-3 py-1 py-lg-2">Motion Tracking</span>
+                <VideoPlayer
+                  videoUrl={heroVideoUrl}
+                  poster={nbg}
+                  title="Colin Nebula 2024 VFX Reel"
+                  autoplay={false}
+                  muted={true}
+                  onPlay={() => {
+                    setIsHeroPlaying(true);
+                    console.info('analytics', 'hero_video_play', 'youtube');
+                  }}
+                  onPause={() => setIsHeroPlaying(false)}
+                  className="hero-video-player"
+                />
+                
+                {/* Video info overlay - only show when not playing */}
+                {!isHeroPlaying && (
+                  <div className="position-absolute bottom-0 start-0 w-100 bg-gradient-dark" style={{ zIndex: 4, pointerEvents: 'none' }}>
+                    <div className="row align-items-end g-3" style={{ pointerEvents: 'auto' }}>
+                      <div className="col-md-8 col-xl-9">
+                        <h2 id="hero-title" className="h2 fw-bold mb-2 text-white transition-all">Colin Nebula 2024 VFX Reel</h2>
+                        <p className="fs-6 fs-lg-5 mb-3 text-white-50 transition-all">
+                          Watch the latest visual effects showcase created with Blender and After Effects
+                        </p>
+                        <div className="d-flex flex-wrap gap-2 align-items-center mb-3" role="list">
+                          <span className="badge bg-primary px-2 px-lg-3 py-1 py-lg-2 transition-all" role="listitem">
+                            {heroVideoUrl.includes('youtube') ? 'YouTube' : 
+                             heroVideoUrl.includes('vimeo') ? 'Vimeo' : 
+                             heroVideoUrl.includes('dailymotion') ? 'DailyMotion' :
+                             heroVideoUrl.includes('twitch') ? 'Twitch' : 'Video'}
+                          </span>
+                          <span className="badge bg-secondary px-2 px-lg-3 py-1 py-lg-2 transition-all" role="listitem">Blender</span>
+                          <span className="badge bg-success px-2 px-lg-3 py-1 py-lg-2 transition-all" role="listitem">After Effects</span>
+                          <span className="badge bg-warning px-2 px-lg-3 py-1 py-lg-2 transition-all" role="listitem">Motion Tracking</span>
+                        </div>
+                      </div>
+                      <div className="col-md-4 col-xl-3 text-center text-md-end">
+                        <div className="d-flex flex-column gap-2">
+                          <small className="text-white-50 mb-1">Video Platforms:</small>
+                          
+                          {/* Primary Platforms */}
+                          <div className="d-flex gap-1 mb-2">
+                            <Button 
+                              variant={heroVideoUrl === videoExamples.youtube ? "warning" : "outline-light"} 
+                              size="sm" 
+                              className="px-2 py-1 fw-semibold flex-grow-1"
+                              onClick={() => {
+                                setHeroVideoUrl(videoExamples.youtube);
+                                setIsHeroPlaying(false);
+                              }}
+                              title="Switch to YouTube video"
+                            >
+                              <i className="bi bi-youtube me-1"></i>YouTube
+                            </Button>
+                            <Button 
+                              variant={heroVideoUrl === videoExamples.vimeo ? "warning" : "outline-light"} 
+                              size="sm" 
+                              className="px-2 py-1 fw-semibold flex-grow-1"
+                              onClick={() => {
+                                setHeroVideoUrl(videoExamples.vimeo);
+                                setIsHeroPlaying(false);
+                              }}
+                              title="Switch to Vimeo video"
+                            >
+                              <i className="bi bi-vimeo me-1"></i>Vimeo
+                            </Button>
+                          </div>
+                          
+                          {/* Social Media Platforms */}
+                          <div className="d-flex gap-1 mb-2">
+                            <Button 
+                              variant={heroVideoUrl === videoExamples.tiktok ? "warning" : "outline-light"} 
+                              size="sm" 
+                              className="px-2 py-1 fw-semibold flex-grow-1"
+                              onClick={() => {
+                                setHeroVideoUrl(videoExamples.tiktok);
+                                setIsHeroPlaying(false);
+                              }}
+                              title="Switch to TikTok video"
+                            >
+                              <i className="bi bi-tiktok me-1"></i>TikTok
+                            </Button>
+                            <Button 
+                              variant={heroVideoUrl === videoExamples.instagram ? "warning" : "outline-light"} 
+                              size="sm" 
+                              className="px-2 py-1 fw-semibold flex-grow-1"
+                              onClick={() => {
+                                setHeroVideoUrl(videoExamples.instagram);
+                                setIsHeroPlaying(false);
+                              }}
+                              title="Switch to Instagram video"
+                            >
+                              <i className="bi bi-instagram me-1"></i>IG
+                            </Button>
+                            <Button 
+                              variant={heroVideoUrl === videoExamples.twitter ? "warning" : "outline-light"} 
+                              size="sm" 
+                              className="px-2 py-1 fw-semibold flex-grow-1"
+                              onClick={() => {
+                                setHeroVideoUrl(videoExamples.twitter);
+                                setIsHeroPlaying(false);
+                              }}
+                              title="Switch to Twitter/X video"
+                            >
+                              <i className="bi bi-twitter-x me-1"></i>X
+                            </Button>
+                          </div>
+                          
+                          {/* Additional Options */}
+                          <div className="d-flex gap-1 mb-2">
+                            <Button 
+                              variant={heroVideoUrl === videoExamples.dailymotion ? "warning" : "outline-light"} 
+                              size="sm" 
+                              className="px-2 py-1 fw-semibold flex-grow-1"
+                              onClick={() => {
+                                setHeroVideoUrl(videoExamples.dailymotion);
+                                setIsHeroPlaying(false);
+                              }}
+                              title="Switch to DailyMotion video"
+                            >
+                              <i className="bi bi-camera-video me-1"></i>Daily
+                            </Button>
+                            <Button 
+                              variant={showPlaylist ? "warning" : "outline-info"} 
+                              size="sm" 
+                              className="px-2 py-1 fw-semibold flex-grow-1"
+                              onClick={() => setShowPlaylist(!showPlaylist)}
+                              title="Toggle playlist mode"
+                            >
+                              <i className="bi bi-collection-play me-1"></i>Playlist
+                            </Button>
+                          </div>
+                          
+                          <Button 
+                            variant="outline-info" 
+                            size="sm" 
+                            className="px-3 py-1 fw-semibold"
+                            onClick={() => setShowCustomInput(!showCustomInput)}
+                            title="Enter custom video URL"
+                          >
+                            <i className="bi bi-link-45deg me-1"></i>Custom URL
+                          </Button>
+                          
+                          {showCustomInput && (
+                            <div className="mt-2">
+                              <InputGroup size="sm">
+                                <Form.Control
+                                  type="url"
+                                  placeholder="Enter video URL..."
+                                  value={customUrl}
+                                  onChange={(e) => setCustomUrl(e.target.value)}
+                                  onKeyPress={(e) => e.key === 'Enter' && handleCustomUrl()}
+                                  className="bg-dark text-light border-secondary"
+                                  style={{ fontSize: '0.8rem' }}
+                                />
+                                <Button 
+                                  variant="outline-success" 
+                                  onClick={handleCustomUrl}
+                                  disabled={!customUrl.trim()}
+                                  title="Load custom video"
+                                >
+                                  <i className="bi bi-check-lg"></i>
+                                </Button>
+                              </InputGroup>
+                              <small className="text-white-50 mt-1 d-block">
+                                Supports YouTube, Vimeo, TikTok, Instagram, Twitter, DailyMotion
+                              </small>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
-                    <div className="col-md-4 text-center text-md-end">
-                      <Button 
-                        variant="warning" 
-                        size="lg" 
-                        className="mb-2 px-3 px-lg-4 py-2 fw-semibold w-100 w-md-auto"
-                        onClick={(e) => { 
-                          lastActiveRef.current = e.currentTarget; 
-                          console.info('analytics', 'open_modal', 'recent');
-                          setLgShow2(true); 
-                        }}
-                      >
-                        <i className="bi bi-play-fill me-2"></i>Watch Reel
-                      </Button>
-                    </div>
                   </div>
-                </div>
+                )}
               </div>
             </Card>
-          </div>
+          </section>
+
+          {/* Playlist Section */}
+          {showPlaylist && (
+            <section className="playlist-showcase mb-5">
+              <div className="text-center mb-4">
+                <h2 className="h2 fw-bold mb-3">
+                  <i className="bi bi-collection-play me-2 text-warning"></i>
+                  Video Playlist
+                </h2>
+                <p className="fs-6 text-muted mb-4">
+                  Experience multi-platform video playlist with auto-advance and shuffle features
+                </p>
+              </div>
+              
+              <VideoPlaylist 
+                videos={samplePlaylist}
+                autoAdvance={playlistAutoAdvance}
+                shuffle={playlistShuffle}
+                onVideoChange={(video) => {
+                  console.log('Playlist video changed:', video.title);
+                  showNotification(`Now playing: ${video.title}`, 'info');
+                }}
+                onAutoAdvanceChange={setPlaylistAutoAdvance}
+                onShuffleChange={setPlaylistShuffle}
+                className="shadow-lg"
+              />
+            </section>
+          )}
 
           {/* Portfolio grid section */}
           <div className="portfolio-grid">
@@ -572,20 +792,29 @@ function VfxVideoEditing() {
               </p>
             </div>
 
-            <div className="row">
-              <div className="col-12 col-lg-6 mb-4 mb-lg-0">
+            <div className="row g-4">
+              <div className="col-12 col-lg-6 col-xl-4 mb-4 mb-lg-0">
                 <Card className="portfolio-card bg-dark text-white shadow-lg border-0 h-100 overflow-hidden">
                   <div className="position-relative">
                     <div className="ratio ratio-16x9">
-                      <Card.Img 
+                      <img 
                         loading="lazy" 
-                        variant="top" 
                         src={vfxDemo} 
-                        className="object-fit-cover transition-transform" 
-                        alt="VFX Demo Reel - Professional Visual Effects Showcase" 
+                        className="card-img-top object-fit-cover transition-transform" 
+                        alt="VFX Demo Reel - Professional Visual Effects Showcase"
+                        onError={(e) => {
+                          console.error('Failed to load vfxDemo image:', vfxDemo);
+                          e.target.style.display = 'none';
+                          e.target.parentElement.classList.add('image-error');
+                        }}
+                        onLoad={(e) => {
+                          console.log('vfxDemo image loaded successfully');
+                          e.target.style.display = 'block';
+                          e.target.parentElement.classList.add('image-loaded');
+                        }}
                       />
                     </div>
-                    <div className="card-overlay position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 opacity-0 transition-opacity d-flex align-items-center justify-content-center">
+                    <div className="card-overlay position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-75 opacity-0 transition-opacity d-flex align-items-center justify-content-center">
                       <Button 
                         variant="outline-light" 
                         size="lg" 
@@ -665,19 +894,28 @@ function VfxVideoEditing() {
                   </Card.Body>
                 </Card>
               </div>
-              <div className="col-12 col-lg-6 mb-4 mb-lg-0">
+              <div className="col-12 col-lg-6 col-xl-4 mb-4 mb-lg-0">
                 <Card className="portfolio-card bg-dark text-white shadow-lg border-0 h-100 overflow-hidden">
                   <div className="position-relative">
                     <div className="ratio ratio-16x9">
-                      <Card.Img 
+                      <img 
                         loading="lazy" 
-                        variant="top" 
                         src={videoProduction} 
-                        className="object-fit-cover transition-transform" 
-                        alt="Byte Size Soccer - Educational Video Production" 
+                        className="card-img-top object-fit-cover transition-transform" 
+                        alt="Byte Size Soccer - Educational Video Production"
+                        onError={(e) => {
+                          console.error('Failed to load videoProduction image:', videoProduction);
+                          e.target.style.display = 'none';
+                          e.target.parentElement.classList.add('image-error');
+                        }}
+                        onLoad={(e) => {
+                          console.log('videoProduction image loaded successfully');
+                          e.target.style.display = 'block';
+                          e.target.parentElement.classList.add('image-loaded');
+                        }}
                       />
                     </div>
-                    <div className="card-overlay position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 opacity-0 transition-opacity d-flex align-items-center justify-content-center">
+                    <div className="card-overlay position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-75 opacity-0 transition-opacity d-flex align-items-center justify-content-center">
                       <Button 
                         variant="outline-light" 
                         size="lg" 
@@ -758,19 +996,28 @@ function VfxVideoEditing() {
               </div>
               
               {/* Additional Motion Graphics Card */}
-              <div className="col-12 col-lg-6 offset-lg-3 mt-4">
+              <div className="col-12 col-lg-6 col-xl-4 mb-4 mb-lg-0">
                 <Card className="portfolio-card bg-dark text-white shadow-lg border-0 h-100 overflow-hidden">
                   <div className="position-relative">
                     <div className="ratio ratio-16x9">
-                      <Card.Img 
+                      <img 
                         loading="lazy" 
-                        variant="top" 
                         src={motionGraphics} 
-                        className="object-fit-cover transition-transform" 
-                        alt="Motion Graphics and Animation Work" 
+                        className="card-img-top object-fit-cover transition-transform" 
+                        alt="Motion Graphics and Animation Work"
+                        onError={(e) => {
+                          console.error('Failed to load motionGraphics image:', motionGraphics);
+                          e.target.style.display = 'none';
+                          e.target.parentElement.classList.add('image-error');
+                        }}
+                        onLoad={(e) => {
+                          console.log('motionGraphics image loaded successfully');
+                          e.target.style.display = 'block';
+                          e.target.parentElement.classList.add('image-loaded');
+                        }}
                       />
                     </div>
-                    <div className="card-overlay position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 opacity-0 transition-opacity d-flex align-items-center justify-content-center">
+                    <div className="card-overlay position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-75 opacity-0 transition-opacity d-flex align-items-center justify-content-center">
                       <Button 
                         variant="outline-light" 
                         size="lg" 

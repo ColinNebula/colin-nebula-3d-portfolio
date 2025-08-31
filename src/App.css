@@ -1,191 +1,6 @@
-/* Global theme variables and styles */
+/* App-wide styles - theme variables are now centralized in theme.css */
 
-:root {
-  /* Default light theme values */
-  --bs-body-bg: #ffffff;
-  --bs-body-color: #212529;
-  --card-bg: #ffffff;
-  --card-border: #dee2e6;
-  --text-color: #212529;
-  --text-muted: #6c757d;
-  --border-color: #dee2e6;
-  --input-bg: #ffffff;
-  --input-border: #ced4da;
-  --modal-bg: #ffffff;
-  --modal-backdrop: rgba(0,0,0,0.5);
-}
-
-/* Dark theme variables */
-[data-theme="dark"] {
-  --bs-body-bg: #121212;
-  --bs-body-color: #ffffff;
-  --card-bg: #1e1e1e;
-  --card-border: #343a40;
-  --text-color: #ffffff;
-  --text-muted: #adb5bd;
-  --border-color: #495057;
-  --input-bg: #2d3339;
-  --input-border: #495057;
-  --modal-bg: #1e1e1e;
-  --modal-backdrop: rgba(0,0,0,0.8);
-}
-
-/* Apply theme styles globally */
-body {
-  background-color: var(--bs-body-bg) !important;
-  color: var(--bs-body-color) !important;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-/* Card components */
-.card {
-  background-color: var(--card-bg) !important;
-  border-color: var(--card-border) !important;
-  color: var(--text-color) !important;
-}
-
-.card-body {
-  background-color: var(--card-bg) !important;
-  color: var(--text-color) !important;
-}
-
-/* Text utilities */
-.text-muted {
-  color: var(--text-muted) !important;
-}
-
-/* Form controls */
-.form-control {
-  background-color: var(--input-bg) !important;
-  border-color: var(--input-border) !important;
-  color: var(--text-color) !important;
-}
-
-.form-control:focus {
-  background-color: var(--input-bg) !important;
-  border-color: var(--input-focus-border) !important;
-  color: var(--text-color) !important;
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-}
-
-/* Modal components */
-.modal-content {
-  background-color: var(--modal-bg) !important;
-  color: var(--text-color) !important;
-  border-color: var(--card-border) !important;
-}
-
-.modal-header {
-  border-bottom-color: var(--border-color) !important;
-}
-
-.modal-footer {
-  border-top-color: var(--border-color) !important;
-}
-
-/* Dropdown menus */
-.dropdown-menu {
-  background-color: var(--card-bg) !important;
-  border-color: var(--card-border) !important;
-}
-
-.dropdown-item {
-  color: var(--text-color) !important;
-}
-
-.dropdown-item:hover,
-.dropdown-item:focus {
-  background-color: var(--border-color) !important;
-  color: var(--text-color) !important;
-}
-
-/* Tables */
-.table {
-  color: var(--text-color) !important;
-}
-
-.table-striped > tbody > tr:nth-of-type(odd) > td,
-.table-striped > tbody > tr:nth-of-type(odd) > th {
-  background-color: var(--border-color) !important;
-}
-
-/* Borders */
-.border {
-  border-color: var(--border-color) !important;
-}
-
-/* List groups */
-.list-group-item {
-  background-color: var(--card-bg) !important;
-  border-color: var(--card-border) !important;
-  color: var(--text-color) !important;
-}
-
-/* Alerts */
-.alert {
-  border-color: var(--card-border) !important;
-}
-
-/* Container and layout fixes */
-.app-container {
-  min-height: 100vh;
-  background-color: var(--bs-body-bg);
-  color: var(--bs-body-color);
-}
-
-/* Smooth transitions for theme changes */
-* {
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-}
-
-/* Dark theme specific adjustments */
-.dark-theme {
-  /* Custom scrollbar for dark theme */
-  scrollbar-width: thin;
-  scrollbar-color: #495057 #1e1e1e;
-}
-
-.dark-theme::-webkit-scrollbar {
-  width: 8px;
-}
-
-.dark-theme::-webkit-scrollbar-track {
-  background: #1e1e1e;
-}
-
-.dark-theme::-webkit-scrollbar-thumb {
-  background-color: #495057;
-  border-radius: 4px;
-}
-
-.dark-theme::-webkit-scrollbar-thumb:hover {
-  background-color: #6c757d;
-}
-
-/* Light theme specific adjustments */
-.light-theme {
-  scrollbar-width: thin;
-  scrollbar-color: #ced4da #ffffff;
-}
-
-.light-theme::-webkit-scrollbar {
-  width: 8px;
-}
-
-.light-theme::-webkit-scrollbar-track {
-  background: #ffffff;
-}
-
-.light-theme::-webkit-scrollbar-thumb {
-  background-color: #ced4da;
-  border-radius: 4px;
-}
-
-.light-theme::-webkit-scrollbar-thumb:hover {
-  background-color: #adb5bd;
-}
-
-/* App-wide styles */
+/* App-wide styles (originally from :root) */
 :root {
   /* Default light theme variables (also defined in Home.css) */
   --primary: #0ea5e9;
@@ -204,7 +19,7 @@ body {
   transition: color 220ms ease, background-color 220ms ease;
 }
 
-/* Dark theme variables */
+/* Dark theme variables (keep for compatibility) */
 [data-theme="dark"],
 .dark-theme {
   --primary: #5aa8ff;
@@ -229,7 +44,226 @@ body {
 }
 
 main {
-  min-height: 70vh; /* Ensures footer stays at bottom */
+  min-height: auto; /* Remove excessive min-height */
+  flex: 1; /* Take available space in flex container */
+}
+
+/* App container as flex container */
+.app-container {
+  position: relative;
+  min-height: 100vh;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Error boundary styling */
+.error-boundary-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem 1rem;
+  min-height: 60vh;
+}
+
+.error-boundary-content {
+  max-width: 600px;
+  text-align: center;
+  padding: 2rem;
+  border-radius: 8px;
+  background-color: var(--card-bg);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+}
+
+.error-stack {
+  text-align: left;
+  background: rgba(0, 0, 0, 0.05);
+  padding: 1rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  overflow-x: auto;
+  max-height: 300px;
+}
+
+/* Accessibility improvements */
+:focus {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* Skip to content link for keyboard users */
+.skip-to-content {
+  position: absolute;
+  left: -9999px;
+  top: 1em;
+  z-index: 1001;
+  background: var(--primary);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  text-decoration: none;
+}
+
+.skip-to-content:focus {
+  left: 1em;
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.card-image {
+  border-radius: 8px;
+}
+
+.ratio {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+}
+
+.ratio iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.top_text, .middle_text {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.top-p, .mid-p {
+  text-align: center;
+  font-size: 1.2rem;
+}
+
+.icons .bottom {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+/* Global notification animations */
+.notification-toast {
+  animation: slideInRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Fullscreen landing page styles */
+.fullscreen-landing {
+  height: 100vh !important;
+  overflow: hidden;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.fullscreen-main {
+  height: 100vh;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Responsive notification container */
+@media (max-width: 768px) {
+  .notification-container {
+    left: 1rem;
+    right: 1rem;
+    top: 1rem;
+  }
+  
+  .notification-toast {
+    min-width: auto;
+    max-width: 100%;
+  }
+}
+
+/* Global responsive fixes */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+body {
+  background: var(--surface);
+  color: var(--text);
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  line-height: 1.6;
+}
+
+main {
+  min-height: auto; /* Remove excessive min-height */
+  flex: 1; /* Take available space in flex container */
+}
+
+/* App container as flex container */
+.app-container {
+  position: relative;
+  min-height: 100vh;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Error boundary styling */
@@ -400,13 +434,6 @@ main {
   padding: 0;
   display: flex;
   flex-direction: column;
-}
-
-/* Main app container */
-.app-container {
-  position: relative;
-  min-height: 100vh;
-  transition: all 0.3s ease;
 }
 
 /* Theme-specific styles */

@@ -884,12 +884,12 @@
   border: 1px solid rgba(255, 255, 255, 0.1) !important;
   border-radius: 20px !important;
   backdrop-filter: blur(20px);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Consistent transition */
   overflow: hidden;
   position: relative;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
   height: auto;
-  min-height: 450px;
+  min-height: 500px; /* Standardized height */
   display: flex;
   flex-direction: column;
   will-change: transform;

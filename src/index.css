@@ -1,4 +1,6 @@
-/* Define CSS variables for colors and transitions */
+/* Main component styles - theme variables are centralized in theme.css */
+
+/* Define CSS variables for colors and transitions (legacy - moved to theme.css) */
 :root {
 	--primary: #0ea5e9;     /* bright sky blue (accent) */
 	--secondary: #ffb347;   /* warm orange (accent) */

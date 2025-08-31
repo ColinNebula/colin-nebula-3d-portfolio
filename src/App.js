@@ -7,6 +7,7 @@ import LandingPage from "./components/LandingPage";
 import LoadingSpinner from './components/UI/LoadingSpinner';
 import ErrorBoundary from './components/ErrorBoundary';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './theme.css';
 import './App.css';
 
 // Create notification context
