@@ -1,7 +1,8 @@
 import React, {useState, useEffect, useRef, useCallback} from "react";
-import logoD from '../../assets/images/logoD.png';
 import nbg from '../../assets/images/nbg.png';
-import content from '../../assets/images/contents.png';
+import vfxDemo from '../../assets/images/Sniper_wireCombo0001.jpg';
+import videoProduction from '../../assets/images/byte3.png';
+import motionGraphics from '../../assets/images/shapeAnimation.png';
 import { Card, Container, Button, NavDropdown, Modal } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNotifications } from '../../App';
@@ -198,35 +199,37 @@ function VfxVideoEditing() {
                   </span>
                 </div>
                 
-                <div className="player-controls d-flex flex-wrap gap-3 align-items-center mb-4">
-                  <a 
-                    className="btn btn-primary rounded-pill" 
-                    href={REEL.demo.url} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                  >
-                    <i className="bi bi-youtube me-2"></i>Open on YouTube
-                  </a>
-                  <button 
-                    className="btn btn-outline-secondary rounded-pill" 
-                    onClick={() => copyToClipboard(REEL.demo.url)}
-                  >
-                    <i className="bi bi-link-45deg me-2"></i>Copy link
-                  </button>
-                  <div className="ms-auto d-flex gap-3">
-                    <label className="form-check form-switch">
+                <div className="player-controls d-flex flex-column flex-lg-row gap-3 align-items-stretch align-items-lg-center mb-4">
+                  <div className="d-flex flex-column flex-sm-row gap-2">
+                    <a 
+                      className="btn btn-primary rounded-pill flex-grow-1" 
+                      href={REEL.demo.url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                    >
+                      <i className="bi bi-youtube me-2"></i>Open on YouTube
+                    </a>
+                    <button 
+                      className="btn btn-outline-secondary rounded-pill flex-grow-1" 
+                      onClick={() => copyToClipboard(REEL.demo.url)}
+                    >
+                      <i className="bi bi-link-45deg me-2"></i>Copy link
+                    </button>
+                  </div>
+                  <div className="d-flex flex-column flex-sm-row gap-3 justify-content-center">
+                    <label className="form-check form-switch d-flex align-items-center">
                       <input 
                         type="checkbox" 
-                        className="form-check-input" 
+                        className="form-check-input me-2" 
                         checked={autoplay} 
                         onChange={() => setAutoplay(v => !v)} 
                       /> 
                       <span className="form-check-label">Autoplay</span>
                     </label>
-                    <label className="form-check form-switch">
+                    <label className="form-check form-switch d-flex align-items-center">
                       <input 
                         type="checkbox" 
-                        className="form-check-input" 
+                        className="form-check-input me-2" 
                         checked={muted} 
                         onChange={() => setMuted(v => !v)} 
                       /> 
@@ -314,35 +317,37 @@ function VfxVideoEditing() {
                   </span>
                 </div>
                 
-                <div className="player-controls d-flex flex-wrap gap-3 align-items-center mb-4">
-                  <a 
-                    className="btn btn-primary rounded-pill" 
-                    href={REEL.recent.url} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                  >
-                    <i className="bi bi-youtube me-2"></i>Open on YouTube
-                  </a>
-                  <button 
-                    className="btn btn-outline-secondary rounded-pill" 
-                    onClick={() => copyToClipboard(REEL.recent.url)}
-                  >
-                    <i className="bi bi-link-45deg me-2"></i>Copy link
-                  </button>
-                  <div className="ms-auto d-flex gap-3">
-                    <label className="form-check form-switch">
+                <div className="player-controls d-flex flex-column flex-lg-row gap-3 align-items-stretch align-items-lg-center mb-4">
+                  <div className="d-flex flex-column flex-sm-row gap-2">
+                    <a 
+                      className="btn btn-primary rounded-pill flex-grow-1" 
+                      href={REEL.recent.url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                    >
+                      <i className="bi bi-youtube me-2"></i>Open on YouTube
+                    </a>
+                    <button 
+                      className="btn btn-outline-secondary rounded-pill flex-grow-1" 
+                      onClick={() => copyToClipboard(REEL.recent.url)}
+                    >
+                      <i className="bi bi-link-45deg me-2"></i>Copy link
+                    </button>
+                  </div>
+                  <div className="d-flex flex-column flex-sm-row gap-3 justify-content-center">
+                    <label className="form-check form-switch d-flex align-items-center">
                       <input 
                         type="checkbox" 
-                        className="form-check-input" 
+                        className="form-check-input me-2" 
                         checked={autoplay} 
                         onChange={() => setAutoplay(v => !v)} 
                       /> 
                       <span className="form-check-label">Autoplay</span>
                     </label>
-                    <label className="form-check form-switch">
+                    <label className="form-check form-switch d-flex align-items-center">
                       <input 
                         type="checkbox" 
-                        className="form-check-input" 
+                        className="form-check-input me-2" 
                         checked={muted} 
                         onChange={() => setMuted(v => !v)} 
                       /> 
@@ -430,35 +435,37 @@ function VfxVideoEditing() {
                   </span>
                 </div>
                 
-                <div className="player-controls d-flex flex-wrap gap-3 align-items-center mb-4">
-                  <a 
-                    className="btn btn-primary rounded-pill" 
-                    href={REEL.byte.url} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                  >
-                    <i className="bi bi-youtube me-2"></i>Open on YouTube
-                  </a>
-                  <button 
-                    className="btn btn-outline-secondary rounded-pill" 
-                    onClick={() => copyToClipboard(REEL.byte.url)}
-                  >
-                    <i className="bi bi-link-45deg me-2"></i>Copy link
-                  </button>
-                  <div className="ms-auto d-flex gap-3">
-                    <label className="form-check form-switch">
+                <div className="player-controls d-flex flex-column flex-lg-row gap-3 align-items-stretch align-items-lg-center mb-4">
+                  <div className="d-flex flex-column flex-sm-row gap-2">
+                    <a 
+                      className="btn btn-primary rounded-pill flex-grow-1" 
+                      href={REEL.byte.url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                    >
+                      <i className="bi bi-youtube me-2"></i>Open on YouTube
+                    </a>
+                    <button 
+                      className="btn btn-outline-secondary rounded-pill flex-grow-1" 
+                      onClick={() => copyToClipboard(REEL.byte.url)}
+                    >
+                      <i className="bi bi-link-45deg me-2"></i>Copy link
+                    </button>
+                  </div>
+                  <div className="d-flex flex-column flex-sm-row gap-3 justify-content-center">
+                    <label className="form-check form-switch d-flex align-items-center">
                       <input 
                         type="checkbox" 
-                        className="form-check-input" 
+                        className="form-check-input me-2" 
                         checked={autoplay} 
                         onChange={() => setAutoplay(v => !v)} 
                       /> 
                       <span className="form-check-label">Autoplay</span>
                     </label>
-                    <label className="form-check form-switch">
+                    <label className="form-check form-switch d-flex align-items-center">
                       <input 
                         type="checkbox" 
-                        className="form-check-input" 
+                        className="form-check-input me-2" 
                         checked={muted} 
                         onChange={() => setMuted(v => !v)} 
                       /> 
@@ -500,12 +507,12 @@ function VfxVideoEditing() {
           </Modal.Body>
         </Modal>
 
-        <div className="text-center mb-5 px-2">
-          <h1 className="display-4 fw-bold mb-3 text-gradient">VFX and Video Editing</h1>
-          <p className="lead fs-5 mb-4 text-muted">
+        <div className="text-center mb-4 mb-lg-5 px-2">
+          <h1 className="display-4 display-lg-3 fw-bold mb-3 text-gradient">VFX and Video Editing</h1>
+          <p className="lead fs-6 fs-lg-5 mb-4 text-muted">
             Professional video production combining 3D software rendering with advanced post-production effects
           </p>
-          <hr className="border-2 border-primary w-25 mx-auto mb-5" />
+          <hr className="border-2 border-primary w-50 w-lg-25 mx-auto mb-4 mb-lg-5" />
         </div>
 
         <div className="px-2 px-lg-4">
@@ -513,7 +520,7 @@ function VfxVideoEditing() {
           <div className="featured-showcase mb-5">
             <Card className="bg-dark text-white shadow-lg border-0 overflow-hidden">
               <div className="position-relative">
-                <div className="ratio ratio-21x9">
+                <div className="ratio ratio-21x9 ratio-md-16x9">
                   <Card.Img 
                     loading="lazy" 
                     variant="top" 
@@ -523,24 +530,24 @@ function VfxVideoEditing() {
                   />
                 </div>
                 <div className="position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-25"></div>
-                <div className="position-absolute bottom-0 start-0 w-100 p-4 p-lg-5 bg-gradient-dark">
-                  <div className="row align-items-end">
+                <div className="position-absolute bottom-0 start-0 w-100 p-3 p-lg-5 bg-gradient-dark">
+                  <div className="row align-items-end g-3">
                     <div className="col-md-8">
                       <h2 className="h2 fw-bold mb-2 text-white">Colin Nebula 2024 VFX Reel</h2>
-                      <p className="fs-5 mb-3 text-white-50">
+                      <p className="fs-6 fs-lg-5 mb-3 text-white-50">
                         Latest visual effects showcase created with Blender and After Effects
                       </p>
                       <div className="d-flex flex-wrap gap-2 align-items-center mb-3">
-                        <span className="badge bg-primary px-3 py-2">Blender</span>
-                        <span className="badge bg-secondary px-3 py-2">After Effects</span>
-                        <span className="badge bg-success px-3 py-2">Motion Tracking</span>
+                        <span className="badge bg-primary px-2 px-lg-3 py-1 py-lg-2">Blender</span>
+                        <span className="badge bg-secondary px-2 px-lg-3 py-1 py-lg-2">After Effects</span>
+                        <span className="badge bg-success px-2 px-lg-3 py-1 py-lg-2">Motion Tracking</span>
                       </div>
                     </div>
-                    <div className="col-md-4 text-md-end">
+                    <div className="col-md-4 text-center text-md-end">
                       <Button 
                         variant="warning" 
                         size="lg" 
-                        className="mb-2 px-4 py-2 fw-semibold"
+                        className="mb-2 px-3 px-lg-4 py-2 fw-semibold w-100 w-md-auto"
                         onClick={(e) => { 
                           lastActiveRef.current = e.currentTarget; 
                           console.info('analytics', 'open_modal', 'recent');
@@ -558,24 +565,24 @@ function VfxVideoEditing() {
 
           {/* Portfolio grid section */}
           <div className="portfolio-grid">
-            <div className="text-center mb-5">
+            <div className="text-center mb-4 mb-lg-5">
               <h2 className="h1 fw-bold mb-3">Portfolio Showcase</h2>
-              <p className="fs-5 text-muted mb-4">
+              <p className="fs-6 fs-lg-5 text-muted mb-4">
                 Combining 2D and 3D tools to create compelling visual narratives
               </p>
             </div>
 
             <div className="row">
-              <div className="portfolio-card-wrapper">
+              <div className="col-12 col-lg-6 mb-4 mb-lg-0">
                 <Card className="portfolio-card bg-dark text-white shadow-lg border-0 h-100 overflow-hidden">
                   <div className="position-relative">
                     <div className="ratio ratio-16x9">
                       <Card.Img 
                         loading="lazy" 
                         variant="top" 
-                        src={logoD} 
+                        src={vfxDemo} 
                         className="object-fit-cover transition-transform" 
-                        alt="VFX logo" 
+                        alt="VFX Demo Reel - Professional Visual Effects Showcase" 
                       />
                     </div>
                     <div className="card-overlay position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 opacity-0 transition-opacity d-flex align-items-center justify-content-center">
@@ -591,26 +598,37 @@ function VfxVideoEditing() {
                         <i className="bi bi-play-fill me-2"></i>View Project
                       </Button>
                     </div>
+                    <div className="position-absolute top-3 end-3">
+                      <span className="badge bg-danger bg-opacity-90 px-3 py-2 rounded-pill">
+                        <i className="bi bi-award me-1"></i>Professional VFX
+                      </span>
+                    </div>
                   </div>
                   
-                  <Card.Body className="p-4 p-lg-5 d-flex flex-column">
+                  <Card.Body className="p-3 p-lg-4 d-flex flex-column">
                     <div className="mb-3">
-                      <span className="badge bg-danger mb-2">Film Industry</span>
-                      <Card.Title className="h3 fw-bold mb-3">VFX Demo Reel</Card.Title>
-                      <Card.Text className="fs-6 text-white-50 flex-grow-1 lh-relaxed">
+                      <div className="d-flex align-items-center justify-content-between mb-2">
+                        <span className="badge bg-danger mb-2">Film Industry</span>
+                        <small className="text-muted">
+                          <i className="bi bi-clock me-1"></i>2:35 min
+                        </small>
+                      </div>
+                      <Card.Title className="h4 fw-bold mb-3">VFX Demo Reel</Card.Title>
+                      <Card.Text className="text-white-50 flex-grow-1 lh-relaxed">
                         Professional visual effects demonstration showcasing industry experience 
-                        in commercial and television production environments.
+                        in commercial and television production environments including rotoscoping, 
+                        compositing, and 3D integration.
                       </Card.Text>
                     </div>
                     
                     <div className="border-top border-secondary pt-3 mt-auto">
                       <div className="d-flex flex-wrap gap-2 mb-3">
                         <small className="text-muted">
-                          <i className="bi bi-tools me-1"></i>Maya • Photoshop • Nuke
+                          <i className="bi bi-tools me-1"></i>Maya • Photoshop • Nuke • After Effects
                         </small>
                       </div>
                       
-                      <div className="d-flex flex-wrap gap-2">
+                      <div className="d-flex flex-column flex-sm-row gap-2">
                         <Button 
                           variant="outline-warning" 
                           size="sm" 
@@ -620,39 +638,43 @@ function VfxVideoEditing() {
                             scrollToTopAndOpen(() => setLgShow(true), 'demo'); 
                           }}
                         >
-                          <i className="bi bi-play me-1"></i>Watch
+                          <i className="bi bi-play me-1"></i>Watch Demo
                         </Button>
-                        <button 
-                          className="btn btn-sm btn-outline-secondary" 
-                          onClick={() => copyToClipboard(REEL.demo.url)}
-                          title="Copy link"
-                        >
-                          <i className="bi bi-link-45deg"></i>
-                        </button>
-                        <a 
-                          className="btn btn-sm btn-outline-primary" 
-                          href={REEL.demo.url} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          title="Open on YouTube"
-                        >
-                          <i className="bi bi-youtube"></i>
-                        </a>
+                        <div className="d-flex gap-2">
+                          <button 
+                            className="btn btn-sm btn-outline-secondary flex-grow-1 flex-sm-grow-0" 
+                            onClick={() => copyToClipboard(REEL.demo.url)}
+                            title="Copy link"
+                          >
+                            <i className="bi bi-link-45deg"></i>
+                            <span className="d-sm-none ms-1">Copy</span>
+                          </button>
+                          <a 
+                            className="btn btn-sm btn-outline-primary flex-grow-1 flex-sm-grow-0" 
+                            href={REEL.demo.url} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            title="Open on YouTube"
+                          >
+                            <i className="bi bi-youtube"></i>
+                            <span className="d-sm-none ms-1">YouTube</span>
+                          </a>
+                        </div>
                       </div>
                     </div>
                   </Card.Body>
                 </Card>
               </div>
-              <div className="portfolio-card-wrapper">
+              <div className="col-12 col-lg-6 mb-4 mb-lg-0">
                 <Card className="portfolio-card bg-dark text-white shadow-lg border-0 h-100 overflow-hidden">
                   <div className="position-relative">
                     <div className="ratio ratio-16x9">
                       <Card.Img 
                         loading="lazy" 
                         variant="top" 
-                        src={content} 
+                        src={videoProduction} 
                         className="object-fit-cover transition-transform" 
-                        alt="Byte video poster" 
+                        alt="Byte Size Soccer - Educational Video Production" 
                       />
                     </div>
                     <div className="card-overlay position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 opacity-0 transition-opacity d-flex align-items-center justify-content-center">
@@ -668,26 +690,36 @@ function VfxVideoEditing() {
                         <i className="bi bi-play-fill me-2"></i>View Project
                       </Button>
                     </div>
+                    <div className="position-absolute top-3 end-3">
+                      <span className="badge bg-success bg-opacity-90 px-3 py-2 rounded-pill">
+                        <i className="bi bi-mortarboard me-1"></i>Educational
+                      </span>
+                    </div>
                   </div>
                   
-                  <Card.Body className="p-4 p-lg-5 d-flex flex-column">
+                  <Card.Body className="p-3 p-lg-4 d-flex flex-column">
                     <div className="mb-3">
-                      <span className="badge bg-success mb-2">Educational</span>
-                      <Card.Title className="h3 fw-bold mb-3">Video Production</Card.Title>
-                      <Card.Text className="fs-6 text-white-50 flex-grow-1 lh-relaxed">
-                        Complete video editing workflow including motion graphics, 
-                        3D integration, and sound design for educational content.
+                      <div className="d-flex align-items-center justify-content-between mb-2">
+                        <span className="badge bg-success mb-2">Client Project</span>
+                        <small className="text-muted">
+                          <i className="bi bi-star-fill me-1"></i>Featured Work
+                        </small>
+                      </div>
+                      <Card.Title className="h4 fw-bold mb-3">Educational Video Production</Card.Title>
+                      <Card.Text className="text-white-50 flex-grow-1 lh-relaxed">
+                        Complete video editing workflow for Byte Size Soccer featuring motion graphics, 
+                        3D integration, sound design, and educational content optimization for young athletes.
                       </Card.Text>
                     </div>
                     
                     <div className="border-top border-secondary pt-3 mt-auto">
                       <div className="d-flex flex-wrap gap-2 mb-3">
                         <small className="text-muted">
-                          <i className="bi bi-tools me-1"></i>After Effects • Photoshop • Maya
+                          <i className="bi bi-tools me-1"></i>After Effects • Photoshop • Maya • Premiere Pro
                         </small>
                       </div>
                       
-                      <div className="d-flex flex-wrap gap-2">
+                      <div className="d-flex flex-column flex-sm-row gap-2">
                         <Button 
                           variant="outline-warning" 
                           size="sm" 
@@ -697,24 +729,121 @@ function VfxVideoEditing() {
                             scrollToTopAndOpen(() => setLgShow1(true), 'byte'); 
                           }}
                         >
-                          <i className="bi bi-play me-1"></i>Watch
+                          <i className="bi bi-play me-1"></i>Watch Video
                         </Button>
-                        <button 
-                          className="btn btn-sm btn-outline-secondary" 
-                          onClick={() => copyToClipboard(REEL.byte.url)}
-                          title="Copy link"
+                        <div className="d-flex gap-2">
+                          <button 
+                            className="btn btn-sm btn-outline-secondary flex-grow-1 flex-sm-grow-0" 
+                            onClick={() => copyToClipboard(REEL.byte.url)}
+                            title="Copy link"
+                          >
+                            <i className="bi bi-link-45deg"></i>
+                            <span className="d-sm-none ms-1">Copy</span>
+                          </button>
+                          <a 
+                            className="btn btn-sm btn-outline-primary flex-grow-1 flex-sm-grow-0" 
+                            href={REEL.byte.url} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            title="Open on YouTube"
+                          >
+                            <i className="bi bi-youtube"></i>
+                            <span className="d-sm-none ms-1">YouTube</span>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </Card.Body>
+                </Card>
+              </div>
+              
+              {/* Additional Motion Graphics Card */}
+              <div className="col-12 col-lg-6 offset-lg-3 mt-4">
+                <Card className="portfolio-card bg-dark text-white shadow-lg border-0 h-100 overflow-hidden">
+                  <div className="position-relative">
+                    <div className="ratio ratio-16x9">
+                      <Card.Img 
+                        loading="lazy" 
+                        variant="top" 
+                        src={motionGraphics} 
+                        className="object-fit-cover transition-transform" 
+                        alt="Motion Graphics and Animation Work" 
+                      />
+                    </div>
+                    <div className="card-overlay position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 opacity-0 transition-opacity d-flex align-items-center justify-content-center">
+                      <Button 
+                        variant="outline-light" 
+                        size="lg" 
+                        className="rounded-pill px-4"
+                        onClick={(e) => { 
+                          lastActiveRef.current = e.currentTarget; 
+                          scrollToTopAndOpen(() => setLgShow2(true), 'recent'); 
+                        }}
+                      >
+                        <i className="bi bi-play-fill me-2"></i>View Reel
+                      </Button>
+                    </div>
+                    <div className="position-absolute top-3 end-3">
+                      <span className="badge bg-primary bg-opacity-90 px-3 py-2 rounded-pill">
+                        <i className="bi bi-magic me-1"></i>Motion Graphics
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <Card.Body className="p-3 p-lg-4 d-flex flex-column">
+                    <div className="mb-3">
+                      <div className="d-flex align-items-center justify-content-between mb-2">
+                        <span className="badge bg-primary mb-2">Latest Work</span>
+                        <small className="text-muted">
+                          <i className="bi bi-calendar me-1"></i>2024
+                        </small>
+                      </div>
+                      <Card.Title className="h4 fw-bold mb-3">Motion Graphics & Animation</Card.Title>
+                      <Card.Text className="text-white-50 flex-grow-1 lh-relaxed">
+                        Advanced motion graphics and 3D animation showcase featuring camera tracking, 
+                        compositing, and seamless integration of CGI elements with live-action footage.
+                      </Card.Text>
+                    </div>
+                    
+                    <div className="border-top border-secondary pt-3 mt-auto">
+                      <div className="d-flex flex-wrap gap-2 mb-3">
+                        <small className="text-muted">
+                          <i className="bi bi-tools me-1"></i>Blender • After Effects • Cinema 4D
+                        </small>
+                      </div>
+                      
+                      <div className="d-flex flex-column flex-sm-row gap-2">
+                        <Button 
+                          variant="outline-warning" 
+                          size="sm" 
+                          className="flex-grow-1"
+                          onClick={(e) => { 
+                            lastActiveRef.current = e.currentTarget; 
+                            scrollToTopAndOpen(() => setLgShow2(true), 'recent'); 
+                          }}
                         >
-                          <i className="bi bi-link-45deg"></i>
-                        </button>
-                        <a 
-                          className="btn btn-sm btn-outline-primary" 
-                          href={REEL.byte.url} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          title="Open on YouTube"
-                        >
-                          <i className="bi bi-youtube"></i>
-                        </a>
+                          <i className="bi bi-play me-1"></i>Watch Reel
+                        </Button>
+                        <div className="d-flex gap-2">
+                          <button 
+                            className="btn btn-sm btn-outline-secondary flex-grow-1 flex-sm-grow-0" 
+                            onClick={() => copyToClipboard(REEL.recent.url)}
+                            title="Copy link"
+                          >
+                            <i className="bi bi-link-45deg"></i>
+                            <span className="d-sm-none ms-1">Copy</span>
+                          </button>
+                          <a 
+                            className="btn btn-sm btn-outline-primary flex-grow-1 flex-sm-grow-0" 
+                            href={REEL.recent.url} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            title="Open on YouTube"
+                          >
+                            <i className="bi bi-youtube"></i>
+                            <span className="d-sm-none ms-1">YouTube</span>
+                          </a>
+                        </div>
                       </div>
                     </div>
                   </Card.Body>

@@ -3,6 +3,20 @@ import { Container, Card, Button, Badge, Form, Modal, Spinner, Alert, Carousel }
 import { useNotifications } from '../../App';
 import './Portfolio.css';
 
+// Import professional images
+import stellarGuardian from '../../assets/images/3dModels.png';
+import nebulaStarship from '../../assets/images/Sniper_wireCombo0001.jpg';
+import facialRigging from '../../assets/images/rigging.png';
+import spaceBattleVFX from '../../assets/images/SniperRifleTestxx6.jpg';
+import architecturalViz from '../../assets/images/TruckB_01.jpg';
+import gameEnvironment from '../../assets/images/maps.jpg';
+import motionGraphics from '../../assets/images/shapeAnimation.png';
+import knivesModel from '../../assets/images/knives.png';
+import maskDesign from '../../assets/images/maskall.png';
+import swordModel from '../../assets/images/swordAll.png';
+import wireframeModel from '../../assets/images/wireM.png';
+import tacticalModel from '../../assets/images/tacticalK.png';
+
 const Portfolio = () => {
   const { showNotification } = useNotifications();
   
@@ -51,13 +65,13 @@ const Portfolio = () => {
     {
       id: 1,
       title: 'Stellar Guardian Character',
-      description: 'High-poly sci-fi character with complete rigging and animation set. Designed for next-generation gaming applications.',
+      description: 'High-poly sci-fi character with complete rigging and animation set. Designed for next-generation gaming applications with industry-standard topology and advanced material systems.',
       category: '3d-modeling',
       technologies: ['blender', 'zbrush', 'substance-painter'],
       images: [
-        'https://via.placeholder.com/800x600?text=Stellar+Guardian+Front',
-        'https://via.placeholder.com/800x600?text=Stellar+Guardian+Side',
-        'https://via.placeholder.com/800x600?text=Stellar+Guardian+Back'
+        stellarGuardian,
+        nebulaStarship,
+        facialRigging
       ],
       featured: true,
       date: '2024-01-15',
@@ -71,42 +85,43 @@ const Portfolio = () => {
         animations: '58 sequences',
         bones: '120+ bones'
       },
-      challenges: 'Creating realistic armor mechanics while maintaining performance optimization.',
-      outcome: 'Successfully integrated into multiple game engines with positive feedback from industry professionals.'
+      challenges: 'Creating realistic armor mechanics while maintaining performance optimization for real-time rendering.',
+      outcome: 'Successfully integrated into multiple game engines with positive feedback from industry professionals and featured in portfolio reviews.'
     },
     {
       id: 2,
-      title: 'Nebula Starship',
-      description: 'Detailed spacecraft model with modular construction and realistic physics-based design.',
+      title: 'Advanced Sniper Rifle',
+      description: 'Detailed tactical weapon model with modular construction and realistic physics-based design. Features complete material breakdown and multiple LOD versions.',
       category: '3d-modeling',
       technologies: ['blender', 'substance-painter'],
       images: [
-        'https://via.placeholder.com/800x600?text=Nebula+Starship+Exterior',
-        'https://via.placeholder.com/800x600?text=Nebula+Starship+Interior',
-        'https://via.placeholder.com/800x600?text=Nebula+Starship+Blueprint'
+        nebulaStarship,
+        wireframeModel,
+        tacticalModel
       ],
       date: '2023-11-20',
       duration: '4 weeks',
-      client: 'Sci-Fi Studios',
+      client: 'Gaming Studio',
       status: 'completed',
-      tags: ['spaceship', 'modular', 'hard-surface', 'detailed'],
+      tags: ['weapon', 'modular', 'hard-surface', 'detailed'],
       specifications: {
         polygons: '2.1M triangles',
         textures: '8K detail textures',
         components: '300+ unique parts',
         variants: 'High/Low poly versions'
-      }
+      },
+      featured: true
     },
     {
       id: 3,
-      title: 'Facial Rigging Demo',
-      description: 'Advanced facial rig with realistic expressions and lip-sync capabilities.',
+      title: 'Professional Facial Rigging',
+      description: 'Advanced facial rig with realistic expressions and lip-sync capabilities. Industry-standard control system for film and game production.',
       category: 'animation',
       technologies: ['maya', 'zbrush'],
       images: [
-        'https://via.placeholder.com/800x600?text=Facial+Rig+Neutral',
-        'https://via.placeholder.com/800x600?text=Facial+Rig+Expressions',
-        'https://via.placeholder.com/800x600?text=Facial+Rig+Controls'
+        facialRigging,
+        stellarGuardian,
+        maskDesign
       ],
       date: '2023-10-10',
       duration: '2 weeks',
@@ -116,32 +131,32 @@ const Portfolio = () => {
     },
     {
       id: 4,
-      title: 'Space Battle VFX',
-      description: 'Epic space battle sequence with particle effects, explosions, and dynamic lighting.',
+      title: 'VFX Compositing Demo',
+      description: 'Professional visual effects demonstration showcasing advanced compositing techniques, matte painting, and seamless CGI integration.',
       category: 'vfx',
       technologies: ['after-effects', 'blender'],
       images: [
-        'https://via.placeholder.com/800x600?text=Space+Battle+Wide',
-        'https://via.placeholder.com/800x600?text=Space+Battle+Explosion',
-        'https://via.placeholder.com/800x600?text=Space+Battle+Ships'
+        spaceBattleVFX,
+        nebulaStarship,
+        motionGraphics
       ],
       featured: true,
       date: '2023-12-05',
       duration: '5 weeks',
       client: 'Project Nebula',
       status: 'completed',
-      tags: ['space', 'particles', 'explosions', 'compositing']
+      tags: ['compositing', 'particles', 'vfx', 'integration']
     },
     {
       id: 5,
       title: 'Architectural Visualization',
-      description: 'Modern house exterior and interior visualization with realistic lighting and materials.',
+      description: 'Professional architectural rendering with photorealistic lighting and materials. Complete environment design with detailed interior and exterior spaces.',
       category: 'architectural',
       technologies: ['blender', 'substance-painter'],
       images: [
-        'https://via.placeholder.com/800x600?text=Modern+House+Exterior',
-        'https://via.placeholder.com/800x600?text=Modern+House+Interior',
-        'https://via.placeholder.com/800x600?text=Modern+House+Garden'
+        architecturalViz,
+        gameEnvironment,
+        stellarGuardian
       ],
       date: '2023-09-15',
       duration: '3 weeks',
@@ -152,21 +167,55 @@ const Portfolio = () => {
     {
       id: 6,
       title: 'Game Environment Assets',
-      description: 'Modular environment pieces for fantasy game including rocks, trees, and structures.',
+      description: 'Modular environment pieces for fantasy game including optimized models, detailed textures, and game-ready materials with multiple LOD versions.',
       category: 'game-assets',
       technologies: ['blender', 'unity', 'substance-painter'],
       images: [
-        'https://via.placeholder.com/800x600?text=Game+Environment+Overview',
-        'https://via.placeholder.com/800x600?text=Game+Assets+Details',
-        'https://via.placeholder.com/800x600?text=Game+Assets+Textures'
+        gameEnvironment,
+        architecturalViz,
+        stellarGuardian
       ],
       date: '2024-02-01',
       duration: '6 weeks',
       client: 'Indie Game Studio',
       status: 'in-progress',
       tags: ['game-ready', 'modular', 'fantasy', 'optimized']
+    },
+    {
+      id: 7,
+      title: 'Professional Knife Collection',
+      description: 'High-detail knife and blade models with realistic materials and weathering effects. Created for commercial product visualization.',
+      category: '3d-modeling',
+      technologies: ['blender', 'substance-painter'],
+      images: [
+        knivesModel,
+        tacticalModel,
+        swordModel
+      ],
+      date: '2024-03-10',
+      duration: '2 weeks',
+      client: 'Product Visualization',
+      status: 'completed',
+      tags: ['product-viz', 'realistic', 'materials', 'commercial']
+    },
+    {
+      id: 8,
+      title: 'Character Mask Design',
+      description: 'Stylized character mask with intricate detailing and multiple material variations. Features both high-poly sculpted and low-poly game versions.',
+      category: '3d-modeling',
+      technologies: ['zbrush', 'blender', 'substance-painter'],
+      images: [
+        maskDesign,
+        stellarGuardian,
+        facialRigging
+      ],
+      date: '2024-01-25',
+      duration: '1 week',
+      client: 'Character Design Studio',
+      status: 'completed',
+      tags: ['character', 'stylized', 'sculpting', 'design']
     }
-  ], []); // Empty dependency array since this data is static
+  ], []); // Static data doesn't need dependencies
 
     // Search suggestions
   const searchSuggestions = useMemo(() => {
@@ -210,7 +259,7 @@ const Portfolio = () => {
     if (projects.length === 0) {
       loadPortfolio();
     }
-  }, [projects.length, showNotification]);
+  }, [projects.length, showNotification, portfolioData]);
 
   // Filter and sort projects
   const filteredProjects = useMemo(() => {

@@ -10,10 +10,17 @@
   margin-top: 3rem;
 }
 
+/* Use Bootstrap Grid for portfolio cards */
 .portfolio-grid .row {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 2rem;
+  /* Remove custom grid, use Bootstrap's responsive grid system */
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -15px;
+}
+
+.portfolio-grid .row > [class*="col-"] {
+  padding: 0 15px;
+  margin-bottom: 2rem;
 }
 
 .portfolio-card-wrapper {
@@ -21,47 +28,80 @@
   flex-direction: column;
   width: 100%;
   position: relative;
+  min-height: 100%;
 }
 
 /* Card Consistency Fixes */
 .portfolio-card {
   height: 100%;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(15px);
   flex: 1;
   display: flex;
   flex-direction: column;
-  background: rgba(0, 0, 0, 0.7) !important;
+  background: rgba(0, 0, 0, 0.8) !important;
+  border-radius: 15px;
+  overflow: hidden;
+  position: relative;
+}
+
+.portfolio-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%, rgba(255, 255, 255, 0.05) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 1;
 }
 
 .portfolio-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-12px) scale(1.02);
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.4),
+    0 0 30px rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.portfolio-card:hover::before {
+  opacity: 1;
 }
 
 .portfolio-card .card-img-top {
   height: 250px;
   object-fit: cover;
-  transition: transform 0.3s ease;
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   width: 100%;
+  filter: brightness(0.9) contrast(1.1);
 }
 
 .portfolio-card:hover .card-img-top {
-  transform: scale(1.05);
+  transform: scale(1.08);
+  filter: brightness(1) contrast(1.2);
 }
 
 .portfolio-card .ratio {
   background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 15px 15px 0 0;
+  overflow: hidden;
+  position: relative;
 }
 
 .portfolio-card .card-body {
   display: flex;
   flex-direction: column;
   height: auto;
-  min-height: 300px;
+  min-height: 320px;
   flex: 1;
+  position: relative;
+  z-index: 2;
+  background: rgba(0, 0, 0, 0.9);
+  backdrop-filter: blur(10px);
 }
 
 .portfolio-card .card-title {
@@ -69,36 +109,140 @@
   font-weight: bold !important;
   margin-bottom: 1rem;
   font-size: 1.5rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .portfolio-card .card-text {
   flex-grow: 1;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.85);
   line-height: 1.6;
   margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+}
+
+/* Professional Badge Styling */
+.portfolio-card .badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.portfolio-card .badge.bg-danger {
+  background: linear-gradient(135deg, #dc3545, #c82333) !important;
+}
+
+.portfolio-card .badge.bg-success {
+  background: linear-gradient(135deg, #28a745, #218838) !important;
+}
+
+.portfolio-card .badge.bg-primary {
+  background: linear-gradient(135deg, #007bff, #0056b3) !important;
+}
+
+/* Top Corner Badge */
+.portfolio-card .position-absolute.top-3.end-3 .badge {
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* Enhanced Button Styling */
+.portfolio-card .btn {
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  font-weight: 600;
+  border-radius: 25px;
+  position: relative;
+  overflow: hidden;
+}
+
+.portfolio-card .btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.portfolio-card .btn:hover::before {
+  left: 100%;
+}
+
+.portfolio-card .btn-outline-warning {
+  background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 193, 7, 0.2));
+  border-color: #ffc107;
+  color: #ffc107;
+  box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
+}
+
+.portfolio-card .btn-outline-warning:hover {
+  background: linear-gradient(135deg, #ffc107, #e0a800);
+  color: #000;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 193, 7, 0.4);
+}
+
+/* Professional Tools Text */
+.portfolio-card .text-muted {
+  color: rgba(255, 255, 255, 0.7) !important;
+  font-size: 0.85rem;
+  font-weight: 500;
 }
 
 /* Card Overlay Effects */
 .card-overlay {
-  transition: opacity 0.3s ease;
-  backdrop-filter: blur(5px);
-  z-index: 2;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  backdrop-filter: blur(8px);
+  z-index: 3;
+  background: radial-gradient(circle at center, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.7) 100%);
 }
 
 .portfolio-card:hover .card-overlay {
   opacity: 1 !important;
+  backdrop-filter: blur(5px);
 }
 
 .card-overlay .btn {
-  z-index: 3;
+  z-index: 4;
   position: relative;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.card-overlay .btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
 }
 
 /* Card Ratio Container */
 .portfolio-card .ratio {
-  background-color: rgba(255, 255, 255, 0.1);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%);
   overflow: hidden;
   position: relative;
+}
+
+.portfolio-card .ratio::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent 0%, rgba(255, 255, 255, 0.03) 50%, transparent 100%);
+  pointer-events: none;
 }
 
 .portfolio-card .ratio img {
@@ -108,6 +252,35 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+/* Professional Hover Effects */
+.portfolio-card {
+  position: relative;
+  isolation: isolate;
+}
+
+.portfolio-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: conic-gradient(from 0deg at 50% 50%, 
+    rgba(255, 255, 255, 0.1) 0deg, 
+    transparent 60deg, 
+    transparent 300deg, 
+    rgba(255, 255, 255, 0.1) 360deg);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: -1;
+  border-radius: 15px;
+}
+
+.portfolio-card:hover::after {
+  opacity: 1;
 }
 
 /* Featured Showcase */
@@ -168,10 +341,19 @@
 }
 
 /* Responsive Design */
+@media (max-width: 1200px) {
+  .portfolio-grid .row > [class*="col-"] {
+    margin-bottom: 1.5rem;
+  }
+}
+
 @media (max-width: 992px) {
-  .portfolio-grid .row {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
+  .video-editing-container {
+    padding: 1.5rem 0;
+  }
+  
+  .portfolio-grid .row > [class*="col-"] {
+    margin-bottom: 1.5rem;
   }
   
   .portfolio-card .card-img-top {
@@ -179,7 +361,26 @@
   }
   
   .portfolio-card .card-body {
-    min-height: 250px;
+    min-height: 280px;
+    padding: 1.5rem;
+  }
+  
+  .featured-showcase .position-absolute.bottom-0 {
+    position: relative !important;
+    background: rgba(0, 0, 0, 0.8) !important;
+  }
+  
+  .featured-showcase .row {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .featured-showcase .col-md-4 {
+    text-align: center;
+  }
+  
+  .featured-showcase .ratio-21x9 {
+    aspect-ratio: 16/10;
   }
 }
 
@@ -192,21 +393,200 @@
     margin-top: 2rem;
   }
   
+  .portfolio-grid .row {
+    margin: 0 -10px;
+  }
+  
+  .portfolio-grid .row > [class*="col-"] {
+    padding: 0 10px;
+    margin-bottom: 1rem;
+  }
+  
   .featured-showcase {
     margin-bottom: 2rem;
   }
   
+  .featured-showcase .ratio-21x9,
+  .featured-showcase .ratio-md-16x9 {
+    aspect-ratio: 16/10;
+  }
+  
   .portfolio-card .card-body {
-    min-height: 250px;
-    padding: 1.5rem;
+    min-height: auto;
+    padding: 1rem;
   }
   
   .portfolio-card .card-title {
     font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .portfolio-card .card-text {
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+  
+  /* Mobile Modal Improvements */
+  .modal-dialog {
+    margin: 0.5rem !important;
+    max-width: calc(100vw - 1rem) !important;
+  }
+  
+  .modal-content {
+    border-radius: 10px;
+  }
+  
+  .modal-body {
+    padding: 1rem !important;
+  }
+  
+  .modal-header {
+    padding: 1rem !important;
+  }
+  
+  .modal-title {
+    font-size: 1.25rem;
+  }
+  
+  /* Mobile Controls */
+  .player-controls {
+    flex-direction: column;
+    align-items: stretch !important;
+    gap: 1rem !important;
+  }
+  
+  .player-controls .btn {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .player-controls .ms-auto {
+    margin: 0 !important;
+    justify-content: center;
+  }
+  
+  .project-meta .d-flex.flex-wrap {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 0.5rem !important;
+  }
+  
+  .project-meta .ms-auto {
+    margin: 0 !important;
+  }
+  
+  /* Mobile Badge Layout */
+  .project-meta .gap-2 {
+    gap: 0.5rem !important;
+  }
+  
+  .badge {
+    font-size: 0.7rem;
+    padding: 0.375rem 0.75rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .video-editing-container {
+    padding: 0.5rem 0;
   }
   
   .portfolio-grid .row {
-    gap: 1rem;
+    margin: 0 -5px;
+  }
+  
+  .portfolio-grid .row > [class*="col-"] {
+    padding: 0 5px;
+    margin-bottom: 0.75rem;
+  }
+  
+  .portfolio-card .card-body {
+    padding: 0.75rem;
+  }
+  
+  .portfolio-card .card-title {
+    font-size: 1.1rem;
+  }
+  
+  .portfolio-card .card-text {
+    font-size: 0.85rem;
+  }
+  
+  /* Ultra Mobile Modal */
+  .modal-dialog {
+    margin: 0.25rem !important;
+    max-width: calc(100vw - 0.5rem) !important;
+  }
+  
+  .modal-body,
+  .modal-header {
+    padding: 0.75rem !important;
+  }
+  
+  .modal-title {
+    font-size: 1.1rem;
+  }
+  
+  .project-description h5 {
+    font-size: 1rem;
+  }
+  
+  .project-description p {
+    font-size: 0.85rem;
+  }
+  
+  /* Mobile Button Improvements */
+  .btn-group-vertical .btn,
+  .d-flex .btn {
+    font-size: 0.85rem;
+    padding: 0.5rem 1rem;
+  }
+  
+  .featured-showcase .btn-lg {
+    font-size: 1rem;
+    padding: 0.75rem 1.5rem;
+  }
+  
+  /* Text Sizing */
+  .display-4 {
+    font-size: 2rem !important;
+  }
+  
+  .fs-5 {
+    font-size: 1rem !important;
+  }
+  
+  .lead {
+    font-size: 1.1rem !important;
+  }
+  
+  .featured-showcase .ratio-21x9,
+  .featured-showcase .ratio-md-16x9 {
+    aspect-ratio: 4/3;
+  }
+}
+
+@media (max-width: 400px) {
+  .portfolio-grid .row > [class*="col-"] {
+    margin-bottom: 0.5rem;
+  }
+  
+  .portfolio-card .card-body {
+    padding: 0.5rem;
+  }
+  
+  .modal-dialog {
+    margin: 0.125rem !important;
+    max-width: calc(100vw - 0.25rem) !important;
+  }
+  
+  .display-4 {
+    font-size: 1.75rem !important;
+  }
+  
+  .badge {
+    font-size: 0.65rem;
+    padding: 0.25rem 0.5rem;
   }
 }
 
@@ -215,10 +595,24 @@
   background-color: var(--card-bg, rgba(0, 0, 0, 0.9));
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 15px;
+  max-height: 95vh;
+  overflow-y: auto;
+}
+
+.modal-dialog {
+  max-width: 90vw;
+  margin: 1rem auto;
 }
 
 .modal-header {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1.5rem;
+}
+
+.modal-body {
+  padding: 1.5rem;
+  max-height: calc(95vh - 120px);
+  overflow-y: auto;
 }
 
 .modal-title {
@@ -226,12 +620,55 @@
 }
 
 .modal-video-player .modal-dialog {
-  max-width: 90vw;
+  max-width: min(90vw, 1200px);
 }
 
 .video-player-wrapper {
   border-radius: 10px;
   overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.video-player-wrapper .ratio {
+  background: #000;
+}
+
+/* Project Details Container */
+.project-details-container {
+  max-width: 100%;
+}
+
+.project-meta {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 1rem;
+}
+
+.project-description {
+  margin-top: 1rem;
+}
+
+.feature-list {
+  padding-left: 1.25rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.feature-list li {
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
+}
+
+/* Form Controls in Modal */
+.form-check {
+  margin-bottom: 0;
+}
+
+.form-check-input {
+  margin-right: 0.5rem;
+}
+
+.form-check-label {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
 }
 
 /* Badge Styling */

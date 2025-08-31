@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Container, Row, Col, Card, Alert, Badge, Form, Modal, Button, Spinner } from 'react-bootstrap';
 import { useNotifications } from '../../App';
-import './Updates.css';
 
 // Skeleton loader component
 const SkeletonLoader = ({ count, viewMode }) => {
@@ -1059,8 +1058,9 @@ const Updates = () => {
                     </div>
                   </Card.Body>
                 </Card>
+              </Col>
             ))}
-          </div>
+          </Row>
         ) : (
           // Enhanced List view with animations
           <div className="update-list-view">
