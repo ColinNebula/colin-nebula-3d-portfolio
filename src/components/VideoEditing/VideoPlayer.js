@@ -2,323 +2,383 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Button, Spinner } from 'react-bootstrap';
 
 const VideoPlayer = ({ 
-  videoUrl, 
-  poster, 
-  title, 
-  autoplay = false, 
-  muted = true,
-  onPlay,
-  onPause,
-  className = ""
+  url, 
+  onError, 
+  className = '', 
+  title = 'Professional Video Player',
+  poster = '',
+  ...props 
 }) => {
-  const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [showPoster, setShowPoster] = useState(true);
-  const [videoType, setVideoType] = useState(null);
-  const [embedUrl, setEmbedUrl] = useState('');
-  const [hasError, setHasError] = useState(false);
-  const iframeRef = useRef(null);
+  const [error, setError] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
   const videoRef = useRef(null);
+  const iframeRef = useRef(null);
 
-  useEffect(() => {
-    console.log('VideoPlayer: useEffect triggered with videoUrl:', videoUrl);
-    if (videoUrl) {
-      setHasError(false);
-      const type = detectVideoType(videoUrl);
-      setVideoType(type);
-      console.log('VideoPlayer: Detected video type:', type);
-      
-      if (type.platform !== 'native') {
-        const embed = generateEmbedUrl(videoUrl, type);
-        setEmbedUrl(embed);
-        console.log('VideoPlayer: Generated embed URL:', embed);
+  // Detect video type based on URL
+  const detectVideoType = (videoUrl) => {
+    if (!videoUrl) return null;
+    
+    const urlPatterns = {
+      youtube: /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]+)/,
+      vimeo: /(?:vimeo\.com\/)([0-9]+)/,
+      tiktok: /(?:tiktok\.com\/)(@[a-zA-Z0-9_.]+\/video\/[0-9]+|embed\/[0-9]+)/,
+      instagram: /(?:instagram\.com\/p\/|instagram\.com\/reel\/)([a-zA-Z0-9_-]+)/,
+      twitter: /(?:twitter\.com\/[a-zA-Z0-9_]+\/status\/|x\.com\/[a-zA-Z0-9_]+\/status\/)([0-9]+)/,
+      dailymotion: /(?:dailymotion\.com\/video\/)([a-zA-Z0-9]+)/
+    };
+
+    for (const [platform, pattern] of Object.entries(urlPatterns)) {
+      const match = videoUrl.match(pattern);
+      if (match) {
+        return { platform, id: match[1] };
       }
-    } else {
-      setHasError(true);
-      console.log('VideoPlayer: No videoUrl provided, setting error state');
     }
-  }, [videoUrl]);
-
-  const detectVideoType = (url) => {
-    // YouTube detection
-    const youtubeRegex = /(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{11})/;
-    const youtubeMatch = url.match(youtubeRegex);
-    if (youtubeMatch) {
-      return { platform: 'youtube', id: youtubeMatch[1] };
-    }
-
-    // Vimeo detection
-    const vimeoRegex = /(?:vimeo\.com\/)([0-9]+)/;
-    const vimeoMatch = url.match(vimeoRegex);
-    if (vimeoMatch) {
-      return { platform: 'vimeo', id: vimeoMatch[1] };
-    }
-
-    // TikTok detection
-    const tiktokRegex = /(?:tiktok\.com\/@[^/]+\/video\/|vm\.tiktok\.com\/|tiktok\.com\/t\/)([a-zA-Z0-9]+)/;
-    const tiktokMatch = url.match(tiktokRegex);
-    if (tiktokMatch) {
-      return { platform: 'tiktok', id: tiktokMatch[1] };
-    }
-
-    // Instagram detection (posts and reels)
-    const instagramRegex = /(?:instagram\.com\/(?:p|reel)\/|instagr\.am\/p\/)([a-zA-Z0-9-_]+)/;
-    const instagramMatch = url.match(instagramRegex);
-    if (instagramMatch) {
-      return { platform: 'instagram', id: instagramMatch[1] };
-    }
-
-    // Twitter/X detection
-    const twitterRegex = /(?:twitter\.com|x\.com)\/[^/]+\/status\/([0-9]+)/;
-    const twitterMatch = url.match(twitterRegex);
-    if (twitterMatch) {
-      return { platform: 'twitter', id: twitterMatch[1] };
-    }
-
-    // Twitch detection
-    const twitchRegex = /(?:twitch\.tv\/videos\/)([0-9]+)/;
-    const twitchMatch = url.match(twitchRegex);
-    if (twitchMatch) {
-      return { platform: 'twitch', id: twitchMatch[1] };
-    }
-
-    // DailyMotion detection
-    const dailymotionRegex = /(?:dailymotion\.com\/video\/)([a-zA-Z0-9]+)/;
-    const dailymotionMatch = url.match(dailymotionRegex);
-    if (dailymotionMatch) {
-      return { platform: 'dailymotion', id: dailymotionMatch[1] };
-    }
-
-    // Wistia detection
-    const wistiaRegex = /(?:wistia\.com\/medias\/|wi\.st\/)([a-zA-Z0-9]+)/;
-    const wistiaMatch = url.match(wistiaRegex);
-    if (wistiaMatch) {
-      return { platform: 'wistia', id: wistiaMatch[1] };
-    }
-
-    // JW Player detection
-    const jwRegex = /(?:jwplatform\.com\/players\/)([a-zA-Z0-9-]+)/;
-    const jwMatch = url.match(jwRegex);
-    if (jwMatch) {
-      return { platform: 'jwplayer', id: jwMatch[1] };
-    }
-
-    // Native video (mp4, webm, etc.)
-    return { platform: 'native', url };
+    
+    return null;
   };
 
-  const generateEmbedUrl = (originalUrl, type) => {
-    const baseParams = new URLSearchParams();
+  // Generate embed URL based on platform
+  const generateEmbedUrl = (videoType, videoUrl) => {
+    if (!videoType) return null;
+
+    const { platform, id } = videoType;
     
-    switch (type.platform) {
+    switch (platform) {
       case 'youtube':
-        baseParams.set('rel', '0');
-        baseParams.set('modestbranding', '1');
-        baseParams.set('showinfo', '0');
-        if (autoplay) baseParams.set('autoplay', '1');
-        if (muted) baseParams.set('mute', '1');
-        return `https://www.youtube.com/embed/${type.id}?${baseParams.toString()}`;
-        
+        return `https://www.youtube.com/embed/${id}?enablejsapi=1&origin=${window.location.origin}&autoplay=0&controls=1&rel=0&showinfo=0&modestbranding=1`;
       case 'vimeo':
-        baseParams.set('title', '0');
-        baseParams.set('byline', '0');
-        baseParams.set('portrait', '0');
-        if (autoplay) baseParams.set('autoplay', '1');
-        if (muted) baseParams.set('muted', '1');
-        return `https://player.vimeo.com/video/${type.id}?${baseParams.toString()}`;
-        
+        return `https://player.vimeo.com/video/${id}?api=1&player_id=vimeo_player&autoplay=0&title=0&byline=0&portrait=0`;
       case 'tiktok':
-        // TikTok embed is limited, but we can use their oEmbed or direct embed
-        return `https://www.tiktok.com/embed/v2/${type.id}`;
-        
+        return `https://www.tiktok.com/embed/v2/${id}`;
       case 'instagram':
-        // Instagram embeds require special handling
-        return `https://www.instagram.com/p/${type.id}/embed/`;
-        
+        return `https://www.instagram.com/p/${id}/embed/`;
       case 'twitter':
-        // Twitter video embeds
-        return `https://platform.twitter.com/embed/Tweet.html?id=${type.id}`;
-        
-      case 'twitch':
-        baseParams.set('parent', window.location.hostname);
-        if (autoplay) baseParams.set('autoplay', 'true');
-        if (muted) baseParams.set('muted', 'true');
-        return `https://player.twitch.tv/?video=${type.id}&${baseParams.toString()}`;
-        
+        return `https://platform.twitter.com/embed/Tweet.html?id=${id}`;
       case 'dailymotion':
-        baseParams.set('ui-highlight', '29abe8');
-        baseParams.set('ui-logo', '0');
-        if (autoplay) baseParams.set('autoplay', '1');
-        if (muted) baseParams.set('mute', '1');
-        return `https://www.dailymotion.com/embed/video/${type.id}?${baseParams.toString()}`;
-        
-      case 'wistia':
-        baseParams.set('seo', 'false');
-        baseParams.set('videoFoam', 'true');
-        if (autoplay) baseParams.set('autoPlay', 'true');
-        return `https://fast.wistia.net/embed/iframe/${type.id}?${baseParams.toString()}`;
-        
-      case 'jwplayer':
-        return `https://cdn.jwplayer.com/players/${type.id}`;
-        
+        return `https://www.dailymotion.com/embed/video/${id}`;
       default:
-        return originalUrl;
+        return videoUrl;
     }
   };
 
+  const videoType = detectVideoType(url);
+  const embedUrl = generateEmbedUrl(videoType, url);
+
+  // Enhanced play functionality with iframe control
   const handlePlay = () => {
-    setIsLoading(true);
-    setShowPoster(false);
-    setIsPlaying(true);
-    
-    if (onPlay) onPlay();
-    
-    // For iframe-based players, hide loading after a delay
-    if (videoType.platform !== 'native') {
-      setTimeout(() => setIsLoading(false), 1500);
+    try {
+      setIsPlaying(true);
+      
+      if (iframeRef.current && videoType) {
+        const iframe = iframeRef.current;
+        
+        // Send play command via postMessage API
+        if (videoType.platform === 'youtube') {
+          iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+        } else if (videoType.platform === 'vimeo') {
+          iframe.contentWindow.postMessage('{"method":"play"}', '*');
+        }
+      }
+      
+      setIsVisible(true);
+    } catch (error) {
+      console.error('Error playing video:', error);
     }
   };
 
-  const handleNativePlay = () => {
-    setIsPlaying(true);
-    setIsLoading(false);
-    if (onPlay) onPlay();
+  // Enhanced pause functionality with iframe control
+  const handlePause = () => {
+    try {
+      setIsPlaying(false);
+      
+      if (iframeRef.current && videoType) {
+        const iframe = iframeRef.current;
+        
+        // Send pause command via postMessage API
+        if (videoType.platform === 'youtube') {
+          iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+        } else if (videoType.platform === 'vimeo') {
+          iframe.contentWindow.postMessage('{"method":"pause"}', '*');
+        }
+      }
+    } catch (error) {
+      console.error('Error pausing video:', error);
+    }
   };
 
-  const handleNativePause = () => {
-    setIsPlaying(false);
-    if (onPause) onPause();
+  // Enhanced stop functionality with iframe control
+  const handleStop = () => {
+    try {
+      setIsPlaying(false);
+      setIsVisible(false);
+      
+      if (iframeRef.current && videoType) {
+        const iframe = iframeRef.current;
+        
+        // Send stop command via postMessage API
+        if (videoType.platform === 'youtube') {
+          iframe.contentWindow.postMessage('{"event":"command","func":"stopVideo","args":""}', '*');
+        } else if (videoType.platform === 'vimeo') {
+          iframe.contentWindow.postMessage('{"method":"pause"}', '*');
+          iframe.contentWindow.postMessage('{"method":"setCurrentTime","value":0}', '*');
+        }
+      }
+    } catch (error) {
+      console.error('Error stopping video:', error);
+    }
   };
 
-  const handleNativeLoadStart = () => {
-    setIsLoading(true);
+  const handleFullscreen = () => {
+    if (iframeRef.current) {
+      if (iframeRef.current.requestFullscreen) {
+        iframeRef.current.requestFullscreen();
+      } else if (iframeRef.current.webkitRequestFullscreen) {
+        iframeRef.current.webkitRequestFullscreen();
+      } else if (iframeRef.current.msRequestFullscreen) {
+        iframeRef.current.msRequestFullscreen();
+      }
+    }
   };
 
-  const handleNativeCanPlay = () => {
-    setIsLoading(false);
-  };
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      
+      switch (e.code) {
+        case 'Space':
+          e.preventDefault();
+          if (isPlaying) {
+            handlePause();
+          } else {
+            handlePlay();
+          }
+          break;
+        case 'Escape':
+          e.preventDefault();
+          handleStop();
+          break;
+        case 'KeyF':
+          e.preventDefault();
+          handleFullscreen();
+          break;
+        default:
+          break;
+      }
+    };
 
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [isPlaying]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Render video content
   const renderVideoContent = () => {
-    if (hasError) {
+    if (error) {
       return (
-        <div className="d-flex flex-column align-items-center justify-content-center h-100 text-center p-4">
-          <i className="bi bi-exclamation-triangle text-warning mb-3" style={{ fontSize: '3rem' }}></i>
-          <h6 className="text-white mb-2">Video Not Available</h6>
-          <small className="text-white-50">Please check the video URL or try a different video.</small>
+        <div className="professional-video-error d-flex flex-column align-items-center justify-content-center h-100 text-center p-4">
+          <div className="mb-3">
+            <i className="bi bi-exclamation-triangle-fill text-warning" style={{ fontSize: '3rem' }}></i>
+          </div>
+          <h5 className="text-white mb-2">Video Unavailable</h5>
+          <p className="text-white-50 mb-0">
+            {error.message || 'Unable to load video content'}
+          </p>
         </div>
       );
     }
 
-    if (videoType?.platform === 'native') {
+    if (isLoading) {
       return (
-        <video
-          ref={videoRef}
-          src={videoUrl}
-          poster={poster}
-          controls
-          autoPlay={autoplay}
-          muted={muted}
-          className="w-100 h-100 object-fit-cover"
-          onPlay={handleNativePlay}
-          onPause={handleNativePause}
-          onLoadStart={handleNativeLoadStart}
-          onCanPlay={handleNativeCanPlay}
-          onError={() => setHasError(true)}
-          style={{ backgroundColor: '#000' }}
-        >
-          Your browser does not support the video tag.
-        </video>
+        <div className="professional-video-loading d-flex flex-column align-items-center justify-content-center h-100">
+          <Spinner animation="border" variant="light" className="mb-3" />
+          <p className="text-white-50 mb-0">Loading professional video...</p>
+        </div>
       );
     }
 
-    if (isPlaying && embedUrl) {
+    if (!url) {
       return (
-        <>
-          <iframe
-            ref={iframeRef}
-            src={embedUrl}
-            title={title || "Video Player"}
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-            className="w-100 h-100"
-            style={{ backgroundColor: '#000' }}
-            onLoad={() => setIsLoading(false)}
-            onError={() => setHasError(true)}
-          />
-          {isLoading && (
-            <div className="position-absolute top-50 start-50 translate-middle">
-              <Spinner animation="border" variant="light" role="status">
-                <span className="visually-hidden">Loading video...</span>
-              </Spinner>
-            </div>
-          )}
-        </>
+        <div className="professional-video-placeholder d-flex flex-column align-items-center justify-content-center h-100 text-center p-4">
+          <div className="mb-3">
+            <i className="bi bi-camera-video text-white-50" style={{ fontSize: '4rem' }}></i>
+          </div>
+          <h5 className="text-white mb-2">Professional Video Player</h5>
+          <p className="text-white-50 mb-3">
+            Select a video from the playlist or enter a custom URL to begin
+          </p>
+          <div className="d-flex gap-2 flex-wrap justify-content-center">
+            <span className="badge bg-primary bg-opacity-75 px-3 py-2">
+              <i className="bi bi-youtube me-1"></i>YouTube
+            </span>
+            <span className="badge bg-info bg-opacity-75 px-3 py-2">
+              <i className="bi bi-vimeo me-1"></i>Vimeo
+            </span>
+          </div>
+        </div>
+      );
+    }
+
+    if (embedUrl) {
+      return (
+        <iframe
+          ref={iframeRef}
+          src={embedUrl}
+          width="100%"
+          height="100%"
+          frameBorder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowFullScreen
+          title={title}
+          className="professional-video-iframe"
+          style={{
+            borderRadius: '12px',
+            minHeight: '300px'
+          }}
+        />
       );
     }
 
     return (
-      <>
-        {poster && (
-          <img
-            src={poster}
-            alt={title || "Video thumbnail"}
-            className="w-100 h-100 object-fit-cover"
-            style={{ 
-              filter: showPoster ? 'brightness(0.7)' : 'none',
-              display: 'block',
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              zIndex: 1
-            }}
-            onError={() => {
-              console.error('VideoPlayer: Poster image failed to load:', poster);
-              setHasError(true);
-            }}
-            onLoad={() => console.log('VideoPlayer: Poster image loaded successfully')}
-          />
-        )}
-        {!isPlaying && (
-          <div className="position-absolute top-50 start-50 translate-middle" style={{ zIndex: 3 }}>
-            <Button
-              variant="light"
-              size="lg"
-              className="rounded-circle shadow-lg"
-              onClick={handlePlay}
-              style={{
-                width: '80px',
-                height: '80px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
-              aria-label={`Play ${title || 'video'}`}
-            >
-              <i className="bi bi-play-fill fs-1" style={{ marginLeft: '4px' }}></i>
-            </Button>
-          </div>
-        )}
-      </>
+      <video
+        ref={videoRef}
+        width="100%"
+        height="100%"
+        controls
+        poster={poster}
+        className="professional-video-element"
+        style={{
+          borderRadius: '12px',
+          objectFit: 'cover'
+        }}
+      >
+        <source src={url} type="video/mp4" />
+        <source src={url} type="video/webm" />
+        <source src={url} type="video/ogg" />
+        Your browser does not support the video tag.
+      </video>
     );
   };
 
   return (
-    <div className={`position-relative video-player ${className}`}>
-      {console.log('VideoPlayer render: isPlaying=', isPlaying, 'hasError=', hasError, 'videoType=', videoType)}
-      <div className="ratio ratio-16x9">
-        {renderVideoContent()}
-      </div>
+    <div className={`professional-video-player position-relative ${className}`} {...props}>
+      {/* Professional background gradient */}
+      <div className="professional-video-background"></div>
       
-      {/* Video info overlay */}
-      {!isPlaying && title && (
-        <div className="position-absolute bottom-0 start-0 w-100 p-3 bg-gradient-dark">
-          <h6 className="text-white mb-0 fw-semibold">{title}</h6>
-          <small className="text-white-50">
-            {videoType?.platform ? `${videoType.platform.charAt(0).toUpperCase() + videoType.platform.slice(1)} Video` : 'Video'}
-          </small>
+      {/* Video container */}
+      <div className="professional-video-container position-relative">
+        <div className="ratio ratio-16x9">
+          {renderVideoContent()}
         </div>
-      )}
+        
+        {/* Enhanced Play Button Overlay */}
+        {!isVisible && !error && url && (
+          <div className="d-flex align-items-center justify-content-center position-absolute top-0 start-0 w-100 h-100">
+            <Button
+              variant="light"
+              size="lg"
+              onClick={handlePlay}
+              className="professional-play-button rounded-circle d-flex align-items-center justify-content-center"
+              style={{
+                width: '80px',
+                height: '80px',
+                fontSize: '2rem',
+                backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                border: '3px solid rgba(255, 255, 255, 0.8)',
+                backdropFilter: 'blur(10px)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+              }}
+            >
+              <i className="bi bi-play-fill"></i>
+            </Button>
+          </div>
+        )}
+        
+        {/* Professional Control Overlay */}
+        <div 
+          className="professional-video-controls position-absolute bottom-0 start-0 end-0 p-3"
+          style={{
+            background: 'linear-gradient(transparent, rgba(0, 0, 0, 0.8))',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '0 0 12px 12px'
+          }}
+        >
+          <div className="d-flex align-items-end justify-content-between">
+            <div>
+              <h6 className="text-white mb-1 fw-bold" style={{ letterSpacing: '0.3px' }}>{title}</h6>
+              <div className="d-flex align-items-center gap-3">
+                <small className="text-white-50 d-flex align-items-center gap-1">
+                  <i className="bi bi-camera-video-fill"></i>
+                  {videoType?.platform ? `${videoType.platform.charAt(0).toUpperCase() + videoType.platform.slice(1)} Video` : 'Professional Video'}
+                </small>
+                <small className="text-white-50 d-flex align-items-center gap-1">
+                  <i className="bi bi-badge-hd-fill"></i>
+                  HD Quality
+                </small>
+              </div>
+            </div>
+          </div>
+          
+          {/* Enhanced Control Buttons */}
+          <div className="d-flex align-items-center justify-content-between mt-3">
+            <div className="d-flex gap-2">
+              {/* Play/Pause Toggle Button */}
+              <Button
+                variant={isPlaying ? "warning" : "success"}
+                size="sm"
+                onClick={isPlaying ? handlePause : handlePlay}
+                className="professional-control-btn d-flex align-items-center gap-2"
+                disabled={!url}
+              >
+                <i className={`bi ${isPlaying ? 'bi-pause-fill' : 'bi-play-fill'}`}></i>
+                <span className="d-none d-sm-inline">{isPlaying ? 'Pause' : 'Play'}</span>
+              </Button>
+              
+              {/* Stop Button */}
+              <Button
+                variant="danger"
+                size="sm"
+                onClick={handleStop}
+                className="professional-control-btn d-flex align-items-center gap-2"
+                disabled={!url}
+              >
+                <i className="bi bi-stop-fill"></i>
+                <span className="d-none d-sm-inline">Stop</span>
+              </Button>
+              
+              {/* Fullscreen Button */}
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={handleFullscreen}
+                className="professional-control-btn d-flex align-items-center gap-2"
+                disabled={!url}
+              >
+                <i className="bi bi-arrows-fullscreen"></i>
+                <span className="d-none d-lg-inline">Fullscreen</span>
+              </Button>
+            </div>
+            
+            {/* Status Indicator */}
+            <div className="d-flex align-items-center gap-1">
+              <div 
+                style={{
+                  width: '8px',
+                  height: '8px',
+                  borderRadius: '50%',
+                  backgroundColor: isPlaying ? '#28a745' : '#ffc107',
+                  boxShadow: `0 0 10px ${isPlaying ? '#28a745' : '#ffc107'}`
+                }}
+              ></div>
+              <small className="text-white-50">
+                {isPlaying ? 'Playing' : 'Ready'}
+              </small>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

@@ -1,5 +1,4 @@
 import React, {useState, useEffect, useRef, useCallback} from "react";
-import nbg from '../../assets/images/nbg.png';
 import vfxDemo from '../../assets/images/Sniper_wireCombo0001.jpg';
 import videoProduction from '../../assets/images/byte3.png';
 import motionGraphics from '../../assets/images/shapeAnimation.png';
@@ -48,7 +47,7 @@ function VfxVideoEditing() {
   
   // Example video URLs for different platforms
   const videoExamples = {
-    youtube: 'https://www.youtube.com/watch?v=mPxmNbMpO7A',
+    youtube: REEL.recent.url,
     vimeo: 'https://vimeo.com/76979871', // Example Vimeo video
     dailymotion: 'https://www.dailymotion.com/video/x7tgad0', // Example DailyMotion video
     tiktok: 'https://www.tiktok.com/@username/video/1234567890', // Example TikTok (limited embed)
@@ -57,30 +56,41 @@ function VfxVideoEditing() {
     // twitch: 'https://www.twitch.tv/videos/123456789', // Example Twitch VOD
   };
 
-  // Sample playlist for demonstration
-  const [samplePlaylist] = useState([
+  // Colin Nebula Reels Collection
+  const colinNebulaReels = [
     {
       title: "Colin Nebula 2024 VFX Reel",
-      url: "https://www.youtube.com/watch?v=mPxmNbMpO7A",
-      description: "Latest visual effects showcase",
+      url: REEL.recent.url,
+      description: "Latest visual effects showcase featuring advanced compositing and motion tracking",
       duration: "3:45",
-      thumbnail: vfxDemo
+      thumbnail: vfxDemo,
+      tags: ["VFX", "Motion Tracking", "Compositing", "2024"],
+      platform: "youtube"
+    },
+    {
+      title: "VFX Demo Reel",
+      url: REEL.demo.url,
+      description: "Professional visual effects demonstration showcasing various techniques",
+      duration: "4:12",
+      thumbnail: motionGraphics,
+      tags: ["VFX", "Demo", "Professional", "Effects"],
+      platform: "youtube"
     },
     {
       title: "Byte3 Animation Demo", 
-      url: "https://www.youtube.com/watch?v=1wI6aDte_1Q",
-      description: "3D animation and rigging demo",
+      url: REEL.byte.url,
+      description: "3D animation and rigging demonstration with character work",
       duration: "2:30",
-      thumbnail: videoProduction
-    },
-    {
-      title: "Motion Graphics Showcase",
-      url: "https://vimeo.com/76979871",
-      description: "Advanced motion graphics techniques",
-      duration: "4:12",
-      thumbnail: motionGraphics
+      thumbnail: videoProduction,
+      tags: ["3D Animation", "Rigging", "Character", "Blender"],
+      platform: "youtube"
     }
-  ]);
+  ];
+
+  // Sample playlist for demonstration
+  const [samplePlaylist] = useState(colinNebulaReels);
+
+  // Playlist state management
 
   const [showPlaylist, setShowPlaylist] = useState(false);
   const [playlistAutoAdvance, setPlaylistAutoAdvance] = useState(false);
@@ -94,6 +104,18 @@ function VfxVideoEditing() {
       setCustomUrl('');
       showNotification('Custom video URL loaded!', 'success');
     }
+  };
+
+  const handleReelSelect = (reel) => {
+    setHeroVideoUrl(reel.url);
+    setIsHeroPlaying(false);
+    showNotification(`Now loading: ${reel.title}`, 'info', 2000);
+  };
+
+  const handlePlatformSwitch = (platform, url) => {
+    setHeroVideoUrl(url);
+    setIsHeroPlaying(false);
+    showNotification(`Switched to ${platform} video`, 'info', 2000);
   };
 
   const [showTop, setShowTop] = useState(false);
@@ -576,20 +598,18 @@ function VfxVideoEditing() {
         <div className="px-2 px-lg-4 px-xl-5 px-xxl-0">
           {/* Featured VFX Reel 2024 - Enhanced hero section */}
           <section className="featured-showcase mb-5" role="banner" aria-labelledby="hero-title">
-            <Card className="bg-dark text-white shadow-lg border-0 overflow-hidden">
-              <div className="position-relative">
+            <Card className="bg-dark text-white shadow-lg border-0">
+              <div className="position-relative w-100" style={{ padding: 0, margin: 0 }}>
                 <VideoPlayer
-                  videoUrl={heroVideoUrl}
-                  poster={nbg}
-                  title="Colin Nebula 2024 VFX Reel"
-                  autoplay={false}
-                  muted={true}
+                  url={heroVideoUrl}
+                  poster=""
+                  title={colinNebulaReels.find(reel => reel.url === heroVideoUrl)?.title || "Colin Nebula 2024 VFX Reel"}
                   onPlay={() => {
                     setIsHeroPlaying(true);
                     console.info('analytics', 'hero_video_play', 'youtube');
                   }}
                   onPause={() => setIsHeroPlaying(false)}
-                  className="hero-video-player"
+                  className="hero-video-player video-player"
                 />
                 
                 {/* Video info overlay - only show when not playing */}
@@ -597,9 +617,11 @@ function VfxVideoEditing() {
                   <div className="position-absolute bottom-0 start-0 w-100 bg-gradient-dark" style={{ zIndex: 4, pointerEvents: 'none' }}>
                     <div className="row align-items-end g-3" style={{ pointerEvents: 'auto' }}>
                       <div className="col-md-8 col-xl-9">
-                        <h2 id="hero-title" className="h2 fw-bold mb-2 text-white transition-all">Colin Nebula 2024 VFX Reel</h2>
+                        <h2 id="hero-title" className="h2 fw-bold mb-2 text-white transition-all">
+                          {colinNebulaReels.find(reel => reel.url === heroVideoUrl)?.title || "Colin Nebula 2024 VFX Reel"}
+                        </h2>
                         <p className="fs-6 fs-lg-5 mb-3 text-white-50 transition-all">
-                          Watch the latest visual effects showcase created with Blender and After Effects
+                          {colinNebulaReels.find(reel => reel.url === heroVideoUrl)?.description || "Watch the latest visual effects showcase created with Blender and After Effects"}
                         </p>
                         <div className="d-flex flex-wrap gap-2 align-items-center mb-3" role="list">
                           <span className="badge bg-primary px-2 px-lg-3 py-1 py-lg-2 transition-all" role="listitem">
@@ -608,9 +630,46 @@ function VfxVideoEditing() {
                              heroVideoUrl.includes('dailymotion') ? 'DailyMotion' :
                              heroVideoUrl.includes('twitch') ? 'Twitch' : 'Video'}
                           </span>
-                          <span className="badge bg-secondary px-2 px-lg-3 py-1 py-lg-2 transition-all" role="listitem">Blender</span>
-                          <span className="badge bg-success px-2 px-lg-3 py-1 py-lg-2 transition-all" role="listitem">After Effects</span>
-                          <span className="badge bg-warning px-2 px-lg-3 py-1 py-lg-2 transition-all" role="listitem">Motion Tracking</span>
+                          {/* Dynamic tags based on selected reel */}
+                          {(colinNebulaReels.find(reel => reel.url === heroVideoUrl)?.tags || ["Blender", "After Effects", "Motion Tracking"]).map((tag, index) => (
+                            <span key={index} className="badge bg-secondary px-2 px-lg-3 py-1 py-lg-2 transition-all" role="listitem">
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                        
+                        {/* Colin's Reels Selector */}
+                        <div className="mb-3">
+                          <small className="text-white-50 d-block mb-2">My Reels:</small>
+                          <div className="d-flex flex-wrap gap-1">
+                            {colinNebulaReels.map((reel, index) => (
+                              <Button
+                                key={index}
+                                variant={heroVideoUrl === reel.url ? "primary" : "outline-light"}
+                                size="sm"
+                                className="px-2 py-1 fw-semibold"
+                                onClick={() => handleReelSelect(reel)}
+                                title={reel.description}
+                              >
+                                {reel.title.includes('2024') ? '2024 Reel' : 
+                                 reel.title.includes('Demo') ? 'Demo Reel' : 
+                                 reel.title.includes('Byte3') ? 'Byte3' : 
+                                 `Reel ${index + 1}`}
+                              </Button>
+                            ))}
+                            <Button
+                              variant="outline-success"
+                              size="sm"
+                              className="px-2 py-1 fw-semibold"
+                              onClick={() => {
+                                navigator.clipboard.writeText(heroVideoUrl);
+                                showNotification('Video URL copied to clipboard!', 'success', 2000);
+                              }}
+                              title="Copy current video URL"
+                            >
+                              <i className="bi bi-clipboard me-1"></i>Copy
+                            </Button>
+                          </div>
                         </div>
                       </div>
                       <div className="col-md-4 col-xl-3 text-center text-md-end">
@@ -623,10 +682,7 @@ function VfxVideoEditing() {
                               variant={heroVideoUrl === videoExamples.youtube ? "warning" : "outline-light"} 
                               size="sm" 
                               className="px-2 py-1 fw-semibold flex-grow-1"
-                              onClick={() => {
-                                setHeroVideoUrl(videoExamples.youtube);
-                                setIsHeroPlaying(false);
-                              }}
+                              onClick={() => handlePlatformSwitch('YouTube', videoExamples.youtube)}
                               title="Switch to YouTube video"
                             >
                               <i className="bi bi-youtube me-1"></i>YouTube
@@ -635,10 +691,7 @@ function VfxVideoEditing() {
                               variant={heroVideoUrl === videoExamples.vimeo ? "warning" : "outline-light"} 
                               size="sm" 
                               className="px-2 py-1 fw-semibold flex-grow-1"
-                              onClick={() => {
-                                setHeroVideoUrl(videoExamples.vimeo);
-                                setIsHeroPlaying(false);
-                              }}
+                              onClick={() => handlePlatformSwitch('Vimeo', videoExamples.vimeo)}
                               title="Switch to Vimeo video"
                             >
                               <i className="bi bi-vimeo me-1"></i>Vimeo
@@ -651,10 +704,7 @@ function VfxVideoEditing() {
                               variant={heroVideoUrl === videoExamples.tiktok ? "warning" : "outline-light"} 
                               size="sm" 
                               className="px-2 py-1 fw-semibold flex-grow-1"
-                              onClick={() => {
-                                setHeroVideoUrl(videoExamples.tiktok);
-                                setIsHeroPlaying(false);
-                              }}
+                              onClick={() => handlePlatformSwitch('TikTok', videoExamples.tiktok)}
                               title="Switch to TikTok video"
                             >
                               <i className="bi bi-tiktok me-1"></i>TikTok
@@ -663,10 +713,7 @@ function VfxVideoEditing() {
                               variant={heroVideoUrl === videoExamples.instagram ? "warning" : "outline-light"} 
                               size="sm" 
                               className="px-2 py-1 fw-semibold flex-grow-1"
-                              onClick={() => {
-                                setHeroVideoUrl(videoExamples.instagram);
-                                setIsHeroPlaying(false);
-                              }}
+                              onClick={() => handlePlatformSwitch('Instagram', videoExamples.instagram)}
                               title="Switch to Instagram video"
                             >
                               <i className="bi bi-instagram me-1"></i>IG
@@ -675,10 +722,7 @@ function VfxVideoEditing() {
                               variant={heroVideoUrl === videoExamples.twitter ? "warning" : "outline-light"} 
                               size="sm" 
                               className="px-2 py-1 fw-semibold flex-grow-1"
-                              onClick={() => {
-                                setHeroVideoUrl(videoExamples.twitter);
-                                setIsHeroPlaying(false);
-                              }}
+                              onClick={() => handlePlatformSwitch('Twitter/X', videoExamples.twitter)}
                               title="Switch to Twitter/X video"
                             >
                               <i className="bi bi-twitter-x me-1"></i>X
@@ -691,10 +735,7 @@ function VfxVideoEditing() {
                               variant={heroVideoUrl === videoExamples.dailymotion ? "warning" : "outline-light"} 
                               size="sm" 
                               className="px-2 py-1 fw-semibold flex-grow-1"
-                              onClick={() => {
-                                setHeroVideoUrl(videoExamples.dailymotion);
-                                setIsHeroPlaying(false);
-                              }}
+                              onClick={() => handlePlatformSwitch('DailyMotion', videoExamples.dailymotion)}
                               title="Switch to DailyMotion video"
                             >
                               <i className="bi bi-camera-video me-1"></i>Daily
@@ -703,7 +744,14 @@ function VfxVideoEditing() {
                               variant={showPlaylist ? "warning" : "outline-info"} 
                               size="sm" 
                               className="px-2 py-1 fw-semibold flex-grow-1"
-                              onClick={() => setShowPlaylist(!showPlaylist)}
+                              onClick={() => {
+                                setShowPlaylist(!showPlaylist);
+                                showNotification(
+                                  showPlaylist ? 'Playlist hidden' : 'Playlist shown', 
+                                  'info', 
+                                  1500
+                                );
+                              }}
                               title="Toggle playlist mode"
                             >
                               <i className="bi bi-collection-play me-1"></i>Playlist
@@ -714,7 +762,14 @@ function VfxVideoEditing() {
                             variant="outline-info" 
                             size="sm" 
                             className="px-3 py-1 fw-semibold"
-                            onClick={() => setShowCustomInput(!showCustomInput)}
+                            onClick={() => {
+                              setShowCustomInput(!showCustomInput);
+                              showNotification(
+                                showCustomInput ? 'Custom URL input hidden' : 'Custom URL input shown', 
+                                'info', 
+                                1500
+                              );
+                            }}
                             title="Enter custom video URL"
                           >
                             <i className="bi bi-link-45deg me-1"></i>Custom URL
@@ -743,6 +798,9 @@ function VfxVideoEditing() {
                               </InputGroup>
                               <small className="text-white-50 mt-1 d-block">
                                 Supports YouTube, Vimeo, TikTok, Instagram, Twitter, DailyMotion
+                              </small>
+                              <small className="text-white-50 mt-1 d-block">
+                                <strong>Shortcuts:</strong> Space = Play/Pause, Esc = Stop, F = Fullscreen
                               </small>
                             </div>
                           )}

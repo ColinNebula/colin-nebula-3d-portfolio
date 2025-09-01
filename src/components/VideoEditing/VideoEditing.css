@@ -95,12 +95,20 @@
 
 .featured-showcase .card {
   border-radius: 20px;
-  overflow: hidden;
+  overflow: visible; /* Allow video player to expand properly */
   box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
   transition: all 0.4s ease;
   width: 100%;
   max-width: none; /* Remove any width constraints */
   z-index: 1;
+  padding: 0; /* Remove any default card padding */
+}
+
+/* Ensure the card's immediate child (position-relative div) has no padding */
+.featured-showcase .card > .position-relative {
+  padding: 0 !important;
+  margin: 0 !important;
+  width: 100% !important;
 }
 
 .featured-showcase .card:hover {
@@ -128,12 +136,26 @@
   max-height: none; /* Remove height constraints */
   height: auto; /* Allow flexible height */
   position: relative; /* Ensure proper positioning context */
-  overflow: hidden; /* Ensure proper image containment */
+  overflow: hidden; /* Ensure proper image containment for non-video content */
   background-color: #1a1a2e; /* Fallback background color */
 }
 
+/* Special override for video player in featured showcase - remove height constraints */
+.featured-showcase .video-player .ratio {
+  min-height: auto !important; /* Let video player control its own height */
+  max-height: none !important;
+  height: auto !important;
+  overflow: visible !important; /* Critical: prevent truncation */
+  position: relative !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 50%, #0f0f0f 100%) !important;
+  contain: layout style; /* Optimize performance and prevent layout issues */
+}
+
 /* UNIVERSAL FIX: Ensure image displays properly and content is never cut off - ONLY for non-video-player images */
-.featured-showcase .ratio img {
+.featured-showcase .ratio img:not(.video-player img) {
   position: absolute; /* Ensure absolute positioning */
   top: 0;
   left: 0;
@@ -341,7 +363,7 @@
   }
 }
 
-.featured-showcase .card:hover .ratio img {
+.featured-showcase .card:hover .ratio img:not(.video-player img) {
   transform: scale(1.02);
 }
 
@@ -2104,29 +2126,186 @@
     transition: none;
   }
   
-  .featured-showcase .card:hover .ratio img,
+  .featured-showcase .card:hover .ratio img:not(.video-player img),
   .portfolio-card:hover .card-img-top {
     transform: none;
   }
 }
 
-/* Video Player Component Styles */
+/* Video Player Component Styles - Professional Enhancement */
 .video-player {
-  border-radius: 0.5rem;
+  border-radius: 12px;
   overflow: hidden;
   background: #000;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-  min-height: 200px; /* Ensure minimum visibility */
+  position: relative; /* Ensure proper positioning context */
+  isolation: isolate; /* Create stacking context to prevent z-index conflicts */
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.4),
+    0 8px 25px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  min-height: 300px;
+  width: 100% !important; /* Force full width */
+  max-width: 100% !important; /* Ensure it doesn't exceed container */
+  display: block !important;
+  position: relative !important;
+  visibility: visible !important;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.video-player:hover {
+  box-shadow: 
+    0 25px 70px rgba(0, 0, 0, 0.5),
+    0 12px 30px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
 }
 
 .video-player .ratio {
-  background: #000;
+  background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 50%, #0f0f0f 100%);
   border-radius: inherit;
+  min-height: 300px !important;
+  width: 100% !important;
+  max-width: 100% !important; /* Ensure ratio container doesn't exceed width */
+  display: block !important;
+  position: relative !important;
+  visibility: visible !important;
+  overflow: hidden;
+  isolation: isolate; /* Create proper stacking context for play button */
+  box-sizing: border-box; /* Include padding and border in width calculation */
+}
+
+/* Professional Play Button Animations */
+.professional-play-btn {
+  animation: gentlePulse 2s ease-in-out infinite;
+}
+
+/* Fix play button container positioning to prevent layout issues */
+.video-player .position-absolute:not(.d-flex) {
+  contain: layout; /* Optimize layout performance and prevent overflow */
+}
+
+/* Ensure play button container doesn't break layout but preserve flexbox */
+.video-player .ratio .position-absolute:not(.d-flex) {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* Ensure flexbox centering works properly for play button */
+.video-player .position-absolute.d-flex {
+  contain: none; /* Don't apply layout containment to flexbox containers */
+}
+
+/* Force flexbox properties for play button container to prevent conflicts */
+.video-player .position-absolute.d-flex.justify-content-center {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+@keyframes gentlePulse {
+  0%, 100% { 
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 2px 8px rgba(0,0,0,0.2);
+  }
+  50% { 
+    box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 4px 12px rgba(255,255,255,0.1);
+  }
+}
+
+/* Professional Control Button Styles */
+.professional-control-btn {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.professional-control-btn:hover {
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+}
+
+/* Ensure content inside video player is visible and full width */
+.video-player .ratio > * {
+  display: block !important;
+  visibility: visible !important;
+  width: 100% !important; /* Ensure all video content takes full width */
+  max-width: 100% !important;
+}
+
+/* Mobile-first responsive video player heights */
+@media (max-width: 575px) {
+  .video-player,
+  .featured-showcase .video-player {
+    min-height: 280px;
+  }
+  .video-player .ratio,
+  .featured-showcase .video-player .ratio {
+    min-height: 280px !important;
+  }
+  
+  /* Optimize controls for mobile */
+  .video-player .position-absolute.top-0.end-0 .d-flex {
+    gap: 1px !important;
+  }
+  
+  .video-player .professional-control-btn {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 0.8rem !important;
+  }
+}
+
+/* Responsive video player heights */
+@media (min-width: 576px) {
+  .video-player,
+  .featured-showcase .video-player {
+    min-height: 350px;
+  }
+  .video-player .ratio,
+  .featured-showcase .video-player .ratio {
+    min-height: 350px !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .video-player,
+  .featured-showcase .video-player {
+    min-height: 400px;
+  }
+  .video-player .ratio,
+  .featured-showcase .video-player .ratio {
+    min-height: 400px !important;
+  }
+}
+
+@media (min-width: 992px) {
+  .video-player,
+  .featured-showcase .video-player {
+    min-height: 450px;
+  }
+  .video-player .ratio,
+  .featured-showcase .video-player .ratio {
+    min-height: 450px !important;
+  }
+}
+
+@media (min-width: 1200px) {
+  .video-player,
+  .featured-showcase .video-player {
+    min-height: 500px;
+  }
+  .video-player .ratio,
+  .featured-showcase .video-player .ratio {
+    min-height: 500px !important;
+  }
 }
 
 .video-player iframe,
 .video-player video {
   border-radius: inherit;
+  width: 100% !important; /* Ensure video content takes full width */
+  height: 100% !important; /* Ensure video content takes full height */
+  object-fit: cover; /* Maintain aspect ratio while filling container */
 }
 
 .video-player .btn:hover {
@@ -2139,15 +2318,83 @@
   border-radius: 0 0 0.5rem 0.5rem;
 }
 
-/* Override featured-showcase ratio styles for video player */
-.featured-showcase .video-player .ratio {
-  min-height: 400px !important;
-  max-height: none !important;
-  height: auto !important;
-  overflow: visible !important;
-  position: relative !important;
+/* Override featured-showcase ratio styles for video player - Enhanced */
+.featured-showcase .video-player {
   display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  overflow: visible !important; /* Prevent any truncation */
+  width: 100% !important; /* Ensure full width within card */
+  max-width: 100% !important; /* Don't exceed card width */
+  box-shadow: 
+    0 30px 80px rgba(0, 0, 0, 0.6),
+    0 15px 40px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
 }
+
+.featured-showcase .video-player:hover {
+  box-shadow: 
+    0 35px 90px rgba(0, 0, 0, 0.7),
+    0 20px 50px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+/* Enhanced featured-showcase ratio styles for video player - integrated with main responsive rules above */
+
+/* CRITICAL: Prevent video player truncation by any parent container */
+.featured-showcase .video-player,
+.featured-showcase .video-player .ratio,
+.featured-showcase .video-player > *,
+.video-player {
+  overflow: visible !important;
+  clip: none !important;
+  clip-path: none !important;
+  max-height: none !important;
+}
+
+/* Ensure parent containers don't truncate video player */
+.featured-showcase:has(.video-player) {
+  overflow: visible !important;
+}
+
+.featured-showcase .card:has(.video-player) {
+  overflow: visible !important;
+}
+
+/* Force visibility for all video player content */
+
+/* Ensure all children of video player ratio are visible and full width */
+.featured-showcase .video-player .ratio > * {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  width: 100% !important; /* Critical: ensure all content takes full width */
+  max-width: 100% !important;
+}
+
+.featured-showcase .video-player .professional-play-btn {
+  background: linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.92) 100%) !important;
+  border: 2px solid rgba(255, 255, 255, 0.8) !important;
+  box-shadow: 
+    0 12px 40px rgba(0,0,0,0.4), 
+    0 4px 12px rgba(0,0,0,0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+}
+
+.featured-showcase .video-player .professional-play-btn:hover {
+  background: linear-gradient(135deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0.98) 100%) !important;
+  border: 2px solid rgba(255, 255, 255, 1) !important;
+  box-shadow: 
+    0 16px 50px rgba(0,0,0,0.5), 
+    0 6px 18px rgba(0,0,0,0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
+  transform: scale(1.15) !important;
+}
+
+/* Enhanced featured video player overrides - integrated with main responsive rules above */
 
 .featured-showcase .video-player .ratio img {
   position: relative !important;
@@ -2156,6 +2403,7 @@
   display: block !important;
   width: 100% !important;
   height: 100% !important;
+  min-height: 400px !important;
 }
 
 .featured-showcase .video-player iframe,
@@ -2174,29 +2422,59 @@
   position: relative !important;
 }
 
-/* Hero Video Player Specific Styles */
-.featured-showcase .video-player {
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-}
 
-.featured-showcase .video-player .btn {
-  background: rgba(255, 255, 255, 0.95);
-  color: #000;
-  border: none;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
-
-.featured-showcase .video-player .btn:hover {
-  background: rgba(255, 255, 255, 1);
-  transform: scale(1.15);
-}
-
-/* Loading spinner styles */
+/* Professional Loading and Error States */
 .video-player .spinner-border {
-  width: 3rem;
-  height: 3rem;
-  border-width: 0.3em;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-width: 3px;
+  animation: professional-spin 1s linear infinite;
+}
+
+@keyframes professional-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Professional Typography for Video Player */
+.video-player h5,
+.video-player h6 {
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.video-player .text-white-50 {
+  text-shadow: 0 1px 2px rgba(0,0,0,0.7);
+}
+
+/* Keyboard shortcut styling */
+.video-player kbd {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 4px !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+  font-size: 0.75rem !important;
+  padding: 2px 6px !important;
+  text-shadow: none !important;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+/* Enhanced glass morphism effects */
+.video-player .bg-opacity-20 {
+  backdrop-filter: blur(15px) saturate(180%);
+  -webkit-backdrop-filter: blur(15px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.125);
+}
+
+/* Professional status indicators */
+.video-player .text-success {
+  text-shadow: 0 0 8px rgba(34, 197, 94, 0.4);
+}
+
+.video-player .border-success {
+  border-color: rgba(34, 197, 94, 0.4) !important;
 }
 
 /* High Contrast Mode Support */

@@ -20,9 +20,11 @@ export const NotificationProvider = ({ children }) => {
 
   // Clear timeouts on unmount
   useEffect(() => {
+    const timeouts = notificationTimeouts.current;
     return () => {
-      notificationTimeouts.current.forEach(timeoutId => clearTimeout(timeoutId));
+      timeouts.forEach(timeoutId => clearTimeout(timeoutId));
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const showNotification = (message, variant = 'success', duration = 4000, options = {}) => {
