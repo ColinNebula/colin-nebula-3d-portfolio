@@ -27,6 +27,26 @@ export const NotificationProvider = ({ children }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  /**
+   * Enhanced notification system with authentication awareness
+   * 
+   * @param {string} message - The notification message to display
+   * @param {string} variant - The notification type ('success', 'danger', 'info', 'warning')
+   * @param {number} duration - How long to display the notification (in milliseconds)
+   * @param {object} options - Additional notification options:
+   *   - category: 'system' | 'account' | 'updates' | 'navigation' | etc.
+   *   - priority: 'low' | 'normal' | 'high' | 'urgent'
+   *   - persistent: boolean - Whether notification stays until manually dismissed
+   *   - icon: string - Emoji or icon to display
+   *   - requireAuth: boolean - Whether user must be logged in to see this (default: true)
+   *   - public: boolean - Whether to show even when not logged in (overrides requireAuth)
+   *   - allowDuplicates: boolean - Whether to allow duplicate messages
+   * 
+   * Authentication Rules:
+   * - System errors and critical messages are always shown (category: 'system', 'error')
+   * - Public notifications are always shown (public: true)
+   * - Other notifications require authentication unless requireAuth: false
+   */
   const showNotification = (message, variant = 'success', duration = 4000, options = {}) => {
     // Check for duplicate messages in recent notifications (last 5 seconds)
     const now = Date.now();
@@ -39,6 +59,25 @@ export const NotificationProvider = ({ children }) => {
     if (isDuplicate && !options.allowDuplicates) {
       return null; // Don't show duplicate notification
     }
+
+    // Check authentication state for non-critical notifications
+    const isAuthenticationRequired = options.requireAuth !== false && 
+                                   options.category !== 'system' && 
+                                   options.category !== 'error' &&
+                                   !options.public;
+    
+    // Only show certain notifications when user is logged in
+    if (isAuthenticationRequired) {
+      try {
+        const authToken = localStorage.getItem('nebula_auth_token');
+        if (!authToken) {
+          // Don't show notification if authentication is required but user isn't logged in
+          return null;
+        }
+      } catch (e) {
+        return null;
+      }
+    }
     
     const id = Date.now() + Math.random().toString(36).substring(2, 7);
     
@@ -50,7 +89,9 @@ export const NotificationProvider = ({ children }) => {
       category: options.category || 'system',
       priority: options.priority || 'normal',
       persistent: options.persistent || false,
-      icon: options.icon || null
+      icon: options.icon || null,
+      requireAuth: options.requireAuth !== false,
+      public: options.public || false
     };
     
     setNotifications(prev => [

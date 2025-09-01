@@ -1,5 +1,5 @@
-import React from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Container, Row, Col, Modal, Form, Button, Alert } from 'react-bootstrap';
 import { 
   FaGithub,
   FaLinkedin,
@@ -8,11 +8,90 @@ import {
   FaYoutube,
   FaEnvelope,
   FaPhone,
-  FaMapMarkerAlt
+  FaMapMarkerAlt,
+  FaBell,
+  FaCheck
 } from 'react-icons/fa';
+import emailjs from '@emailjs/browser';
+import { emailjsConfig, createEmailTemplate } from '../../utils/emailConfig';
 import './Footer.css';
 
 function Footer() {
+  const [showSubscribeModal, setShowSubscribeModal] = useState(false);
+  const [subscribeForm, setSubscribeForm] = useState({
+    name: '',
+    email: ''
+  });
+  const [subscribeStatus, setSubscribeStatus] = useState('');
+  const [isSubscribing, setIsSubscribing] = useState(false);
+
+  const handleSubscribe = async (e) => {
+    e.preventDefault();
+    
+    if (!subscribeForm.name.trim() || !subscribeForm.email.trim()) {
+      setSubscribeStatus('Please fill in all fields.');
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(subscribeForm.email)) {
+      setSubscribeStatus('Please enter a valid email address.');
+      return;
+    }
+
+    setIsSubscribing(true);
+    setSubscribeStatus('');
+
+    try {
+      // Check if already subscribed
+      const subscribers = JSON.parse(localStorage.getItem('portfolio_subscribers') || '[]');
+      if (subscribers.includes(subscribeForm.email)) {
+        setSubscribeStatus('You are already subscribed to updates!');
+        setIsSubscribing(false);
+        return;
+      }
+
+      // Create email template
+      const templateParams = createEmailTemplate(subscribeForm.name, subscribeForm.email);
+
+      // Send email via EmailJS
+      await emailjs.send(
+        emailjsConfig.serviceId,
+        emailjsConfig.templateId,
+        templateParams,
+        emailjsConfig.publicKey
+      );
+
+      // Save to localStorage
+      subscribers.push(subscribeForm.email);
+      localStorage.setItem('portfolio_subscribers', JSON.stringify(subscribers));
+      
+      // Success
+      setSubscribeStatus('🎉 Thank you for subscribing! Check your email for a welcome message.');
+      setSubscribeForm({ name: '', email: '' });
+      
+      // Close modal after 3 seconds
+      setTimeout(() => {
+        setShowSubscribeModal(false);
+        setSubscribeStatus('');
+      }, 3000);
+      
+    } catch (error) {
+      console.error('Subscription error:', error);
+      setSubscribeStatus('There was an error processing your subscription. Please try again.');
+    } finally {
+      setIsSubscribing(false);
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setSubscribeForm(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
   const socialLinks = [
     {
       name: 'GitHub',
@@ -133,13 +212,100 @@ function Footer() {
               </div>
               
               <div className="footer-cta">
-                <button className="btn btn-primary">
-                  Start Your Project
+                <button 
+                  className="btn btn-primary subscribe-btn"
+                  onClick={() => setShowSubscribeModal(true)}
+                >
+                  <FaBell className="me-2" />
+                  Subscribe to Updates
                 </button>
               </div>
             </div>
           </Col>
         </Row>
+
+        {/* Subscription Modal */}
+        <Modal 
+          show={showSubscribeModal} 
+          onHide={() => setShowSubscribeModal(false)}
+          centered
+          className="subscribe-modal"
+        >
+          <Modal.Header closeButton className="subscribe-modal-header">
+            <Modal.Title>
+              <FaBell className="me-2" />
+              Subscribe to Updates
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body className="subscribe-modal-body">
+            <div className="subscribe-intro">
+              <p>Stay updated with my latest 3D projects, tutorials, and creative insights!</p>
+              <ul className="subscribe-benefits">
+                <li><FaCheck className="me-2" />Latest project updates</li>
+                <li><FaCheck className="me-2" />Behind-the-scenes content</li>
+                <li><FaCheck className="me-2" />Exclusive tutorials</li>
+                <li><FaCheck className="me-2" />Creative process insights</li>
+              </ul>
+            </div>
+            
+            {subscribeStatus && (
+              <Alert 
+                variant={subscribeStatus.includes('🎉') ? 'success' : 'danger'}
+                className="subscribe-alert"
+              >
+                {subscribeStatus}
+              </Alert>
+            )}
+            
+            <Form onSubmit={handleSubscribe}>
+              <Form.Group className="mb-3">
+                <Form.Label>Name</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="name"
+                  value={subscribeForm.name}
+                  onChange={handleInputChange}
+                  placeholder="Your full name"
+                  disabled={isSubscribing}
+                />
+              </Form.Group>
+              
+              <Form.Group className="mb-4">
+                <Form.Label>Email</Form.Label>
+                <Form.Control
+                  type="email"
+                  name="email"
+                  value={subscribeForm.email}
+                  onChange={handleInputChange}
+                  placeholder="your.email@example.com"
+                  disabled={isSubscribing}
+                />
+              </Form.Group>
+              
+              <div className="d-grid">
+                <Button 
+                  type="submit" 
+                  variant="primary" 
+                  size="lg"
+                  disabled={isSubscribing}
+                  className="subscribe-submit-btn"
+                >
+                  {isSubscribing ? (
+                    <>
+                      <span className="spinner-border spinner-border-sm me-2" />
+                      Subscribing...
+                    </>
+                  ) : (
+                    <>
+                      <FaBell className="me-2" />
+                      Subscribe Now
+                    </>
+                  )}
+                </Button>
+              </div>
+            </Form>
+          </Modal.Body>
+        </Modal>
 
         {/* Footer Bottom */}
         <Row className="footer-bottom">

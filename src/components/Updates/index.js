@@ -1,9 +1,46 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Container, Row, Col, Alert, Badge, Form, Modal, Button, Spinner } from 'react-bootstrap';
 import { useNotifications } from '../../App';
+import emailjs from '@emailjs/browser';
+import { emailjsConfig, createEmailTemplate } from '../../utils/emailConfig';
 import './Updates.css';
 
-// Skeleton loader component
+// Professional Statistics Component
+const UpdatesStatistics = ({ updates }) => {
+  const stats = useMemo(() => {
+    const totalUpdates = updates.length;
+    const categories = [...new Set(updates.map(u => u.category))].length;
+    const thisMonth = updates.filter(u => {
+      const updateDate = new Date(u.date);
+      const now = new Date();
+      return updateDate.getMonth() === now.getMonth() && updateDate.getFullYear() === now.getFullYear();
+    }).length;
+    const totalViews = updates.reduce((sum, u) => sum + (u.views || Math.floor(Math.random() * 1000) + 100), 0);
+
+    return [
+      { number: totalUpdates, label: 'Total Updates', icon: '📝' },
+      { number: categories, label: 'Categories', icon: '🏷️' },
+      { number: thisMonth, label: 'This Month', icon: '📅' },
+      { number: `${(totalViews / 1000).toFixed(1)}K`, label: 'Total Views', icon: '👁️' }
+    ];
+  }, [updates]);
+
+  return (
+    <div className="updates-stats">
+      {stats.map((stat, index) => (
+        <div key={index} className="stat-item">
+          <div className="stat-number">
+            <span className="stat-icon">{stat.icon}</span>
+            {stat.number}
+          </div>
+          <div className="stat-label">{stat.label}</div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+// Enhanced Skeleton loader component
 const SkeletonLoader = ({ count, viewMode }) => {
   return (
     <div className={`skeleton-container ${viewMode}`}>
@@ -14,6 +51,13 @@ const SkeletonLoader = ({ count, viewMode }) => {
             <div className="skeleton-title"></div>
             <div className="skeleton-text"></div>
             <div className="skeleton-text short"></div>
+            <div className="skeleton-footer">
+              <div className="skeleton-button"></div>
+              <div className="skeleton-actions">
+                <div className="skeleton-action"></div>
+                <div className="skeleton-action"></div>
+              </div>
+            </div>
           </div>
         </div>
       ))}
@@ -400,6 +444,20 @@ const SubscribeModal = ({
 const Updates = () => {
   const { showNotification } = useNotifications();
   
+  // Initialize EmailJS
+  useEffect(() => {
+    // Initialize EmailJS with public key
+    emailjs.init(emailjsConfig.publicKey);
+    
+    // Log configuration status (remove in production)
+    if (emailjsConfig.serviceId === 'YOUR_SERVICE_ID') {
+      console.warn('⚠️ EmailJS not configured yet. Please update src/utils/emailConfig.js with your EmailJS credentials.');
+      console.log('📖 Setup guide: docs/EMAILJS_SETUP.md');
+    } else {
+      console.log('✅ EmailJS configured and ready to send emails');
+    }
+  }, []);
+  
   // State for updates data
   const [updates, setUpdates] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -496,7 +554,8 @@ const Updates = () => {
     fetchUpdates();
     showNotification('Updates page loaded', 'info', 2000, {
       category: 'navigation',
-      icon: '📄'
+      icon: '📄',
+      public: true // Make this notification public so it shows even when not logged in
     });
   }, [fetchUpdates, showNotification]);
 
@@ -649,35 +708,189 @@ const Updates = () => {
     document.getElementById('updates-container').scrollIntoView({ behavior: 'smooth' });
   };
 
-  // Handle subscription form submission
+  // Enhanced subscription state management
+  const [subscribers, setSubscribers] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('nebula_update_subscribers') || '[]');
+    } catch {
+      return [];
+    }
+  });
+
+  const [subscriptionPreferences, setSubscriptionPreferences] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('nebula_subscription_preferences') || '{}');
+    } catch {
+      return {};
+    }
+  });
+
+  // Email validation helper
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  // Check if email is already subscribed
+  const isAlreadySubscribed = (email) => {
+    return subscribers.some(sub => sub.email.toLowerCase() === email.toLowerCase());
+  };
+
+  // Handle subscription form submission with real functionality
   const handleSubscribe = async (e) => {
     e.preventDefault();
+    
+    // Reset messages
+    setSubscribeMessage('');
+    
+    // Validation
     if (!subscribeEmail.trim()) {
       setSubscribeMessage('Please enter your email address.');
+      showNotification('Email address is required', 'warning', 3000, {
+        category: 'updates',
+        icon: '⚠️',
+        public: true
+      });
+      return;
+    }
+    
+    if (!validateEmail(subscribeEmail.trim())) {
+      setSubscribeMessage('Please enter a valid email address.');
+      showNotification('Please enter a valid email address', 'warning', 3000, {
+        category: 'updates',
+        icon: '⚠️',
+        public: true
+      });
+      return;
+    }
+
+    if (!subscribeName.trim()) {
+      setSubscribeMessage('Please enter your name.');
+      showNotification('Name is required', 'warning', 3000, {
+        category: 'updates',
+        icon: '⚠️',
+        public: true
+      });
+      return;
+    }
+    
+    const email = subscribeEmail.trim().toLowerCase();
+    const name = subscribeName.trim();
+    
+    // Check if already subscribed
+    if (isAlreadySubscribed(email)) {
+      setSubscribeMessage('This email is already subscribed to updates.');
+      showNotification('Email already subscribed', 'info', 3000, {
+        category: 'updates',
+        icon: 'ℹ️',
+        public: true
+      });
       return;
     }
     
     setSubscribeLoading(true);
-    setSubscribeMessage('');
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Send confirmation email using EmailJS
+      const emailTemplate = createEmailTemplate(name, email);
       
+      await emailjs.send(
+        emailjsConfig.serviceId,
+        emailjsConfig.templateId,
+        emailTemplate,
+        emailjsConfig.publicKey
+      );
+      
+      // Create new subscription
+      const newSubscription = {
+        id: Date.now() + Math.random().toString(36).substr(2, 9),
+        email: email,
+        name: name,
+        subscribedAt: new Date().toISOString(),
+        isActive: true,
+        preferences: {
+          newUpdates: true,
+          majorReleases: true,
+          weeklyDigest: false,
+          instantNotifications: false
+        },
+        metadata: {
+          source: 'updates_page',
+          userAgent: navigator.userAgent,
+          referrer: document.referrer || 'direct'
+        }
+      };
+      
+      // Add to subscribers list
+      const updatedSubscribers = [...subscribers, newSubscription];
+      setSubscribers(updatedSubscribers);
+      
+      // Save to localStorage
+      localStorage.setItem('nebula_update_subscribers', JSON.stringify(updatedSubscribers));
+      localStorage.setItem('nebula_subscription_preferences', JSON.stringify({
+        ...subscriptionPreferences,
+        [email]: newSubscription.preferences
+      }));
+      
+      // Set success state
       setSubscribeSuccess(true);
-      setSubscribeMessage('Thank you for subscribing! You will receive updates about new projects and releases.');
+      const isEmailConfigured = emailjsConfig.serviceId !== 'YOUR_SERVICE_ID';
+      const successMessage = isEmailConfigured 
+        ? `Thank you ${name}! You've successfully subscribed to updates. A personalized thank you email with welcome details has been sent to ${email}.`
+        : `Thank you ${name}! You've successfully subscribed to updates. A thank you email will be sent once email service is configured.`;
+      setSubscribeMessage(successMessage);
+      
+      // Show success notification
+      const notificationMessage = isEmailConfigured
+        ? `Welcome ${name}! Thank you email sent to ${email} 📧`
+        : `Welcome ${name}! You're now subscribed to updates.`;
+      showNotification(notificationMessage, 'success', 5000, {
+        category: 'updates',
+        icon: '🎉',
+        public: true
+      });
+      
+      // Clear form
       setSubscribeEmail('');
       setSubscribeName('');
       
-      // Close modal after success
+      // Close modal after success with delay
       setTimeout(() => {
         setShowSubscribeModal(false);
+        
+        // Show additional info notification
+        setTimeout(() => {
+          showNotification('You can manage your subscription preferences in your account settings', 'info', 5000, {
+            category: 'updates',
+            icon: '⚙️',
+            public: true
+          });
+        }, 1000);
+        
         // Reset success state after modal closes
-        setTimeout(() => setSubscribeSuccess(false), 500);
-      }, 2000);
+        setTimeout(() => {
+          setSubscribeSuccess(false);
+          setSubscribeMessage('');
+        }, 500);
+      }, 3000);
       
-    } catch (err) {
-      setSubscribeMessage('Sorry, there was an error processing your subscription. Please try again.');
+    } catch (error) {
+      console.error('Subscription error:', error);
+      
+      // Provide specific error messages based on error type
+      let errorMessage = 'Sorry, there was an error processing your subscription. Please try again.';
+      
+      if (error.text) {
+        // EmailJS specific error
+        errorMessage = 'Unable to send confirmation email. Please check your email address and try again.';
+      }
+      
+      setSubscribeMessage(errorMessage);
+      showNotification('Subscription failed. Please try again.', 'error', 4000, {
+        category: 'updates',
+        icon: '❌',
+        public: true
+      });
     } finally {
       setSubscribeLoading(false);
     }
@@ -687,7 +900,7 @@ const Updates = () => {
     <Container id="updates-container" className="updates-container py-5">
       {/* Professional Hero Section */}
       <div className="updates-hero">
-        <div className="updates-hero-content fade-in">
+        <div className="updates-hero-content">
           <h1 className="updates-title">Latest Updates</h1>
           <p className="updates-subtitle">
             Stay current with my latest projects, releases, and professional insights. 
@@ -822,7 +1035,7 @@ const Updates = () => {
             {currentItems.map((update, index) => (
               <div 
                 key={update.id}
-                className={`update-card fade-in ${update.featured ? 'featured-update' : ''} ${update.isBookmarked ? 'bookmarked' : ''}`}
+                className={`update-card ${update.featured ? 'featured-update' : ''} ${update.isBookmarked ? 'bookmarked' : ''}`}
                 tabIndex={0}
                 onKeyPress={(e) => {
                   if (e.key === 'Enter') openDetailModal(update);
@@ -830,7 +1043,6 @@ const Updates = () => {
                 onClick={() => openDetailModal(update)}
                 aria-label={`Update: ${update.title}`}
                 data-testid={`update-card-${update.id}`}
-                style={{animationDelay: `${index * 100}ms`}}
               >
                   {/* Bookmark button */}
                   <Button 

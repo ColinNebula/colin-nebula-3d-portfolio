@@ -126,6 +126,209 @@
   margin-top: 2rem;
 }
 
+/* Subscribe Button and Modal Styles */
+.subscribe-btn {
+  background: linear-gradient(135deg, #40e0ff 0%, #ff6384 100%);
+  border: none;
+  color: #ffffff;
+  font-weight: 600;
+  padding: 0.8rem 2rem;
+  border-radius: 30px;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.subscribe-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(64, 224, 255, 0.3);
+  background: linear-gradient(135deg, #ff6384 0%, #40e0ff 100%);
+}
+
+/* Subscribe Modal */
+.subscribe-modal .modal-dialog {
+  max-width: 500px;
+}
+
+.subscribe-modal-header {
+  background: linear-gradient(135deg, #40e0ff 0%, #ff6384 100%);
+  color: #ffffff;
+  border-bottom: none;
+  border-radius: 0.5rem 0.5rem 0 0;
+}
+
+.subscribe-modal-header .modal-title {
+  font-weight: 600;
+  font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+}
+
+.subscribe-modal-header .btn-close {
+  filter: brightness(0) invert(1);
+  opacity: 0.8;
+}
+
+.subscribe-modal-header .btn-close:hover {
+  opacity: 1;
+}
+
+.subscribe-modal-body {
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 0 0 0.5rem 0.5rem;
+}
+
+.subscribe-intro {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.subscribe-intro p {
+  font-size: 1.1rem;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.subscribe-benefits {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.subscribe-benefits li {
+  display: flex;
+  align-items: center;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.subscribe-benefits li svg {
+  color: #28a745;
+  margin-right: 0.5rem;
+  font-size: 0.8rem;
+}
+
+.subscribe-alert {
+  margin-bottom: 1rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+}
+
+.subscribe-modal .form-label {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.subscribe-modal .form-control {
+  border: 2px solid #e9ecef;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.subscribe-modal .form-control:focus {
+  border-color: #40e0ff;
+  box-shadow: 0 0 0 0.2rem rgba(64, 224, 255, 0.25);
+}
+
+.subscribe-submit-btn {
+  background: linear-gradient(135deg, #40e0ff 0%, #ff6384 100%);
+  border: none;
+  font-weight: 600;
+  padding: 0.875rem 2rem;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.subscribe-submit-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #ff6384 0%, #40e0ff 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(64, 224, 255, 0.3);
+}
+
+.subscribe-submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Dark theme compatibility for modal */
+[data-theme="dark"] .subscribe-modal-body,
+.theme-dark .subscribe-modal-body {
+  background: rgba(33, 37, 41, 0.95);
+  color: #ffffff;
+}
+
+[data-theme="dark"] .subscribe-intro p,
+.theme-dark .subscribe-intro p {
+  color: #e9ecef;
+}
+
+[data-theme="dark"] .subscribe-benefits li,
+.theme-dark .subscribe-benefits li {
+  color: #adb5bd;
+}
+
+[data-theme="dark"] .subscribe-modal .form-label,
+.theme-dark .subscribe-modal .form-label {
+  color: #e9ecef;
+}
+
+[data-theme="dark"] .subscribe-modal .form-control,
+.theme-dark .subscribe-modal .form-control {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+[data-theme="dark"] .subscribe-modal .form-control:focus,
+.theme-dark .subscribe-modal .form-control:focus {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: #40e0ff;
+}
+
+/* Responsive modal */
+@media (max-width: 576px) {
+  .subscribe-modal .modal-dialog {
+    margin: 1rem;
+    max-width: calc(100vw - 2rem);
+  }
+  
+  .subscribe-modal-body {
+    padding: 1.5rem;
+  }
+  
+  .subscribe-benefits {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  
+  .subscribe-intro p {
+    font-size: 1rem;
+  }
+  
+  .subscribe-benefits li {
+    font-size: 0.85rem;
+  }
+}
+
 .footer-cta .btn {
   background: linear-gradient(135deg, #40e0ff 0%, #ff6384 100%);
   border: none;

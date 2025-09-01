@@ -170,7 +170,8 @@ function VfxVideoEditing() {
     } catch {
       showNotification('Failed to copy link', 'danger', 3000, {
         category: 'system',
-        icon: '❌'
+        icon: '❌',
+        public: true // Error messages should be visible even when not logged in
       });
     }
   };

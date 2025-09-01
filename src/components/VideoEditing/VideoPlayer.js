@@ -297,19 +297,11 @@ const VideoPlayer = ({
               variant="light"
               size="lg"
               onClick={handlePlay}
-              className="professional-play-button rounded-circle d-flex align-items-center justify-content-center"
-              style={{
-                width: '80px',
-                height: '80px',
-                fontSize: '2rem',
-                backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                border: '3px solid rgba(255, 255, 255, 0.8)',
-                backdropFilter: 'blur(10px)',
-                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
-                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-              }}
+              className="professional-play-button rounded-circle"
+              aria-label="Play video"
+              role="button"
             >
-              <i className="bi bi-play-fill"></i>
+              <i className="bi bi-play-fill" aria-hidden="true"></i>
             </Button>
           </div>
         )}

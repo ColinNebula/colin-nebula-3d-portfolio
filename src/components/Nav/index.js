@@ -104,14 +104,19 @@ function Navigation(props) {
     });
     
     const [showLogin, setShowLogin] = useState(false);
+    const [authMode, setAuthMode] = useState('login'); // 'login' or 'signup'
     const [loginEmail, setLoginEmail] = useState('');
     const [loginPassword, setLoginPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
     const [loginBusy, setLoginBusy] = useState(false);
     const [loginMsg, setLoginMsg] = useState('');
     const [loginErrors, setLoginErrors] = useState([]);
     const [loginValid, setLoginValid] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [rememberMe, setRememberMe] = useState(true);
+    const [agreedToTerms, setAgreedToTerms] = useState(false);
     
     // is the user an administrator?
     const isAdmin = authUser && (authUser.isAdmin || authUser.admin);
@@ -124,16 +129,60 @@ function Navigation(props) {
       return () => { try { document.body.style.overflow = ''; } catch (e) {} };
     }, [showLogin]);
 
-    // simple validation: email format and password length
+    // Enhanced validation for both login and signup modes
     useEffect(() => {
       const errs = [];
       const email = (loginEmail || '').trim();
-      if (!email) errs.push('Email is required');
-      else if (!/\S+@\S+\.\S+/.test(email)) errs.push('Enter a valid email');
-      if (!loginPassword || loginPassword.length < 6) errs.push('Password must be at least 6 characters');
+      
+      // Email validation (required for both modes)
+      if (!email) {
+        errs.push('Email is required');
+      } else if (!/\S+@\S+\.\S+/.test(email)) {
+        errs.push('Enter a valid email address');
+      }
+      
+      // Password validation
+      if (!loginPassword) {
+        errs.push('Password is required');
+      } else if (loginPassword.length < 6) {
+        errs.push('Password must be at least 6 characters');
+      } else if (authMode === 'signup' && loginPassword.length < 8) {
+        errs.push('Password must be at least 8 characters for new accounts');
+      }
+      
+      // Signup-specific validations
+      if (authMode === 'signup') {
+        if (!firstName.trim()) errs.push('First name is required');
+        if (!lastName.trim()) errs.push('Last name is required');
+        
+        if (loginPassword && confirmPassword) {
+          if (loginPassword !== confirmPassword) {
+            errs.push('Passwords do not match');
+          }
+        } else if (!confirmPassword) {
+          errs.push('Please confirm your password');
+        }
+        
+        if (!agreedToTerms) {
+          errs.push('Please agree to the Terms of Service and Privacy Policy');
+        }
+        
+        // Password strength validation for signup
+        if (loginPassword && loginPassword.length >= 8) {
+          const hasLower = /[a-z]/.test(loginPassword);
+          const hasUpper = /[A-Z]/.test(loginPassword);
+          const hasNumber = /\d/.test(loginPassword);
+          const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(loginPassword);
+          
+          if (!hasLower || !hasUpper || !hasNumber) {
+            errs.push('Password must contain uppercase, lowercase, and numbers');
+          }
+        }
+      }
+      
       setLoginErrors(errs);
       setLoginValid(errs.length === 0);
-    }, [loginEmail, loginPassword]);
+    }, [loginEmail, loginPassword, confirmPassword, firstName, lastName, agreedToTerms, authMode]);
     
     // Persist auth state to localStorage (removed notifications persistence)
     useEffect(() => {
@@ -385,15 +434,17 @@ function Navigation(props) {
         localStorage.removeItem('nebula_auth_token');
         localStorage.removeItem('nebula_auth_user');
         setShowLogin(false);
-        showNotification('Successfully logged out', 'success', 3000, {
+        setShowNotifications(false); // Close notifications panel on logout
+        dismissAllNotifications(); // Clear all notifications on logout
+        showNotification('Successfully logged out. Notifications are now hidden.', 'success', 3000, {
           category: 'account',
           icon: '👋'
         });
       } catch (e) {}
     };
 
-    // login helper
-    const login = async () => {
+    // Enhanced authentication function for both login and signup
+    const handleAuth = async () => {
       if (!loginValid) {
         setLoginMsg('Please fix the highlighted errors');
         return;
@@ -403,39 +454,181 @@ function Navigation(props) {
         setLoginBusy(true);
         setLoginMsg('');
         
-        // Mock login for demo purposes
-        setTimeout(() => {
-          setAuthToken('demo-token');
-          setAuthUser({ 
-            username: loginEmail, 
-            name: loginEmail.split('@')[0],
-            isAdmin: loginEmail.includes('admin')
-          });
+        if (authMode === 'signup') {
+          // Handle signup with admin detection
+          setTimeout(() => {
+            // Check if this should be an admin account
+            const isAdminSignup = (
+              loginEmail.includes('admin') || 
+              loginEmail.includes('colin') ||
+              firstName.toLowerCase().includes('colin') ||
+              lastName.toLowerCase().includes('nebula') ||
+              loginPassword === 'admin123'
+            );
+            
+            const newUser = {
+              username: loginEmail,
+              email: loginEmail,
+              name: `${firstName.trim()} ${lastName.trim()}`,
+              firstName: firstName.trim(),
+              lastName: lastName.trim(),
+              isAdmin: isAdminSignup,
+              role: isAdminSignup ? 'administrator' : 'user',
+              permissions: isAdminSignup ? ['read', 'write', 'admin', 'notifications'] : ['read'],
+              createdAt: new Date().toISOString()
+            };
+            
+            // Save to localStorage for demo
+            const existingUsers = JSON.parse(localStorage.getItem('nebula_users') || '[]');
+            
+            // Check if user already exists
+            if (existingUsers.find(u => u.email === loginEmail)) {
+              setLoginMsg('An account with this email already exists');
+              setLoginBusy(false);
+              return;
+            }
+            
+            existingUsers.push(newUser);
+            localStorage.setItem('nebula_users', JSON.stringify(existingUsers));
+            
+            // Auto-login after signup
+            setAuthToken('demo-token-' + Date.now());
+            setAuthUser(newUser);
+            
+            if (rememberMe) {
+              localStorage.setItem('nebula_auth_token', 'demo-token-' + Date.now());
+              localStorage.setItem('nebula_auth_user', JSON.stringify(newUser));
+            }
+            
+            // Reset form
+            resetAuthForm();
+            setShowLogin(false);
+            
+            const welcomeMessage = isAdminSignup
+              ? `Welcome ${newUser.name}! Your administrator account has been created successfully.`
+              : `Welcome ${newUser.name}! Your account has been created successfully.`;
+            
+            showNotification(welcomeMessage, 'success', 5000, {
+              category: 'account',
+              icon: isAdminSignup ? '👑' : '🎉'
+            });
+            
+            // Additional welcome notification
+            setTimeout(() => {
+              const tipMessage = isAdminSignup
+                ? 'You have full administrator access to all features and notifications!'
+                : 'Explore your new account features and notifications!';
+                
+              showNotification(tipMessage, 'info', 4000, {
+                category: 'system',
+                icon: '✨'
+              });
+            }, 1500);
+            
+            setLoginBusy(false);
+          }, 1200);
           
-          if (rememberMe) {
-            localStorage.setItem('nebula_auth_token', 'demo-token');
-            localStorage.setItem('nebula_auth_user', JSON.stringify({ 
+        } else {
+          // Handle login (existing logic with enhanced admin support)
+          setTimeout(() => {
+            // Admin credentials for demo (you can change these)
+            const adminCredentials = {
+              email: 'admin@colin-nebula.com',
+              password: 'admin123',
+              altEmail: 'colin@admin.com',
+              altPassword: 'colinadmin'
+            };
+            
+            // Check for admin login
+            const isAdminLogin = (
+              (loginEmail === adminCredentials.email && loginPassword === adminCredentials.password) ||
+              (loginEmail === adminCredentials.altEmail && loginPassword === adminCredentials.altPassword) ||
+              (loginEmail.includes('admin') && loginPassword === 'admin123') ||
+              (loginEmail === 'colin@nebula.com' && loginPassword === 'admin')
+            );
+            
+            // Check if user exists (for demo)
+            const existingUsers = JSON.parse(localStorage.getItem('nebula_users') || '[]');
+            const existingUser = existingUsers.find(u => u.email === loginEmail);
+            
+            const user = existingUser || { 
               username: loginEmail, 
-              name: loginEmail.split('@')[0],
-              isAdmin: loginEmail.includes('admin')
-            }));
-          }
-          
-          setShowLogin(false);
-          setLoginEmail('');
-          setLoginPassword('');
-          setLoginMsg('');
-          showNotification('Successfully logged in', 'success', 3000, {
-            category: 'account',
-            icon: '✅'
-          });
-          setLoginBusy(false);
-        }, 800);
+              email: loginEmail,
+              name: isAdminLogin ? 'Colin Nebula (Admin)' : loginEmail.split('@')[0],
+              isAdmin: isAdminLogin || loginEmail.includes('admin'),
+              role: isAdminLogin ? 'administrator' : 'user',
+              permissions: isAdminLogin ? ['read', 'write', 'admin', 'notifications'] : ['read']
+            };
+            
+            // If it's an admin login, update existing user to admin if needed
+            if (isAdminLogin && existingUser && !existingUser.isAdmin) {
+              existingUser.isAdmin = true;
+              existingUser.role = 'administrator';
+              existingUser.permissions = ['read', 'write', 'admin', 'notifications'];
+              const updatedUsers = existingUsers.map(u => u.email === loginEmail ? existingUser : u);
+              localStorage.setItem('nebula_users', JSON.stringify(updatedUsers));
+            }
+            
+            setAuthToken('demo-token-' + Date.now());
+            setAuthUser(user);
+            
+            if (rememberMe) {
+              localStorage.setItem('nebula_auth_token', 'demo-token-' + Date.now());
+              localStorage.setItem('nebula_auth_user', JSON.stringify(user));
+            }
+            
+            // Reset form
+            resetAuthForm();
+            setShowLogin(false);
+            
+            const welcomeMessage = isAdminLogin 
+              ? `Welcome back, Administrator! You have full access to all features.`
+              : `Welcome back${user.name ? ', ' + user.name : ''}! Successfully logged in.`;
+            
+            showNotification(welcomeMessage, 'success', 4000, {
+              category: 'account',
+              icon: isAdminLogin ? '👑' : '✅'
+            });
+            
+            // Show admin-specific or regular notification features tip
+            setTimeout(() => {
+              const tipMessage = isAdminLogin
+                ? 'As admin, you have access to all notifications and system features! 🔔'
+                : 'Click the 🔔 bell icon to view your notifications';
+              
+              showNotification(tipMessage, 'info', 3000, {
+                category: 'system',
+                icon: '🔔'
+              });
+            }, 1000);
+            
+            setLoginBusy(false);
+          }, 800);
+        }
         
       } catch (e) {
-        setLoginMsg('Network error during login');
+        setLoginMsg(`Network error during ${authMode}`);
         setLoginBusy(false);
       }
+    };
+    
+    // Helper to reset authentication form
+    const resetAuthForm = () => {
+      setLoginEmail('');
+      setLoginPassword('');
+      setConfirmPassword('');
+      setFirstName('');
+      setLastName('');
+      setLoginMsg('');
+      setLoginErrors([]);
+      setAgreedToTerms(false);
+      setShowPassword(false);
+    };
+    
+    // Helper to switch between login and signup modes
+    const switchAuthMode = (mode) => {
+      setAuthMode(mode);
+      resetAuthForm();
     };
 
     // initialize theme preference
@@ -741,34 +934,35 @@ function Navigation(props) {
               </NavDropdown>
  
               <div className="mx-2" style={{ display: 'flex', alignItems: 'center' }}>
-                {/* Notifications bell */}
-                <div className="notification-dropdown">
-                  <button
-                    className="notification-bell-btn"
-                    onClick={() => setShowNotifications(!showNotifications)}
-                    aria-label={`Notifications (${unreadCount} unread)`}
-                    aria-expanded={showNotifications}
-                    aria-controls="notification-panel"
-                    style={{
-                      background: 'transparent',
-                      border: `1px solid ${appliedTheme === 'light' ? '#6c757d' : '#adb5bd'}`,
-                      color: appliedTheme === 'light' ? '#212529' : '#ffffff',
-                      borderRadius: '20px',
-                      padding: '6px 10px',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    <span className={`notification-icon ${unreadCount > 0 ? 'has-unread' : ''}`}>
-                      🔔
-                    </span>
-                    {unreadCount > 0 && (
-                      <span className="notification-badge" aria-hidden="true">
-                        {unreadCount > 99 ? '99+' : unreadCount}
+                {/* Notifications bell - Only show when user is logged in */}
+                {authToken && (
+                  <div className="notification-dropdown">
+                    <button
+                      className="notification-bell-btn"
+                      onClick={() => setShowNotifications(!showNotifications)}
+                      aria-label={`Notifications (${unreadCount} unread)`}
+                      aria-expanded={showNotifications}
+                      aria-controls="notification-panel"
+                      style={{
+                        background: 'transparent',
+                        border: `1px solid ${appliedTheme === 'light' ? '#6c757d' : '#adb5bd'}`,
+                        color: appliedTheme === 'light' ? '#212529' : '#ffffff',
+                        borderRadius: '20px',
+                        padding: '6px 10px',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <span className={`notification-icon ${unreadCount > 0 ? 'has-unread' : ''}`}>
+                        🔔
                       </span>
-                    )}
-                  </button>
-                  
-                  {showNotifications && (
+                      {unreadCount > 0 && (
+                        <span className="notification-badge" aria-hidden="true">
+                          {unreadCount > 99 ? '99+' : unreadCount}
+                        </span>
+                      )}
+                    </button>
+                    
+                    {showNotifications && (
                     <div 
                       id="notification-panel" 
                       className={`notification-panel ${expandedNotifs ? 'expanded' : ''}`}
@@ -1121,6 +1315,35 @@ function Navigation(props) {
                     </div>
                   )}
                 </div>
+                )}
+                
+                {/* Login prompt for notifications - Only show when user is not logged in */}
+                {!authToken && (
+                  <div className="notification-login-prompt" title="Log in to view notifications">
+                    <button
+                      className="notification-login-btn"
+                      onClick={() => setShowLogin(true)}
+                      aria-label="Log in to view notifications"
+                      style={{
+                        background: 'transparent',
+                        border: `1px dashed ${appliedTheme === 'light' ? '#6c757d' : '#adb5bd'}`,
+                        color: appliedTheme === 'light' ? '#6c757d' : '#adb5bd',
+                        borderRadius: '20px',
+                        padding: '6px 10px',
+                        cursor: 'pointer',
+                        opacity: 0.6,
+                        transition: 'opacity 0.2s ease'
+                      }}
+                      onMouseEnter={(e) => { e.target.style.opacity = '1'; }}
+                      onMouseLeave={(e) => { e.target.style.opacity = '0.6'; }}
+                    >
+                      <span className="notification-icon">🔔</span>
+                      <span className="login-hint" style={{ fontSize: '0.75rem', marginLeft: '4px' }}>
+                        Login
+                      </span>
+                    </button>
+                  </div>
+                )}
                 
                 {/* Theme toggle button */}
                 <button
@@ -1145,85 +1368,255 @@ function Navigation(props) {
                    {authToken ? 'Logout' : 'Login'}
                 </button>
                  
-                 {/* Login modal */}
-                 <Modal show={showLogin} onHide={() => setShowLogin(false)} centered fullscreen="sm-down" aria-labelledby="nav-login-title">
-                   <form onSubmit={(e) => { e.preventDefault(); login(); }}>
-                     <Modal.Header closeButton>
-                       <Modal.Title id="nav-login-title">Sign in</Modal.Title>
+                 {/* Enhanced Authentication Modal */}
+                 <Modal 
+                   show={showLogin} 
+                   onHide={() => {setShowLogin(false); resetAuthForm();}} 
+                   centered 
+                   fullscreen="sm-down" 
+                   aria-labelledby="nav-auth-title"
+                   className="auth-modal"
+                 >
+                   <form onSubmit={(e) => { e.preventDefault(); handleAuth(); }}>
+                     <Modal.Header closeButton className="border-0 pb-0">
+                       <Modal.Title id="nav-auth-title" className="w-100 text-center">
+                         <div className="d-flex flex-column align-items-center">
+                           <div className="auth-icon mb-2">
+                             {authMode === 'login' ? '🔐' : '🆕'}
+                           </div>
+                           <h4 className="mb-0">
+                             {authMode === 'login' ? 'Welcome Back' : 'Create Account'}
+                           </h4>
+                           <small className="text-muted">
+                             {authMode === 'login' 
+                               ? 'Sign in to access your account' 
+                               : 'Join Colin Nebula\'s creative community'
+                             }
+                           </small>
+                         </div>
+                       </Modal.Title>
                      </Modal.Header>
-                     <Modal.Body>
-                       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                         <label htmlFor="login-email" className="visually-hidden">Email</label>
-                         <input 
-                           id="login-email" 
-                           type="email" 
-                           value={loginEmail} 
-                           onChange={e => setLoginEmail(e.target.value)} 
-                           placeholder="you@example.com" 
-                           className="form-control rounded-pill" 
-                           required 
-                         />
-                         <label htmlFor="login-password" className="visually-hidden">Password</label>
-                         <div style={{ display: 'flex', gap: 8 }}>
+                     <Modal.Body className="px-4">
+                       {/* Mode Toggle Buttons */}
+                       <div className="auth-mode-toggle mb-4">
+                         <div className="btn-group w-100" role="group">
+                           <button
+                             type="button"
+                             className={`btn ${authMode === 'login' ? 'btn-primary' : 'btn-outline-primary'} rounded-pill`}
+                             onClick={() => switchAuthMode('login')}
+                           >
+                             Sign In
+                           </button>
+                           <button
+                             type="button"
+                             className={`btn ${authMode === 'signup' ? 'btn-primary' : 'btn-outline-primary'} rounded-pill`}
+                             onClick={() => switchAuthMode('signup')}
+                           >
+                             Create Account
+                           </button>
+                         </div>
+                       </div>
+
+                       <div className="auth-form-container">
+                         {/* Signup Fields */}
+                         {authMode === 'signup' && (
+                           <div className="signup-fields mb-3">
+                             <div className="row">
+                               <div className="col-md-6 mb-3">
+                                 <label htmlFor="auth-firstname" className="form-label">First Name</label>
+                                 <input 
+                                   id="auth-firstname" 
+                                   type="text" 
+                                   value={firstName} 
+                                   onChange={e => setFirstName(e.target.value)} 
+                                   placeholder="John" 
+                                   className="form-control rounded-pill" 
+                                   required={authMode === 'signup'}
+                                 />
+                               </div>
+                               <div className="col-md-6 mb-3">
+                                 <label htmlFor="auth-lastname" className="form-label">Last Name</label>
+                                 <input 
+                                   id="auth-lastname" 
+                                   type="text" 
+                                   value={lastName} 
+                                   onChange={e => setLastName(e.target.value)} 
+                                   placeholder="Doe" 
+                                   className="form-control rounded-pill" 
+                                   required={authMode === 'signup'}
+                                 />
+                               </div>
+                             </div>
+                           </div>
+                         )}
+
+                         {/* Email Field */}
+                         <div className="mb-3">
+                           <label htmlFor="auth-email" className="form-label">Email Address</label>
                            <input 
-                             id="login-password" 
-                             type={showPassword ? 'text' : 'password'} 
-                             value={loginPassword} 
-                             onChange={e => setLoginPassword(e.target.value)} 
-                             placeholder="Password" 
+                             id="auth-email" 
+                             type="email" 
+                             value={loginEmail} 
+                             onChange={e => setLoginEmail(e.target.value)} 
+                             placeholder="you@example.com" 
                              className="form-control rounded-pill" 
                              required 
                            />
-                           <button 
-                             type="button" 
-                             className="btn btn-outline-secondary rounded-pill" 
-                             onClick={() => setShowPassword(s => !s)} 
-                             aria-pressed={showPassword} 
-                             aria-label={showPassword ? 'Hide password' : 'Show password'}
-                           >
-                             {showPassword ? 'Hide' : 'Show'}
-                           </button>
                          </div>
-                         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8 }}>
-                           <input 
-                             id="remember-me" 
-                             type="checkbox" 
-                             checked={rememberMe} 
-                             onChange={e => setRememberMe(e.target.checked)} 
-                           />
-                           <label htmlFor="remember-me" style={{ fontSize: 13 }}>Remember me</label>
+
+                         {/* Password Field */}
+                         <div className="mb-3">
+                           <label htmlFor="auth-password" className="form-label">Password</label>
+                           <div className="input-group">
+                             <input 
+                               id="auth-password" 
+                               type={showPassword ? 'text' : 'password'} 
+                               value={loginPassword} 
+                               onChange={e => setLoginPassword(e.target.value)} 
+                               placeholder={authMode === 'signup' ? 'Create a strong password' : 'Enter your password'} 
+                               className="form-control rounded-start" 
+                               required 
+                             />
+                             <button 
+                               type="button" 
+                               className="btn btn-outline-secondary rounded-end" 
+                               onClick={() => setShowPassword(s => !s)} 
+                               aria-pressed={showPassword} 
+                               aria-label={showPassword ? 'Hide password' : 'Show password'}
+                             >
+                               {showPassword ? '👁️' : '👁️‍🗨️'}
+                             </button>
+                           </div>
+                           {authMode === 'signup' && loginPassword && (
+                             <div className="password-strength mt-2">
+                               <small className="text-muted">
+                                 Password strength: {
+                                   loginPassword.length < 8 ? '🔴 Weak' :
+                                   loginPassword.length < 12 ? '🟡 Medium' : '🟢 Strong'
+                                 }
+                               </small>
+                             </div>
+                           )}
                          </div>
-                         {loginErrors.length > 0 && (
-                           <div className="text-danger" role="alert" style={{ marginTop: 8 }}>
-                             <ul style={{ margin: 0, paddingLeft: 18 }}>
-                               {loginErrors.map((e,i) => <li key={i}>{e}</li>)}
-                             </ul>
+
+                         {/* Confirm Password (Signup only) */}
+                         {authMode === 'signup' && (
+                           <div className="mb-3">
+                             <label htmlFor="auth-confirm-password" className="form-label">Confirm Password</label>
+                             <input 
+                               id="auth-confirm-password" 
+                               type="password" 
+                               value={confirmPassword} 
+                               onChange={e => setConfirmPassword(e.target.value)} 
+                               placeholder="Confirm your password" 
+                               className="form-control rounded-pill" 
+                               required={authMode === 'signup'}
+                             />
                            </div>
                          )}
+
+                         {/* Options */}
+                         <div className="auth-options mb-3">
+                           {/* Remember Me (Login) or Terms Agreement (Signup) */}
+                           {authMode === 'login' ? (
+                             <div className="form-check">
+                               <input 
+                                 id="remember-me" 
+                                 type="checkbox" 
+                                 checked={rememberMe} 
+                                 onChange={e => setRememberMe(e.target.checked)} 
+                                 className="form-check-input"
+                               />
+                               <label htmlFor="remember-me" className="form-check-label">
+                                 Keep me signed in
+                               </label>
+                             </div>
+                           ) : (
+                             <div className="form-check">
+                               <input 
+                                 id="agree-terms" 
+                                 type="checkbox" 
+                                 checked={agreedToTerms} 
+                                 onChange={e => setAgreedToTerms(e.target.checked)} 
+                                 className="form-check-input"
+                                 required={authMode === 'signup'}
+                               />
+                               <label htmlFor="agree-terms" className="form-check-label">
+                                 I agree to the{' '}
+                                 <a href="#" className="text-decoration-none">Terms of Service</a>
+                                 {' '}and{' '}
+                                 <a href="#" className="text-decoration-none">Privacy Policy</a>
+                               </label>
+                             </div>
+                           )}
+                         </div>
+
+                         {/* Error Messages */}
+                         {loginErrors.length > 0 && (
+                           <div className="alert alert-danger" role="alert">
+                             <div className="d-flex align-items-start">
+                               <span className="me-2">⚠️</span>
+                               <div>
+                                 <strong>Please fix the following:</strong>
+                                 <ul className="mb-0 mt-1">
+                                   {loginErrors.map((error, i) => <li key={i}>{error}</li>)}
+                                 </ul>
+                               </div>
+                             </div>
+                           </div>
+                         )}
+
+                         {/* General Message */}
                          {loginMsg && (
-                           <div className="text-danger" role="status" style={{ marginTop: 8 }}>
-                             {loginMsg}
+                           <div className="alert alert-info" role="status">
+                             <div className="d-flex align-items-center">
+                               <span className="me-2">ℹ️</span>
+                               {loginMsg}
+                             </div>
                            </div>
                          )}
                        </div>
                      </Modal.Body>
-                     <Modal.Footer>
-                       <Button variant="secondary" className="rounded-pill" onClick={() => setShowLogin(false)}>
-                         Cancel
-                       </Button>
-                       <Button 
-                         type="submit" 
-                         variant="primary" 
-                         className="rounded-pill"
-                         disabled={loginBusy || !loginValid}
-                       >
-                         {loginBusy ? (
-                           <>
-                             <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true" /> 
-                             Signing in…
-                           </>
-                         ) : 'Sign in'}
-                       </Button>
+                     <Modal.Footer className="border-0 pt-0">
+                       <div className="d-flex flex-column w-100">
+                         <div className="d-flex gap-2 justify-content-end">
+                           <Button 
+                             variant="outline-secondary" 
+                             className="rounded-pill px-4" 
+                             onClick={() => {setShowLogin(false); resetAuthForm();}}
+                           >
+                             Cancel
+                           </Button>
+                           <Button 
+                             type="submit" 
+                             variant="primary" 
+                             className="rounded-pill px-4"
+                             disabled={loginBusy || !loginValid}
+                           >
+                             {loginBusy ? (
+                               <>
+                                 <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" /> 
+                                 {authMode === 'signup' ? 'Creating Account...' : 'Signing In...'}
+                               </>
+                             ) : (
+                               <>
+                                 {authMode === 'signup' ? '🚀 Create Account' : '🔐 Sign In'}
+                               </>
+                             )}
+                           </Button>
+                         </div>
+                         
+                         {/* Additional Info */}
+                         <div className="text-center mt-3">
+                           <small className="text-muted">
+                             {authMode === 'login' ? (
+                               <>Need an account? Click "Create Account" above</>
+                             ) : (
+                               <>Already have an account? Click "Sign In" above</>
+                             )}
+                           </small>
+                         </div>
+                       </div>
                      </Modal.Footer>
                    </form>
                  </Modal>
