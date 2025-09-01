@@ -154,6 +154,33 @@
   contain: layout style; /* Optimize performance and prevent layout issues */
 }
 
+/* Video overlay improvements - less intrusive */
+.featured-showcase .bg-gradient-dark {
+  background: linear-gradient(transparent 0%, transparent 40%, rgba(0,0,0,0.4) 70%, rgba(0,0,0,0.9) 100%) !important;
+  backdrop-filter: blur(5px);
+  pointer-events: none;
+}
+
+.featured-showcase .bg-gradient-dark .row {
+  pointer-events: auto;
+}
+
+/* Ensure overlay content is smaller and less blocking */
+.featured-showcase .bg-gradient-dark h2 {
+  font-size: 1.25rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.featured-showcase .bg-gradient-dark p {
+  font-size: 0.9rem !important;
+  margin-bottom: 0.75rem !important;
+}
+
+.featured-showcase .bg-gradient-dark .btn {
+  font-size: 0.8rem !important;
+  padding: 0.25rem 0.5rem !important;
+}
+
 /* UNIVERSAL FIX: Ensure image displays properly and content is never cut off - ONLY for non-video-player images */
 .featured-showcase .ratio img:not(.video-player img) {
   position: absolute; /* Ensure absolute positioning */

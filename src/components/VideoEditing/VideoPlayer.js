@@ -4,6 +4,8 @@ import { Button, Spinner } from 'react-bootstrap';
 const VideoPlayer = ({ 
   url, 
   onError, 
+  onPlay,
+  onPause,
   className = '', 
   title = 'Professional Video Player',
   poster = '',
@@ -71,6 +73,11 @@ const VideoPlayer = ({
     try {
       setIsPlaying(true);
       
+      // Call the onPlay callback if provided
+      if (onPlay) {
+        onPlay();
+      }
+      
       if (iframeRef.current && videoType) {
         const iframe = iframeRef.current;
         
@@ -93,6 +100,11 @@ const VideoPlayer = ({
     try {
       setIsPlaying(false);
       
+      // Call the onPause callback if provided
+      if (onPause) {
+        onPause();
+      }
+      
       if (iframeRef.current && videoType) {
         const iframe = iframeRef.current;
         
@@ -113,6 +125,11 @@ const VideoPlayer = ({
     try {
       setIsPlaying(false);
       setIsVisible(false);
+      
+      // Call the onPause callback if provided (since stop should also hide overlay)
+      if (onPause) {
+        onPause();
+      }
       
       if (iframeRef.current && videoType) {
         const iframe = iframeRef.current;
@@ -262,9 +279,10 @@ const VideoPlayer = ({
   };
 
   return (
-    <div className={`professional-video-player position-relative ${className}`} {...props}>
-      {/* Professional background gradient */}
-      <div className="professional-video-background"></div>
+    <>
+      <div className={`professional-video-player position-relative ${className}`} {...props}>
+        {/* Professional background gradient */}
+        <div className="professional-video-background"></div>
       
       {/* Video container */}
       <div className="professional-video-container position-relative">
@@ -295,16 +313,18 @@ const VideoPlayer = ({
             </Button>
           </div>
         )}
-        
-        {/* Professional Control Overlay */}
-        <div 
-          className="professional-video-controls position-absolute bottom-0 start-0 end-0 p-3"
-          style={{
-            background: 'linear-gradient(transparent, rgba(0, 0, 0, 0.8))',
-            backdropFilter: 'blur(10px)',
-            borderRadius: '0 0 12px 12px'
-          }}
-        >
+      </div>
+      
+      {/* Professional Control Overlay - moved outside video container */}
+      <div 
+        className="professional-video-controls w-100 p-3"
+        style={{
+          background: 'linear-gradient(135deg, rgba(26, 26, 46, 0.95) 0%, rgba(20, 20, 35, 0.98) 50%, rgba(15, 15, 25, 0.95) 100%)',
+          backdropFilter: 'blur(10px)',
+          borderRadius: '0 0 12px 12px',
+          marginTop: '-5px' /* Slight overlap for seamless connection */
+        }}
+      >
           <div className="d-flex align-items-end justify-content-between">
             <div>
               <h6 className="text-white mb-1 fw-bold" style={{ letterSpacing: '0.3px' }}>{title}</h6>
@@ -379,7 +399,7 @@ const VideoPlayer = ({
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

@@ -614,7 +614,7 @@ function VfxVideoEditing() {
                 
                 {/* Video info overlay - only show when not playing */}
                 {!isHeroPlaying && (
-                  <div className="position-absolute bottom-0 start-0 w-100 bg-gradient-dark" style={{ zIndex: 4, pointerEvents: 'none' }}>
+                  <div className="position-absolute bottom-0 start-0 w-100 bg-gradient-dark" style={{ zIndex: 4, pointerEvents: 'none', background: 'linear-gradient(transparent 0%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,0.8) 100%)', padding: '2rem 1rem 1rem 1rem' }}>
                     <div className="row align-items-end g-3" style={{ pointerEvents: 'auto' }}>
                       <div className="col-md-8 col-xl-9">
                         <h2 id="hero-title" className="h2 fw-bold mb-2 text-white transition-all">
