@@ -1,9 +1,687 @@
 /* About Section Styling */
 .about-section {
     min-height: 100vh;
-    padding: 2rem 0;
+    padding: 3rem 0;
     color: var(--text);
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    overflow-x: hidden;
+    position: relative;
+}
+
+.about-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(64, 224, 255, 0.3) 50%, transparent 100%);
+}
+
+/* Hero Section */
+.hero-content {
+    position: relative;
+}
+
+.text-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: inline-block;
+}
+
+.hero-divider {
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 2px;
+    margin-top: 1.5rem;
+}
+
+/* Bio Cards */
+.bio-card {
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    background: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.bio-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.bio-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+}
+
+/* Top Cards List Styling */
+.top-card-item {
+    position: relative;
+    margin-bottom: 2rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.02) 0%, rgba(118, 75, 162, 0.02) 100%);
+    border-radius: 1rem;
+    border: 1px solid rgba(102, 126, 234, 0.1);
+    max-width: none;
+    width: 100%;
+}
+
+.top-card-header {
+    position: relative;
+    z-index: 2;
+}
+
+.top-card-number .rank-badge {
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 0.75rem 1.5rem;
+    border-radius: 2rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    position: relative;
+    overflow: hidden;
+}
+
+.top-card-number .rank-badge::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s ease;
+}
+
+.top-card-item:hover .rank-badge::before {
+    left: 100%;
+}
+
+.top-card-title h3 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 1.8rem;
+}
+
+.top-card-content {
+    border: 2px solid rgba(102, 126, 234, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+}
+
+.top-card-content .card-body {
+    padding: 2rem !important;
+}
+
+.top-card-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.top-card-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.top-card-content.journey-card {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.05) 0%, rgba(255, 193, 7, 0.02) 100%);
+    border-color: rgba(255, 193, 7, 0.2);
+}
+
+.top-card-content.philosophy-card {
+    background: linear-gradient(135deg, rgba(13, 202, 240, 0.05) 0%, rgba(13, 202, 240, 0.02) 100%);
+    border-color: rgba(13, 202, 240, 0.2);
+}
+
+.top-card-content:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+    border-color: rgba(102, 126, 234, 0.3);
+}
+
+.top-card-meta {
+    background: rgba(248, 249, 250, 0.8);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin: 0 -0.5rem;
+}
+
+.top-card-meta .col {
+    text-align: center;
+    padding: 0.75rem;
+}
+
+.top-card-meta strong {
+    display: block;
+    font-size: 1.1rem;
+    margin-top: 0.5rem;
+    font-weight: 600;
+}
+
+.top-card-meta small {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* Responsive Top Cards */
+@media (max-width: 768px) {
+    .top-card-item {
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .top-card-header {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 1rem;
+    }
+    
+    .top-card-title {
+        margin-left: 0 !important;
+    }
+    
+    .top-card-title h3 {
+        font-size: 1.5rem;
+    }
+    
+    .top-card-number .rank-badge {
+        font-size: 0.9rem;
+        padding: 0.6rem 1.2rem;
+    }
+    
+    .top-card-content .card-body {
+        padding: 1.5rem !important;
+    }
+    
+    .top-card-meta {
+        padding: 1.25rem;
+        margin: 0 -0.25rem;
+    }
+    
+    .top-card-meta .col {
+        margin-bottom: 0.75rem;
+        padding: 0.5rem;
+    }
+    
+    .top-card-meta strong {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .top-card-item {
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .top-card-content .card-body {
+        padding: 1.25rem !important;
+    }
+    
+    .top-card-title h3 {
+        font-size: 1.3rem;
+    }
+    
+    .top-card-number .rank-badge {
+        font-size: 0.8rem;
+        padding: 0.5rem 1rem;
+    }
+    
+    .top-card-meta {
+        padding: 1rem;
+        margin: 0;
+    }
+    
+    .top-card-meta .col {
+        margin-bottom: 0.5rem;
+        padding: 0.25rem;
+    }
+    
+    .top-card-meta strong {
+        font-size: 0.9rem;
+    }
+    
+    .top-card-meta small {
+        font-size: 0.8rem;
+    }
+}
+
+/* Additional Details Cards List Styling */
+.additional-card-item {
+    position: relative;
+    margin-bottom: 1.5rem;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, rgba(33, 37, 41, 0.02) 0%, rgba(73, 80, 87, 0.02) 100%);
+    border-radius: 1rem;
+    border: 1px solid rgba(33, 37, 41, 0.08);
+}
+
+.additional-card-header {
+    position: relative;
+    z-index: 2;
+}
+
+.additional-card-number .rank-badge {
+    font-size: 0.9rem;
+    font-weight: 700;
+    padding: 0.6rem 1.25rem;
+    border-radius: 2rem;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    position: relative;
+    overflow: hidden;
+}
+
+.additional-card-number .rank-badge::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s ease;
+}
+
+.additional-card-item:hover .rank-badge::before {
+    left: 100%;
+}
+
+.additional-card-title h3 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 1.4rem;
+}
+
+.additional-card-content {
+    border: 2px solid rgba(33, 37, 41, 0.08);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+}
+
+.additional-card-content .card-body {
+    padding: 1.5rem !important;
+}
+
+.additional-card-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+}
+
+.additional-card-content.technical-card {
+    background: linear-gradient(135deg, rgba(40, 167, 69, 0.04) 0%, rgba(40, 167, 69, 0.02) 100%);
+    border-color: rgba(40, 167, 69, 0.15);
+}
+
+.additional-card-content.technical-card::before {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+}
+
+.additional-card-content.collaboration-card {
+    background: linear-gradient(135deg, rgba(0, 123, 255, 0.04) 0%, rgba(0, 123, 255, 0.02) 100%);
+    border-color: rgba(0, 123, 255, 0.15);
+}
+
+.additional-card-content.collaboration-card::before {
+    background: linear-gradient(135deg, #007bff 0%, #6610f2 100%);
+}
+
+.additional-card-content:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    border-color: rgba(33, 37, 41, 0.2);
+}
+
+.additional-card-meta {
+    background: rgba(248, 249, 250, 0.6);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin: 0 -0.25rem;
+}
+
+.additional-card-meta .col {
+    text-align: center;
+    padding: 0.5rem;
+}
+
+.additional-card-meta strong {
+    display: block;
+    font-size: 0.95rem;
+    margin-top: 0.3rem;
+    font-weight: 600;
+}
+
+.additional-card-meta small {
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+/* Responsive Additional Cards */
+@media (max-width: 768px) {
+    .additional-card-item {
+        padding: 1.25rem;
+        margin-bottom: 1.25rem;
+    }
+    
+    .additional-card-header {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 0.75rem;
+    }
+    
+    .additional-card-title {
+        margin-left: 0 !important;
+    }
+    
+    .additional-card-title h3 {
+        font-size: 1.2rem;
+    }
+    
+    .additional-card-number .rank-badge {
+        font-size: 0.8rem;
+        padding: 0.5rem 1rem;
+    }
+    
+    .additional-card-content .card-body {
+        padding: 1.25rem !important;
+    }
+    
+    .additional-card-meta {
+        padding: 0.75rem;
+        margin: 0 -0.15rem;
+    }
+    
+    .additional-card-meta .col {
+        margin-bottom: 0.5rem;
+        padding: 0.3rem;
+    }
+    
+    .additional-card-meta strong {
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .additional-card-item {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .additional-card-content .card-body {
+        padding: 1rem !important;
+    }
+    
+    .additional-card-title h3 {
+        font-size: 1.1rem;
+    }
+    
+    .additional-card-number .rank-badge {
+        font-size: 0.75rem;
+        padding: 0.4rem 0.8rem;
+    }
+    
+    .additional-card-meta {
+        padding: 0.6rem;
+        margin: 0;
+    }
+    
+    .additional-card-meta .col {
+        margin-bottom: 0.4rem;
+        padding: 0.2rem;
+    }
+    
+    .additional-card-meta strong {
+        font-size: 0.8rem;
+    }
+    
+    .additional-card-meta small {
+        font-size: 0.75rem;
+    }
+}
+
+/* Experience Cards List Styling */
+.experience-card-item {
+    position: relative;
+    margin-bottom: 1.5rem;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.03) 0%, rgba(118, 75, 162, 0.03) 100%);
+    border-radius: 1rem;
+    border: 1px solid rgba(102, 126, 234, 0.1);
+}
+
+.experience-card-header {
+    position: relative;
+    z-index: 2;
+}
+
+.experience-card-number .rank-badge {
+    font-size: 0.9rem;
+    font-weight: 700;
+    padding: 0.6rem 1.25rem;
+    border-radius: 2rem;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    position: relative;
+    overflow: hidden;
+}
+
+.experience-card-number .rank-badge::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s ease;
+}
+
+.experience-card-item:hover .rank-badge::before {
+    left: 100%;
+}
+
+.experience-card-title h3 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 1.4rem;
+}
+
+.experience-card-content {
+    border: 2px solid rgba(102, 126, 234, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+}
+
+.experience-card-content .card-body {
+    padding: 1.5rem !important;
+}
+
+.experience-card-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.experience-card-content.senior-card {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.04) 0%, rgba(255, 193, 7, 0.02) 100%);
+    border-color: rgba(255, 193, 7, 0.2);
+}
+
+.experience-card-content.senior-card::before {
+    background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+}
+
+.experience-card-content.animator-card {
+    background: linear-gradient(135deg, rgba(13, 202, 240, 0.04) 0%, rgba(13, 202, 240, 0.02) 100%);
+    border-color: rgba(13, 202, 240, 0.2);
+}
+
+.experience-card-content.animator-card::before {
+    background: linear-gradient(135deg, #0dcaf0 0%, #0d6efd 100%);
+}
+
+.experience-card-content:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    border-color: rgba(102, 126, 234, 0.3);
+}
+
+.experience-card-meta {
+    background: rgba(248, 249, 250, 0.6);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin: 0 -0.25rem;
+}
+
+.experience-card-meta .col {
+    text-align: center;
+    padding: 0.5rem;
+}
+
+.experience-card-meta strong {
+    display: block;
+    font-size: 0.95rem;
+    margin-top: 0.3rem;
+    font-weight: 600;
+}
+
+.experience-card-meta small {
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+/* Responsive Experience Cards */
+@media (max-width: 768px) {
+    .experience-card-item {
+        padding: 1.25rem;
+        margin-bottom: 1.25rem;
+    }
+    
+    .experience-card-header {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 0.75rem;
+    }
+    
+    .experience-card-title {
+        margin-left: 0 !important;
+    }
+    
+    .experience-card-title h3 {
+        font-size: 1.2rem;
+    }
+    
+    .experience-card-number .rank-badge {
+        font-size: 0.8rem;
+        padding: 0.5rem 1rem;
+    }
+    
+    .experience-card-content .card-body {
+        padding: 1.25rem !important;
+    }
+    
+    .experience-card-meta {
+        padding: 0.75rem;
+        margin: 0 -0.15rem;
+    }
+    
+    .experience-card-meta .col {
+        margin-bottom: 0.5rem;
+        padding: 0.3rem;
+    }
+    
+    .experience-card-meta strong {
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .experience-card-item {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .experience-card-content .card-body {
+        padding: 1rem !important;
+    }
+    
+    .experience-card-title h3 {
+        font-size: 1.1rem;
+    }
+    
+    .experience-card-number .rank-badge {
+        font-size: 0.75rem;
+        padding: 0.4rem 0.8rem;
+    }
+    
+    .experience-card-meta {
+        padding: 0.6rem;
+        margin: 0;
+    }
+    
+    .experience-card-meta .col {
+        margin-bottom: 0.4rem;
+        padding: 0.2rem;
+    }
+    
+    .experience-card-meta strong {
+        font-size: 0.8rem;
+    }
+    
+    .experience-card-meta small {
+        font-size: 0.75rem;
+    }
+}
+
+.card-icon {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+/* Ensure container doesn't overflow */
+.about-section .container-fluid {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* Ensure rows don't create horizontal scroll */
+.about-section .row {
+    overflow-x: hidden;
 }
 
 /* Header Styling */
@@ -111,26 +789,165 @@
 
 .skill-item {
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
-  border: 1px solid #f1f3f5;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  word-wrap: break-word;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.skill-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
 .skill-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+}
+
+.skill-name {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.skill-badge {
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.4rem 0.8rem;
 }
 
 .progress {
-  border-radius: 3px;
+  border-radius: 4px;
   background-color: #e9ecef;
   overflow: hidden;
+  min-height: 8px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.bg-gradient-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
 }
 
 .progress-bar {
-  transition: width 0.6s ease;
-  border-radius: 3px;
+  transition: width 0.8s ease;
+  border-radius: 4px;
+  min-width: 2%;
+  position: relative;
+}
+
+.progress-bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, 
+    rgba(255, 255, 255, 0.2) 0%, 
+    rgba(255, 255, 255, 0.4) 50%, 
+    rgba(255, 255, 255, 0.2) 100%
+  );
+}
+
+/* Experience Cards */
+.experience-card {
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  background: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.experience-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.experience-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+}
+
+.experience-number {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+/* CTA Section */
+.cta-card {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%) !important;
+  box-shadow: 0 15px 35px rgba(102, 126, 234, 0.3);
+  margin: 0 auto;
+  max-width: 600px;
+}
+
+.cta-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  transform: rotate(45deg);
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%, 100% { transform: rotate(45deg) translateX(-100%); }
+  50% { transform: rotate(45deg) translateX(100%); }
+}
+
+.cta-icon {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.cta-button {
+  background: white !important;
+  color: #667eea !important;
+  border: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.cta-button:hover {
+  background: #f8f9fa !important;
+  color: #764ba2 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
 /* Professional Skills Badges */
@@ -194,11 +1011,31 @@
 .btn-light {
   font-weight: 600;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .btn-light:hover {
   transform: translateY(-1px);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Card responsiveness */
+.card {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  overflow: hidden;
+}
+
+.card-body {
+  overflow: hidden;
+}
+
+.card-body p {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
 }
 
 /* Typography */
@@ -239,35 +1076,392 @@
   color: #adb5bd !important;
 }
 
+/* Dark theme for top cards */
+[data-theme="dark"] .top-card-item {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  border-color: rgba(102, 126, 234, 0.2);
+}
+
+[data-theme="dark"] .top-card-content {
+  background: #343a40;
+  border-color: rgba(102, 126, 234, 0.2);
+}
+
+[data-theme="dark"] .top-card-content.journey-card {
+  background: linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, #343a40 100%);
+  border-color: rgba(255, 193, 7, 0.3);
+}
+
+[data-theme="dark"] .top-card-content.philosophy-card {
+  background: linear-gradient(135deg, rgba(13, 202, 240, 0.1) 0%, #343a40 100%);
+  border-color: rgba(13, 202, 240, 0.3);
+}
+
+[data-theme="dark"] .top-card-meta {
+  background: rgba(73, 80, 87, 0.8);
+}
+
+/* Dark theme for additional details cards */
+[data-theme="dark"] .additional-card-item {
+  background: linear-gradient(135deg, rgba(73, 80, 87, 0.1) 0%, rgba(108, 117, 125, 0.1) 100%);
+  border-color: rgba(73, 80, 87, 0.2);
+}
+
+[data-theme="dark"] .additional-card-content {
+  background: #343a40;
+  border-color: rgba(73, 80, 87, 0.2);
+}
+
+[data-theme="dark"] .additional-card-content.technical-card {
+  background: linear-gradient(135deg, rgba(40, 167, 69, 0.1) 0%, #343a40 100%);
+  border-color: rgba(40, 167, 69, 0.25);
+}
+
+[data-theme="dark"] .additional-card-content.collaboration-card {
+  background: linear-gradient(135deg, rgba(0, 123, 255, 0.1) 0%, #343a40 100%);
+  border-color: rgba(0, 123, 255, 0.25);
+}
+
+[data-theme="dark"] .additional-card-meta {
+  background: rgba(73, 80, 87, 0.6);
+}
+
+/* Dark theme for experience cards */
+[data-theme="dark"] .experience-card-item {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
+  border-color: rgba(102, 126, 234, 0.2);
+}
+
+[data-theme="dark"] .experience-card-content {
+  background: #343a40;
+  border-color: rgba(102, 126, 234, 0.2);
+}
+
+[data-theme="dark"] .experience-card-content.senior-card {
+  background: linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, #343a40 100%);
+  border-color: rgba(255, 193, 7, 0.3);
+}
+
+[data-theme="dark"] .experience-card-content.animator-card {
+  background: linear-gradient(135deg, rgba(13, 202, 240, 0.1) 0%, #343a40 100%);
+  border-color: rgba(13, 202, 240, 0.3);
+}
+
+[data-theme="dark"] .experience-card-meta {
+  background: rgba(73, 80, 87, 0.6);
+}
+
 /* Responsive design */
-@media (max-width: 768px) {
+@media (max-width: 1200px) {
   .about-section {
-    padding: 1rem 0;
+    padding: 2.5rem 0;
+  }
+  
+  .container-fluid {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (max-width: 992px) {
+  .about-section {
+    padding: 2rem 0;
   }
   
   .display-4 {
-    font-size: 2.5rem;
+    font-size: 2.8rem;
+  }
+  
+  .lead {
+    font-size: 1.15rem;
   }
   
   .skill-item {
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
   }
   
   .card-body {
     padding: 1.5rem !important;
   }
+  
+  .h4 {
+    font-size: 1.4rem;
+  }
+  
+  .cta-card .card-body {
+    padding: 3rem 2rem !important;
+  }
+  
+  .cta-card {
+    max-width: 550px;
+    margin: 0 auto;
+  }
 }
 
-@media (max-width: 576px) {
+@media (max-width: 768px) {
+  .about-section {
+    padding: 1.5rem 0;
+    min-height: auto;
+  }
+  
+  .container-fluid {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
   .display-4 {
-    font-size: 2rem;
+    font-size: 2.5rem;
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
   }
   
   .lead {
     font-size: 1.1rem;
+    margin-bottom: 2rem;
   }
   
-  .card-body {
+  .hero-divider {
+    width: 60px;
+    height: 3px;
+  }
+  
+  .bio-card .card-body {
+    padding: 1.5rem !important;
+  }
+  
+  .skill-item {
+    margin-bottom: 1rem;
     padding: 1rem !important;
+  }
+  
+  .experience-number {
+    width: 35px;
+    height: 35px;
+    font-size: 0.8rem;
+  }
+  
+  .cta-card .card-body {
+    padding: 2.5rem 1.5rem !important;
+  }
+  
+  .cta-card {
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  
+  .cta-button {
+    padding: 0.75rem 2rem !important;
+    font-size: 0.9rem;
+  }
+  
+  .mb-5 {
+    margin-bottom: 2.5rem !important;
+  }
+  
+  .mb-4 {
+    margin-bottom: 1.5rem !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .about-section {
+    padding: 1rem 0;
+  }
+  
+  .container-fluid {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  
+  .display-4 {
+    font-size: 2rem;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+  }
+  
+  .lead {
+    font-size: 1rem;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+  }
+  
+  .hero-divider {
+    width: 50px;
+    height: 3px;
+    margin-top: 1rem;
+  }
+  
+  .bio-card .card-body {
+    padding: 1rem !important;
+  }
+  
+  .card-icon {
+    margin-bottom: 0.75rem;
+  }
+  
+  .card-icon i {
+    font-size: 1.5rem !important;
+  }
+  
+  .skill-item {
+    padding: 0.75rem !important;
+    margin-bottom: 0.75rem;
+  }
+  
+  .skill-badge {
+    font-size: 0.7rem;
+    padding: 0.3rem 0.6rem;
+  }
+  
+  .experience-number {
+    width: 30px;
+    height: 30px;
+    font-size: 0.75rem;
+  }
+  
+  .experience-card .card-body {
+    padding: 1rem !important;
+  }
+  
+  .cta-card .card-body {
+    padding: 2rem 1rem !important;
+  }
+  
+  .cta-card {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  
+  .cta-icon i {
+    font-size: 2.5rem !important;
+  }
+  
+  .cta-button {
+    padding: 0.6rem 1.5rem !important;
+    font-size: 0.85rem;
+  }
+  
+  .h4 {
+    font-size: 1.2rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .h6 {
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .mb-5 {
+    margin-bottom: 2rem !important;
+  }
+  
+  .mb-4 {
+    margin-bottom: 1rem !important;
+  }
+  
+  .mb-3 {
+    margin-bottom: 0.75rem !important;
+  }
+  
+  .g-4 > * {
+    margin-bottom: 1rem;
+  }
+  
+  .g-3 > * {
+    margin-bottom: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .display-4 {
+    font-size: 1.8rem;
+  }
+  
+  .lead {
+    font-size: 0.95rem;
+  }
+  
+  .hero-divider {
+    width: 40px;
+    height: 2px;
+  }
+  
+  .bio-card .card-body {
+    padding: 0.75rem !important;
+  }
+  
+  .skill-item {
+    padding: 0.5rem !important;
+  }
+  
+  .h4 {
+    font-size: 1.1rem;
+  }
+  
+  .h6 {
+    font-size: 0.85rem;
+  }
+  
+  .cta-card .card-body {
+    padding: 1.5rem 0.75rem !important;
+  }
+  
+  .cta-button {
+    font-size: 0.8rem;
+    padding: 0.5rem 1.2rem !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .container-fluid {
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+  }
+  
+  .display-4 {
+    font-size: 1.6rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .lead {
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+  
+  .bio-card .card-body {
+    padding: 0.5rem !important;
+  }
+  
+  .skill-item {
+    padding: 0.4rem !important;
+  }
+  
+  .h4 {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .h6 {
+    font-size: 0.8rem;
+  }
+  
+  .skill-badge {
+    font-size: 0.65rem;
+    padding: 0.2rem 0.4rem;
+  }
+  
+  .cta-card .card-body {
+    padding: 1rem 0.5rem !important;
+  }
+  
+  .cta-button {
+    font-size: 0.75rem;
+    padding: 0.4rem 1rem !important;
+  }
+  
+  .experience-number {
+    width: 25px;
+    height: 25px;
+    font-size: 0.7rem;
   }
 }

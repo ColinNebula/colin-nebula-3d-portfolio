@@ -148,24 +148,25 @@
   transform: translateY(0);
 }
 
-/* Enhanced Button Animations */
+/* Enhanced Button Animations - Smaller & More Elegant */
 .landing-button {
-  padding: 15px 35px;
+  padding: 10px 24px;
   border-radius: 50px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  letter-spacing: 0.5px;
   position: relative;
   overflow: hidden;
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   border: 2px solid transparent;
   background-size: 200% 200%;
   z-index: 1;
+  min-height: auto;
 }
 
 .landing-button:hover {
-  transform: translateY(-5px) scale(1.05);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
 }
 
 .button-overlay {
@@ -174,9 +175,21 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-  transition: left 0.5s;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.4s;
   z-index: -1;
+}
+
+.landing-button .button-text {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.landing-button:active {
+  transform: translateY(-1px) scale(1.01);
 }
 
 .landing-button:hover .button-overlay {
@@ -365,8 +378,9 @@
   }
   
   .landing-button {
-    padding: 12px 25px;
-    font-size: 0.9rem;
+    padding: 8px 20px;
+    font-size: 0.85rem;
+    letter-spacing: 0.3px;
   }
   
   .logo-particles {
@@ -1196,6 +1210,169 @@ html {
   .landing-container {
     padding: 0.5rem;
   }
+}
+
+/* Floating Portfolio Button - Bottom Left */
+.floating-portfolio-btn {
+  position: fixed;
+  bottom: 2rem;
+  left: 2rem;
+  z-index: 1000;
+  padding: 12px 20px !important;
+  border-radius: 50px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(245, 245, 245, 0.8) !important;
+  background: transparent !important;
+  transform: translateY(100px);
+  opacity: 0;
+  transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  overflow: hidden;
+}
+
+.floating-portfolio-btn.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.floating-portfolio-btn:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+  background: rgba(245, 245, 245, 0.1) !important;
+  border-color: rgba(245, 245, 245, 1) !important;
+}
+
+.floating-portfolio-btn:active {
+  transform: translateY(-1px) scale(1.02);
+}
+
+.floating-portfolio-btn .button-text {
+  position: relative;
+  z-index: 2;
+  color: rgba(245, 245, 245, 0.95);
+  font-weight: 600;
+}
+
+.floating-portfolio-btn .button-overlay {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(245, 245, 245, 0.15), transparent);
+  transition: left 0.4s;
+  z-index: 1;
+}
+
+.floating-portfolio-btn:hover .button-overlay {
+  left: 100%;
+}
+
+/* Floating View Work Button - Bottom Right */
+.floating-work-btn {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 1000;
+  padding: 12px 20px !important;
+  border-radius: 50px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(245, 245, 245, 0.8) !important;
+  background: transparent !important;
+  color: rgba(245, 245, 245, 0.95);
+  transform: translateY(100px);
+  opacity: 0;
+  transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  overflow: hidden;
+}
+
+.floating-work-btn.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.floating-work-btn:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+  background: rgba(245, 245, 245, 0.1) !important;
+  border-color: rgba(245, 245, 245, 1) !important;
+  color: rgba(245, 245, 245, 1);
+}
+
+.floating-work-btn:active {
+  transform: translateY(-1px) scale(1.02);
+}
+
+.floating-work-btn .button-text {
+  position: relative;
+  z-index: 2;
+  color: rgba(245, 245, 245, 0.95);
+  font-weight: 600;
+}
+
+.floating-work-btn .button-overlay {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, 
+    rgba(245, 245, 245, 0.15), 
+    rgba(245, 245, 245, 0.05)
+  );
+  transition: left 0.5s ease;
+  z-index: 1;
+}
+
+.floating-work-btn:hover .button-overlay {
+  left: 100%;
+}
+
+/* Mobile adjustments for floating buttons */
+@media (max-width: 768px) {
+  .floating-portfolio-btn,
+  .floating-work-btn {
+    bottom: 1.5rem;
+    padding: 10px 16px !important;
+    font-size: 0.8rem;
+  }
+  
+  .floating-portfolio-btn {
+    left: 1.5rem;
+  }
+  
+  .floating-work-btn {
+    right: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .floating-portfolio-btn,
+  .floating-work-btn {
+    bottom: 1rem;
+    padding: 8px 14px !important;
+    font-size: 0.75rem;
+  }
+  
+  .floating-portfolio-btn {
+    left: 1rem;
+  }
+  
+  .floating-work-btn {
+    right: 1rem;
+  }
+}
+
+/* Stagger animation for floating buttons */
+.floating-work-btn {
+  animation-delay: 0.2s;
 }
 
 /* Performance optimizations */

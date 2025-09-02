@@ -198,15 +198,15 @@ function Footer() {
               <div className="contact-details">
                 <div className="contact-item">
                   <FaEnvelope />
-                  <span>colin@colinnebula.com</span>
+                  <span>colinnebula@gmail.com</span>
                 </div>
                 <div className="contact-item">
                   <FaPhone />
-                  <span>+1 (555) 123-4567</span>
+                  <span>+1 (416) 856-5764</span>
                 </div>
                 <div className="contact-item">
                   <FaMapMarkerAlt />
-                  <span>Los Angeles, CA</span>
+                  <span>Toronto, ON Canada</span>
                 </div>
               </div>
               

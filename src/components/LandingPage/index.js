@@ -113,28 +113,6 @@ const LandingPage = () => {
               <p className={`mb-5 text-white-50 landing-description ${isLoaded ? 'animate' : ''}`}>
                 Creating stunning digital experiences with cutting-edge technology and artistic vision.
               </p>
-              <div className={`d-flex gap-3 justify-content-center flex-wrap landing-cta ${isLoaded ? 'animate' : ''}`}>
-                <Button 
-                  as={Link} 
-                  to="/home" 
-                  variant="light" 
-                  size="lg" 
-                  className="rounded-pill px-4 fw-semibold landing-button pulse-glow"
-                >
-                  <span className="button-text">🚀 Enter Portfolio</span>
-                  <span className="button-overlay"></span>
-                </Button>
-                <Button 
-                  as={Link} 
-                  to="/portfolio" 
-                  variant="outline-light" 
-                  size="lg" 
-                  className="rounded-pill px-4 fw-semibold landing-button shimmer"
-                >
-                  <span className="button-text">👁️ View Work</span>
-                  <span className="button-overlay"></span>
-                </Button>
-              </div>
             </div>
           </Col>
           
@@ -168,16 +146,6 @@ const LandingPage = () => {
             <div className="arrow arrow-1"></div>
             <div className="arrow arrow-2"></div>
             <div className="arrow arrow-3"></div>
-          </div>
-        </div>
-
-        <div className="landing-footer animated-footer">
-          <div className="technologies">
-            <span className="tech-item">3D Design</span>
-            <span className="dot-separator pulse">•</span>
-            <span className="tech-item">Visual Effects</span>
-            <span className="dot-separator pulse">•</span>
-            <span className="tech-item">Animation</span>
           </div>
         </div>
       </Container>
@@ -231,6 +199,28 @@ const LandingPage = () => {
           top: `${mousePosition.y}%`,
         }}
       ></div>
+
+      {/* Floating Enter Portfolio Button - Bottom Left */}
+      <Button 
+        as={Link} 
+        to="/home" 
+        variant="light" 
+        className={`floating-portfolio-btn rounded-pill px-3 py-2 fw-semibold ${isLoaded ? 'show' : ''}`}
+      >
+        <span className="button-text">🚀 Enter Portfolio</span>
+        <span className="button-overlay"></span>
+      </Button>
+
+      {/* Floating View Work Button - Bottom Right */}
+      <Button 
+        as={Link} 
+        to="/portfolio" 
+        variant="outline-light" 
+        className={`floating-work-btn rounded-pill px-3 py-2 fw-semibold ${isLoaded ? 'show' : ''}`}
+      >
+        <span className="button-text">👁️ View Work</span>
+        <span className="button-overlay"></span>
+      </Button>
     </div>
   );
 };

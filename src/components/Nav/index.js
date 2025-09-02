@@ -1295,10 +1295,10 @@ function Navigation(props) {
                           <div className="empty-state" style={{
                             padding: '2rem 1rem',
                             textAlign: 'center',
-                            color: appliedTheme === 'light' ? '#6c757d' : '#adb5bd'
+                            color: appliedTheme === 'light' ? '#495057' : '#adb5bd'
                           }}>
                             <div className="empty-icon" style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🔔</div>
-                            <p>No notifications to display</p>
+                            <p style={{ color: appliedTheme === 'light' ? '#212529' : '#ffffff' }}>No notifications to display</p>
                           </div>
                         ) : (
                           <ul className="notification-list" style={{
@@ -1387,7 +1387,7 @@ function Navigation(props) {
                            <h4 className="mb-0">
                              {authMode === 'login' ? 'Welcome Back' : 'Create Account'}
                            </h4>
-                           <small className="text-muted">
+                           <small className="text-body">
                              {authMode === 'login' 
                                ? 'Sign in to access your account' 
                                : 'Join Colin Nebula\'s creative community'
@@ -1489,7 +1489,7 @@ function Navigation(props) {
                            </div>
                            {authMode === 'signup' && loginPassword && (
                              <div className="password-strength mt-2">
-                               <small className="text-muted">
+                               <small className="text-body">
                                  Password strength: {
                                    loginPassword.length < 8 ? '🔴 Weak' :
                                    loginPassword.length < 12 ? '🟡 Medium' : '🟢 Strong'
@@ -1608,7 +1608,7 @@ function Navigation(props) {
                          
                          {/* Additional Info */}
                          <div className="text-center mt-3">
-                           <small className="text-muted">
+                           <small className="text-body">
                              {authMode === 'login' ? (
                                <>Need an account? Click "Create Account" above</>
                              ) : (
