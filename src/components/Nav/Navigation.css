@@ -232,37 +232,219 @@
   color: white;
 }
 
-/* Active nav link */
-.navActive {
-  color: var(--primary) !important;
-  font-weight: 600;
+/* Enhanced Nav Links with Hover Animations */
+.nav-link {
+  padding: 0.5rem 0.75rem !important;
   position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 8px;
+  font-weight: 500;
+  overflow: hidden;
 }
 
-.navActive::after {
+/* Hover effect for nav links */
+.nav-link:hover {
+  transform: translateY(-2px);
+  background-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Light theme hover */
+.theme-light .nav-link:hover,
+[data-theme="light"] .nav-link:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Animated underline for hover state */
+.nav-link::before {
   content: '';
   position: absolute;
-  bottom: -2px;
+  bottom: 0;
   left: 50%;
-  transform: translateX(-50%);
-  width: 80%;
+  width: 0;
   height: 2px;
-  background: currentColor;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  transform: translateX(-50%);
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border-radius: 1px;
 }
 
-.nav-link {
-  padding: 0.5rem 0.75rem !important;
+.nav-link:hover::before {
+  width: 80%;
 }
 
-/* Notification Bell */
-.notification-dropdown {
+/* Enhanced Active nav link - stays highlighted */
+.navActive {
+  color: #667eea !important;
+  font-weight: 700 !important;
   position: relative;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.1)) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.25);
+  border-radius: 8px;
 }
 
+/* Force active state to override Bootstrap and inline styles */
+.navbar .nav-link.navActive,
+.nav .nav-link.navActive,
+a.nav-link.navActive {
+  color: #667eea !important;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.1)) !important;
+}
+
+/* Active state indicator - persistent highlight */
+.navActive::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  height: 3px;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  border-radius: 2px;
+  animation: activeUnderline 0.5s ease-out;
+  box-shadow: 0 2px 4px rgba(102, 126, 234, 0.4);
+}
+
+/* Subtle glow effect for active state */
+.navActive::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.3), rgba(118, 75, 162, 0.2));
+  border-radius: 10px;
+  z-index: -1;
+  opacity: 0.6;
+  animation: activeGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes activeUnderline {
+  from {
+    width: 0;
+    opacity: 0;
+  }
+  to {
+    width: 90%;
+    opacity: 1;
+  }
+}
+
+@keyframes activeGlow {
+  from {
+    opacity: 0.4;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 0.6;
+    transform: scale(1.02);
+  }
+}
+
+/* Active state should override hover effects */
+.navActive:hover {
+  color: #667eea !important;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.15)) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.3);
+}
+
+/* Prevent double underline on active hover - override */
+.nav-link.navActive::before {
+  display: none !important;
+}
+
+/* Ensure active state overrides all other states */
+.nav-link.navActive,
+.navbar-nav .nav-link.navActive,
+.nav .nav-link.navActive {
+  color: #667eea !important;
+  font-weight: 700 !important;
+  position: relative;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.1)) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.25) !important;
+  border-radius: 8px !important;
+}
+
+/* Make sure active state is always visible regardless of theme */
+.navbar-light .nav-link.navActive,
+.navbar-dark .nav-link.navActive,
+.theme-light .nav-link.navActive,
+.theme-dark .nav-link.navActive,
+[data-theme="light"] .nav-link.navActive,
+[data-theme="dark"] .nav-link.navActive {
+  color: #667eea !important;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.1)) !important;
+}
+
+/* Active state hover enhancement */
+.nav-link.navActive:hover {
+  color: #5a6fd8 !important;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.15)) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.35) !important;
+}
+
+/* Dropdown menu hover animations */
+.dropdown-menu {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  padding: 0.5rem;
+  margin-top: 0.5rem;
+  overflow: hidden;
+  animation: dropdownSlide 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes dropdownSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.dropdown-item {
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.dropdown-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.dropdown-item:hover::before {
+  left: 100%;
+}
+
+.dropdown-item:hover {
+  background-color: rgba(102, 126, 234, 0.1);
+  transform: translateX(4px);
+  padding-left: 1.25rem;
+}
+
+/* Notification Bell Enhanced Hover */
 .notification-bell-btn {
   position: relative;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   background: transparent;
   border: 1px solid;
   border-radius: 20px;
@@ -271,30 +453,65 @@
   display: flex;
   align-items: center;
   gap: 0.25rem;
+  overflow: hidden;
+}
+
+.notification-bell-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.6s ease;
 }
 
 .notification-bell-btn:hover {
-  opacity: 0.8;
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border-color: currentColor;
+}
+
+.notification-bell-btn:hover::before {
+  left: 100%;
+}
+
+.notification-bell-btn:active {
+  transform: translateY(0) scale(1);
 }
 
 .notification-icon {
   font-size: 1.2rem;
-  transition: transform 0.2s ease;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .notification-bell-btn:hover .notification-icon {
-  transform: rotate(10deg);
+  transform: rotate(15deg) scale(1.1);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 }
 
 .has-unread {
   color: var(--primary);
+  animation: pulseGlow 2s infinite ease-in-out;
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 1;
+    filter: drop-shadow(0 0 0 transparent);
+  }
+  50% {
+    opacity: 0.8;
+    filter: drop-shadow(0 0 8px currentColor);
+  }
 }
 
 .notification-badge {
   position: absolute;
   top: -5px;
   right: -5px;
-  background: #dc3545;
+  background: linear-gradient(135deg, #dc3545, #b52d3c);
   color: white;
   border-radius: 10px;
   padding: 0.125rem 0.25rem;
@@ -302,9 +519,25 @@
   min-width: 18px;
   text-align: center;
   line-height: 1;
+  animation: badgeBounce 1s ease-out;
+  box-shadow: 0 2px 4px rgba(220, 53, 69, 0.4);
 }
 
-/* Notification Panel */
+@keyframes badgeBounce {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Notification Panel Enhanced Animations */
 .notification-panel {
   position: absolute;
   top: 100%;
@@ -315,26 +548,259 @@
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   z-index: 1050;
   overflow: hidden;
+  animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .notification-panel.expanded {
   width: min(90vw, 500px);
   max-height: 80vh;
-}
-
-.notification-panel {
-  animation: slideDown 0.2s ease-out;
+  animation: expandPanel 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes slideDown {
   from {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(-20px) scale(0.95);
+    filter: blur(5px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
+    filter: blur(0);
   }
+}
+
+@keyframes expandPanel {
+  from {
+    width: 320px;
+    max-height: 400px;
+  }
+  to {
+    width: min(90vw, 500px);
+    max-height: 80vh;
+  }
+}
+
+/* Enhanced Notification Items */
+.notification-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid;
+  border-color: inherit;
+  gap: 0.5rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.notification-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+  transition: left 0.6s ease;
+}
+
+.notification-item:hover::before {
+  left: 100%;
+}
+
+.notification-item:hover {
+  transform: translateX(4px);
+  background-color: rgba(102, 126, 234, 0.05);
+  box-shadow: inset 3px 0 0 rgba(102, 126, 234, 0.5);
+}
+
+.notification-item:last-child {
+  border-bottom: none;
+}
+
+.notification-item.unread {
+  background-color: rgba(13, 110, 253, 0.1);
+  border-left: 3px solid #0d6efd;
+  animation: unreadPulse 2s infinite ease-in-out;
+}
+
+@keyframes unreadPulse {
+  0%, 100% {
+    border-left-color: #0d6efd;
+  }
+  50% {
+    border-left-color: #0056b3;
+  }
+}
+
+.notification-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.notification-text {
+  font-size: 0.9rem;
+  line-height: 1.4;
+  margin-bottom: 0.25rem;
+  transition: color 0.2s ease;
+}
+
+.notification-time {
+  font-size: 0.75rem;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.notification-item:hover .notification-time {
+  opacity: 1;
+}
+
+.notification-actions {
+  display: flex;
+  gap: 0.25rem;
+  flex-shrink: 0;
+  opacity: 0;
+  transform: translateX(10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.notification-item:hover .notification-actions {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Enhanced Notification Management Buttons */
+.notification-management {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.notification-management .btn {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.notification-management .btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.notification-management .btn:hover::after {
+  width: 100px;
+  height: 100px;
+}
+
+.notification-management .btn:hover {
+  transform: translateY(-2px) scale(1.05);
+}
+
+.notification-management .btn:active {
+  transform: translateY(0) scale(1);
+}
+
+/* Category Button Enhanced Hover */
+.category-btn {
+  background: transparent;
+  border: 1px solid;
+  border-radius: 20px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.category-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s ease;
+}
+
+.category-btn:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.category-btn:hover::before {
+  left: 100%;
+}
+
+.category-btn.active {
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+  transform: translateY(-1px);
+}
+
+.category-icon {
+  font-size: 0.9em;
+  opacity: 0.8;
+  transition: transform 0.3s ease;
+}
+
+.category-btn:hover .category-icon {
+  transform: scale(1.2) rotate(10deg);
+}
+
+/* Enhanced Notification Login Prompt */
+.notification-login-prompt {
+  position: relative;
+}
+
+.notification-login-btn {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.notification-login-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(108, 117, 125, 0.2), transparent);
+  transition: left 0.6s ease;
+}
+
+.notification-login-btn:hover::before {
+  left: 100%;
+}
+
+.notification-login-btn:hover {
+  transform: translateY(-2px) scale(1.05);
+  border-style: solid !important;
+  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+}
+
+.login-hint {
+  transition: all 0.3s ease;
+}
+
+.notification-login-btn:hover .login-hint {
+  font-weight: 600;
+  transform: translateX(2px);
 }
 
 /* Notification Header */
@@ -581,5 +1047,196 @@
   .notification-panel {
     width: 250px;
     right: -30px;
+  }
+}
+
+/* Enhanced Button Hover Animations */
+.btn {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  border-width: 2px;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.6s ease;
+  z-index: 1;
+}
+
+.btn:hover::before {
+  left: 100%;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.btn:active {
+  transform: translateY(0);
+  transition: transform 0.1s ease;
+}
+
+/* Theme Toggle Button Enhanced */
+.btn-outline-dark,
+.btn-outline-light {
+  border-radius: 20px !important;
+  font-weight: 600;
+  padding: 6px 12px;
+  background: linear-gradient(135deg, transparent, transparent);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-outline-dark:hover {
+  background: linear-gradient(135deg, #212529, #495057);
+  border-color: #212529;
+  color: white;
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 6px 16px rgba(33, 37, 41, 0.3);
+}
+
+.btn-outline-light:hover {
+  background: linear-gradient(135deg, #ffffff, #f8f9fa);
+  border-color: #ffffff;
+  color: #212529;
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 6px 16px rgba(255, 255, 255, 0.3);
+}
+
+/* Login/Logout Button Enhanced */
+.btn-outline-primary {
+  border-radius: 20px !important;
+  font-weight: 600;
+  padding: 6px 12px;
+  background: transparent;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.btn-outline-primary:hover {
+  background: linear-gradient(135deg, #0d6efd, #0056b3);
+  border-color: #0d6efd;
+  color: white;
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 6px 16px rgba(13, 110, 253, 0.4);
+}
+
+/* Navbar Brand Hover Animation */
+.navbar-brand {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.navbar-brand:hover {
+  transform: translateY(-1px);
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+.navbar-brand img {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.navbar-brand:hover img {
+  transform: rotate(5deg) scale(1.05);
+}
+
+/* Navbar Toggle Enhanced */
+.navbar-toggler {
+  border: none;
+  padding: 0.25rem 0.5rem;
+  border-radius: 8px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.navbar-toggler:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: scale(1.1);
+}
+
+.navbar-toggler:focus {
+  box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.3);
+}
+
+.navbar-toggler-icon {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.navbar-toggler[aria-expanded="true"] .navbar-toggler-icon {
+  transform: rotate(90deg);
+}
+
+/* Floating Action Button Style for Quick Actions */
+.btn-quick-actions,
+.btn-refresh-link,
+.btn-updates-link,
+.btn-account-link,
+.btn-system-link {
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 15px !important;
+  font-weight: 600;
+}
+
+.btn-quick-actions:hover,
+.btn-refresh-link:hover,
+.btn-updates-link:hover,
+.btn-account-link:hover,
+.btn-system-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  filter: brightness(1.1);
+}
+
+/* Smooth Transitions for Mobile */
+@media (max-width: 768px) {
+  .nav-link:hover {
+    transform: translateX(5px);
+    background-color: rgba(102, 126, 234, 0.1);
+  }
+  
+  .notification-panel {
+    animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .btn:hover {
+    transform: scale(1.02);
+  }
+  
+  .category-btn:hover {
+    transform: scale(1.03);
+  }
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .nav-link:hover,
+  .btn:hover,
+  .category-btn:hover,
+  .notification-bell-btn:hover {
+    transform: none;
   }
 }

@@ -5,13 +5,12 @@ import logoM from '../../assets/images/logoM.png';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import { Button, Modal, Badge } from 'react-bootstrap';
-import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Navigation.css'; 
 import { useNotifications } from '../../App';
 
 function Navigation(props) {
-    const location = useLocation();
     const navigate = useNavigate();
     const [expanded, setExpanded] = useState(false);
     const [themeAnnounce, setThemeAnnounce] = useState('');
@@ -91,7 +90,6 @@ function Navigation(props) {
     // Notification categories
     const notificationCategories = ['all', 'system', 'account', 'updates'];
     const [notifCategory, setNotifCategory] = useState('all');
-    const [expandedNotifs, setExpandedNotifs] = useState(false);
     
     // Simplified auth state
     const [authToken, setAuthToken] = useState(() => { 
@@ -118,10 +116,7 @@ function Navigation(props) {
     const [rememberMe, setRememberMe] = useState(true);
     const [agreedToTerms, setAgreedToTerms] = useState(false);
     
-    // is the user an administrator?
-    const isAdmin = authUser && (authUser.isAdmin || authUser.admin);
-
-    // disable page scroll when login modal is open
+    // Enhanced validation for both login and signup modes
     useEffect(() => {
       try {
         document.body.style.overflow = showLogin ? 'hidden' : '';
@@ -129,7 +124,6 @@ function Navigation(props) {
       return () => { try { document.body.style.overflow = ''; } catch (e) {} };
     }, [showLogin]);
 
-    // Enhanced validation for both login and signup modes
     useEffect(() => {
       const errs = [];
       const email = (loginEmail || '').trim();
@@ -172,7 +166,6 @@ function Navigation(props) {
           const hasLower = /[a-z]/.test(loginPassword);
           const hasUpper = /[A-Z]/.test(loginPassword);
           const hasNumber = /\d/.test(loginPassword);
-          const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(loginPassword);
           
           if (!hasLower || !hasUpper || !hasNumber) {
             errs.push('Password must contain uppercase, lowercase, and numbers');
@@ -873,51 +866,56 @@ function Navigation(props) {
           <Navbar.Toggle aria-controls="basic-navbar-nav" aria-label="Toggle navigation" />
           <Navbar.Collapse id="basic-navbar-nav" aria-label="Primary">
             <Nav className="ms-auto">
-              <Nav.Link 
-                as={NavLink} 
+              <NavLink 
                 to="/"
-                className={({isActive}) => isActive ? "mx-2 navActive" : "mx-2"}
-                style={{ color: appliedTheme === 'light' ? '#212529' : '#ffffff' }}
+                className={({isActive}) => `nav-link mx-2 ${isActive ? 'navActive' : ''}`}
+                style={({isActive}) => ({ 
+                  color: isActive ? undefined : (appliedTheme === 'light' ? '#212529' : '#ffffff') 
+                })}
                 end
               >
                 Home
-              </Nav.Link>
+              </NavLink>
 
-              <Nav.Link 
-                as={NavLink} 
+              <NavLink 
                 to="/portfolio"
-                className={({isActive}) => isActive ? "mx-2 navActive" : "mx-2"}
-                style={{ color: appliedTheme === 'light' ? '#212529' : '#ffffff' }}
+                className={({isActive}) => `nav-link mx-2 ${isActive ? 'navActive' : ''}`}
+                style={({isActive}) => ({ 
+                  color: isActive ? undefined : (appliedTheme === 'light' ? '#212529' : '#ffffff') 
+                })}
               >
                 Portfolio
-              </Nav.Link>
+              </NavLink>
 
-              <Nav.Link 
-                as={NavLink} 
+              <NavLink 
                 to="/artwork"
-                className={({isActive}) => isActive ? "mx-2 navActive" : "mx-2"}
-                style={{ color: appliedTheme === 'light' ? '#212529' : '#ffffff' }}
+                className={({isActive}) => `nav-link mx-2 ${isActive ? 'navActive' : ''}`}
+                style={({isActive}) => ({ 
+                  color: isActive ? undefined : (appliedTheme === 'light' ? '#212529' : '#ffffff') 
+                })}
               >
                 Artwork
-              </Nav.Link>
+              </NavLink>
 
-              <Nav.Link 
-                as={NavLink} 
+              <NavLink 
                 to="/animation"
-                className={({isActive}) => isActive ? "mx-2 navActive" : "mx-2"}
-                style={{ color: appliedTheme === 'light' ? '#212529' : '#ffffff' }}
+                className={({isActive}) => `nav-link mx-2 ${isActive ? 'navActive' : ''}`}
+                style={({isActive}) => ({ 
+                  color: isActive ? undefined : (appliedTheme === 'light' ? '#212529' : '#ffffff') 
+                })}
               >
                 Animation
-              </Nav.Link>
+              </NavLink>
 
-              <Nav.Link 
-                as={NavLink} 
+              <NavLink 
                 to="/video-editing"
-                className={({isActive}) => isActive ? "mx-2 navActive" : "mx-2"}
-                style={{ color: appliedTheme === 'light' ? '#212529' : '#ffffff' }}
+                className={({isActive}) => `nav-link mx-2 ${isActive ? 'navActive' : ''}`}
+                style={({isActive}) => ({ 
+                  color: isActive ? undefined : (appliedTheme === 'light' ? '#212529' : '#ffffff') 
+                })}
               >
                 VFX
-              </Nav.Link>
+              </NavLink>
 
               <NavDropdown 
                 title="More" 
@@ -926,9 +924,9 @@ function Navigation(props) {
                 menuVariant={appliedTheme === 'light' ? 'light' : 'dark'} 
                 aria-label="More links"
               >
-                <NavDropdown.Item as={Link} to="/privacy-policy">Privacy Policy</NavDropdown.Item>
+                <NavDropdown.Item as={NavLink} to="/privacy-policy">Privacy Policy</NavDropdown.Item>
                 <NavDropdown.Item href="mailto:colinnebula@gmail.com" title="Email Colin">Contact</NavDropdown.Item>
-                <NavDropdown.Item as={Link} to="/resume" title="View Resume">Resume</NavDropdown.Item>
+                <NavDropdown.Item as={NavLink} to="/resume" title="View Resume">Resume</NavDropdown.Item>
                 <NavDropdown.Divider />
                 <NavDropdown.Item href="https://github.com/ColinNebula" target="_blank" rel="noopener noreferrer" title="Open GitHub">GitHub</NavDropdown.Item>
               </NavDropdown>
@@ -965,7 +963,7 @@ function Navigation(props) {
                     {showNotifications && (
                     <div 
                       id="notification-panel" 
-                      className={`notification-panel ${expandedNotifs ? 'expanded' : ''}`}
+                      className="notification-panel"
                       role="dialog"
                       aria-label="Notifications"
                       style={{

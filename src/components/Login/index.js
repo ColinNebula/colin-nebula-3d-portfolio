@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 // Remove Apollo dependency temporarily
 // import { useMutation } from '@apollo/client';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import Auth from '../../utils/auth'; 
+import Auth from '../../utils/auth';
+import './Login.css'; 
 
 function Login(props) {
   const [formState, setFormState] = useState({ email: '', password: '' });
@@ -16,6 +17,22 @@ function Login(props) {
 
   // Check for redirect parameters
   useEffect(() => {
+    // Add body class to prevent scrolling and hide everything
+    document.body.classList.add('login-modal-open');
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+    
+    // Hide main app content if it exists
+    const mainContent = document.querySelector('main');
+    const header = document.querySelector('header');
+    const nav = document.querySelector('nav');
+    const footer = document.querySelector('footer');
+    
+    if (mainContent) mainContent.style.display = 'none';
+    if (header) header.style.display = 'none';
+    if (nav) nav.style.display = 'none';
+    if (footer) footer.style.display = 'none';
+    
     // Check if redirected with an error message
     const params = new URLSearchParams(location.search);
     const errorMsg = params.get('error');
@@ -25,6 +42,19 @@ function Login(props) {
     
     // Test connection to GraphQL endpoint
     checkServerConnection();
+
+    // Cleanup function to restore everything
+    return () => {
+      document.body.classList.remove('login-modal-open');
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+      
+      // Restore main app content
+      if (mainContent) mainContent.style.display = '';
+      if (header) header.style.display = '';
+      if (nav) nav.style.display = '';
+      if (footer) footer.style.display = '';
+    };
   }, [location]);
   
   // Function to test server connection
@@ -125,19 +155,33 @@ function Login(props) {
   };
 
   return (
-    <div className="container my-1">
-      <Link to="/signup">← Go to Signup</Link>
+    <div className="login-modal-backdrop">
+      <div className="login-modal-card container my-1">
+        <Link to="/signup" style={{ 
+          fontSize: '0.9rem', 
+          marginBottom: '15px', 
+          display: 'inline-block',
+          color: 'var(--primary)',
+          textDecoration: 'none'
+        }}>← Go to Signup</Link>
 
-      <h2>Login</h2>
+        <h2 style={{ 
+          fontSize: '1.5rem', 
+          marginBottom: '25px', 
+          textAlign: 'center',
+          color: 'var(--text)',
+          fontWeight: '600'
+        }}>Login</h2>
       
       {/* Connection status indicator */}
       {connectionStatus === 'error' && (
         <div className="server-status-alert" style={{ 
           backgroundColor: '#fff3cd', 
           color: '#856404',
-          padding: '10px',
+          padding: '8px',
           borderRadius: '4px',
-          marginBottom: '15px'
+          marginBottom: '12px',
+          fontSize: '0.85rem'
         }}>
           <p style={{ margin: 0 }}>
             <strong>⚠️ Server connection issue detected.</strong> Login may not work correctly.
@@ -149,28 +193,30 @@ function Login(props) {
       {process.env.NODE_ENV === 'development' && (
         <div className="debug-info" style={{ 
           backgroundColor: '#e2f3eb', 
-          padding: '10px',
+          padding: '8px',
           borderRadius: '4px',
-          marginBottom: '15px',
-          fontSize: '0.8rem'
+          marginBottom: '12px',
+          fontSize: '0.75rem'
         }}>
           <details>
-            <summary>Troubleshooting Info</summary>
-            <p>API Endpoint: /api/login</p>
-            <p>Auth Status: {Auth.loggedIn() ? 'Logged In' : 'Not Logged In'}</p>
-            <p>Connection Status: {connectionStatus}</p>
-            <p className="mt-2">
-              <strong>Note:</strong> Apollo Client is not configured. Using fetch API instead.
-              <br />
-              Install Apollo Client with: <code>npm install @apollo/client graphql</code>
-            </p>
+            <summary style={{ fontSize: '0.8rem', cursor: 'pointer' }}>Troubleshooting Info</summary>
+            <div style={{ marginTop: '5px', fontSize: '0.75rem' }}>
+              <p style={{ margin: '2px 0' }}>API Endpoint: /api/login</p>
+              <p style={{ margin: '2px 0' }}>Auth Status: {Auth.loggedIn() ? 'Logged In' : 'Not Logged In'}</p>
+              <p style={{ margin: '2px 0' }}>Connection Status: {connectionStatus}</p>
+              <p style={{ margin: '5px 0 0 0' }}>
+                <strong>Note:</strong> Apollo Client is not configured. Using fetch API instead.
+                <br />
+                Install Apollo Client with: <code style={{ fontSize: '0.7rem' }}>npm install @apollo/client graphql</code>
+              </p>
+            </div>
           </details>
         </div>
       )}
 
-      <form onSubmit={handleFormSubmit}>
-        <div className="flex-row space-between my-2">
-          <label htmlFor="email">Email address:</label>
+      <form onSubmit={handleFormSubmit} style={{ maxWidth: '100%' }}>
+        <div className="flex-row space-between my-2" style={{ flexDirection: 'column', gap: '5px' }}>
+          <label htmlFor="email" style={{ fontSize: '0.9rem', fontWeight: '500' }}>Email address:</label>
           <input
             placeholder="youremail@test.com"
             name="email"
@@ -179,10 +225,11 @@ function Login(props) {
             onChange={handleChange}
             value={formState.email}
             required
+            style={{ padding: '8px', fontSize: '0.9rem', width: '100%' }}
           />
         </div>
-        <div className="flex-row space-between my-2">
-          <label htmlFor="pwd">Password:</label>
+        <div className="flex-row space-between my-2" style={{ flexDirection: 'column', gap: '5px' }}>
+          <label htmlFor="pwd" style={{ fontSize: '0.9rem', fontWeight: '500' }}>Password:</label>
           <input
             placeholder="******"
             name="password"
@@ -191,6 +238,7 @@ function Login(props) {
             onChange={handleChange}
             value={formState.password}
             required
+            style={{ padding: '8px', fontSize: '0.9rem', width: '100%' }}
           />
         </div>
         
@@ -199,16 +247,17 @@ function Login(props) {
           <div className="error-container" style={{ 
             backgroundColor: '#ffebee',
             color: '#c62828',
-            padding: '10px',
+            padding: '8px',
             borderRadius: '4px',
-            marginBottom: '15px'
+            marginBottom: '12px',
+            fontSize: '0.85rem'
           }}>
             <p className="error-text" style={{ margin: 0 }}>
               <strong>Error:</strong> {customError}
             </p>
-            <details style={{ marginTop: '8px', fontSize: '0.9em' }}>
-              <summary>Troubleshooting Tips</summary>
-              <ul style={{ paddingLeft: '20px', marginTop: '5px' }}>
+            <details style={{ marginTop: '6px', fontSize: '0.8rem' }}>
+              <summary style={{ cursor: 'pointer' }}>Troubleshooting Tips</summary>
+              <ul style={{ paddingLeft: '16px', marginTop: '4px', fontSize: '0.75rem' }}>
                 <li>Check if your email and password are correct</li>
                 <li>Make sure you have a stable internet connection</li>
                 <li>Clear browser cache and cookies</li>
@@ -219,19 +268,23 @@ function Login(props) {
           </div>
         )}
         
-        <div className="flex-row flex-end">
+        <div className="flex-row flex-end" style={{ marginTop: '15px' }}>
           <button 
             type="submit" 
             disabled={loading}
             style={{ 
               cursor: loading ? 'not-allowed' : 'pointer',
-              opacity: loading ? 0.7 : 1 
+              opacity: loading ? 0.7 : 1,
+              padding: '10px 20px',
+              fontSize: '0.9rem',
+              width: '100%'
             }}
           >
             {loading ? 'Logging in...' : 'Login'}
           </button>
         </div>
       </form>
+      </div>
     </div>
   );
 }

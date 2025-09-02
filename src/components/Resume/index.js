@@ -4,10 +4,11 @@ import {
   FaEnvelope, FaPhone, FaGlobe, FaGithub, FaLinkedin, FaPrint, FaDownload, 
   FaFileAlt, FaFileWord, FaFilePdf, FaStar, FaCertificate, FaCode,
   FaRegLightbulb, FaLanguage, FaBriefcase, FaMapMarkerAlt, FaQrcode,
-  FaSpinner
+  FaSpinner, FaMoon, FaSun
 } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { saveResumeToAssets } from '../../utils/resumeSaver';
 import './Resume.css';
 
 // Note: To enable PDF generation, install these packages:
@@ -137,7 +138,7 @@ const Resume = () => {
     window.print();
   };
 
-  // Handle PDF download with real PDF generation
+  // Handle PDF download with real PDF generation and save to assets
   const handleDownloadPDF = async () => {
     if (isGeneratingPdf) return; // Prevent multiple simultaneous generations
     
@@ -223,9 +224,35 @@ const Resume = () => {
         creator: 'Colin Nebula Portfolio'
       });
 
-      // Download the PDF
-      const fileName = `Colin_Nebula_Resume_${new Date().toISOString().split('T')[0]}.pdf`;
-      pdf.save(fileName);
+      // Get PDF as blob
+      const pdfBlob = pdf.output('blob');
+      
+      // Create filename with timestamp
+      const timestamp = new Date().toISOString().split('T')[0];
+      const fileName = `Colin_Nebula_Resume_${timestamp}.pdf`;
+
+      // Save to assets directory using our utility function
+      try {
+        const result = await saveResumeToAssets(pdfBlob, fileName);
+        
+        if (result.success) {
+          alert(`✅ ${result.message}`);
+          if (result.note) {
+            console.log('Note:', result.note);
+          }
+        } else if (result.cancelled) {
+          console.log('Save operation cancelled by user');
+          return; // Don't show error for user cancellation
+        } else {
+          throw new Error(result.message || 'Unknown error');
+        }
+      } catch (saveError) {
+        console.error('Error saving to assets:', saveError);
+        alert(`❌ Could not save to assets directory: ${saveError.message}\n\nThe PDF will be downloaded to your default downloads folder instead.`);
+        
+        // Fallback to regular download
+        pdf.save(fileName);
+      }
 
       // Show success message
       console.log('PDF generated successfully!');
@@ -318,14 +345,25 @@ const Resume = () => {
 
   return (
     <Container className={`resume-container my-5 ${darkMode ? 'dark-mode' : 'light-mode'}`}>
-      <div className="theme-toggle-container mb-3">
+      <div className="theme-toggle-container mb-3 d-flex justify-content-end">
         <Button 
-          variant={darkMode ? "light" : "dark"} 
+          variant={darkMode ? "outline-light" : "outline-dark"} 
           size="sm" 
           onClick={toggleTheme}
-          className="theme-toggle-btn"
+          className="theme-toggle-btn d-flex align-items-center"
+          title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
         >
-          {darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+          {darkMode ? (
+            <>
+              <FaSun className="me-1" />
+              <span className="d-none d-sm-inline">Light</span>
+            </>
+          ) : (
+            <>
+              <FaMoon className="me-1" />
+              <span className="d-none d-sm-inline">Dark</span>
+            </>
+          )}
         </Button>
       </div>
       

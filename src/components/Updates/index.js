@@ -5,47 +5,12 @@ import emailjs from '@emailjs/browser';
 import { emailjsConfig, createEmailTemplate } from '../../utils/emailConfig';
 import './Updates.css';
 
-// Professional Statistics Component
-const UpdatesStatistics = ({ updates }) => {
-  const stats = useMemo(() => {
-    const totalUpdates = updates.length;
-    const categories = [...new Set(updates.map(u => u.category))].length;
-    const thisMonth = updates.filter(u => {
-      const updateDate = new Date(u.date);
-      const now = new Date();
-      return updateDate.getMonth() === now.getMonth() && updateDate.getFullYear() === now.getFullYear();
-    }).length;
-    const totalViews = updates.reduce((sum, u) => sum + (u.views || Math.floor(Math.random() * 1000) + 100), 0);
-
-    return [
-      { number: totalUpdates, label: 'Total Updates', icon: '📝' },
-      { number: categories, label: 'Categories', icon: '🏷️' },
-      { number: thisMonth, label: 'This Month', icon: '📅' },
-      { number: `${(totalViews / 1000).toFixed(1)}K`, label: 'Total Views', icon: '👁️' }
-    ];
-  }, [updates]);
-
-  return (
-    <div className="updates-stats">
-      {stats.map((stat, index) => (
-        <div key={index} className="stat-item">
-          <div className="stat-number">
-            <span className="stat-icon">{stat.icon}</span>
-            {stat.number}
-          </div>
-          <div className="stat-label">{stat.label}</div>
-        </div>
-      ))}
-    </div>
-  );
-};
-
-// Enhanced Skeleton loader component
+// Enhanced Skeleton loader component - STABILIZED
 const SkeletonLoader = ({ count, viewMode }) => {
   return (
-    <div className={`skeleton-container ${viewMode}`}>
-      {[...Array(count)].map((_, i) => (
-        <div key={i} className={`skeleton-card ${viewMode === 'list' ? 'skeleton-list' : ''}`}>
+    <div className={`skeleton-container ${viewMode} no-animations`} style={{ opacity: 1, visibility: 'visible' }}>
+      {Array.from({ length: count }, (_, i) => (
+        <div key={`skeleton-${i}`} className={`skeleton-card ${viewMode === 'list' ? 'skeleton-list' : ''}`}>
           <div className="skeleton-image"></div>
           <div className="skeleton-content">
             <div className="skeleton-title"></div>
@@ -65,7 +30,7 @@ const SkeletonLoader = ({ count, viewMode }) => {
   );
 };
 
-// Enhanced sample updates with more detailed content - moved outside component
+// Enhanced sample updates with more detailed content
 const enhancedSampleUpdates = [
   {
     id: 1,
@@ -444,70 +409,107 @@ const SubscribeModal = ({
 const Updates = () => {
   const { showNotification } = useNotifications();
   
-  // Initialize EmailJS
+  // STABILIZED: Initialize EmailJS only once
   useEffect(() => {
-    // Initialize EmailJS with public key
     emailjs.init(emailjsConfig.publicKey);
     
-    // Log configuration status (remove in production)
     if (emailjsConfig.serviceId === 'YOUR_SERVICE_ID') {
       console.warn('⚠️ EmailJS not configured yet. Please update src/utils/emailConfig.js with your EmailJS credentials.');
       console.log('📖 Setup guide: docs/EMAILJS_SETUP.md');
     } else {
       console.log('✅ EmailJS configured and ready to send emails');
     }
-  }, []);
+  }, []); // Empty dependency array - run only once
   
-  // State for updates data
-  const [updates, setUpdates] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  // STABILIZED: State management - consolidated initialization
+  const [state, setState] = useState(() => ({
+    // Core data
+    updates: [],
+    loading: true,
+    error: null,
+    
+    // Filter states
+    filter: 'all',
+    sortBy: 'newest',
+    searchQuery: '',
+    
+    // Pagination
+    currentPage: 1,
+    
+    // UI states
+    showSubscribeModal: false,
+    subscribeEmail: '',
+    subscribeName: '',
+    subscribeMessage: '',
+    subscribeLoading: false,
+    subscribeSuccess: false,
+    activeUpdate: null,
+    showDetailModal: false,
+    
+    // Persistent states
+    viewMode: (() => {
+      try {
+        return localStorage.getItem('nebula_updates_view_mode') || 'list';
+      } catch {
+        return 'list';
+      }
+    })(),
+    bookmarkedUpdates: (() => {
+      try {
+        return JSON.parse(localStorage.getItem('nebula_bookmarked_updates') || '[]');
+      } catch {
+        return [];
+      }
+    })(),
+    viewHistory: (() => {
+      try {
+        return JSON.parse(localStorage.getItem('nebula_update_view_history') || '[]');
+      } catch {
+        return [];
+      }
+    })(),
+    showBookmarked: false,
+    isFirstVisit: !localStorage.getItem('nebula_updates_visited'),
+    subscribers: (() => {
+      try {
+        return JSON.parse(localStorage.getItem('nebula_update_subscribers') || '[]');
+      } catch {
+        return [];
+      }
+    })(),
+    subscriptionPreferences: (() => {
+      try {
+        return JSON.parse(localStorage.getItem('nebula_subscription_preferences') || '{}');
+      } catch {
+        return {};
+      }
+    })()
+  }));
 
-  // Filtering and sorting state
-  const [filter, setFilter] = useState('all');
-  const [sortBy, setSortBy] = useState('newest');
-  const [searchQuery, setSearchQuery] = useState('');
-  
-  // Pagination state
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(5);
-  
-  // Additional state for enhanced features
-  const [showSubscribeModal, setShowSubscribeModal] = useState(false);
-  const [subscribeEmail, setSubscribeEmail] = useState('');
-  const [subscribeName, setSubscribeName] = useState('');
-  const [subscribeMessage, setSubscribeMessage] = useState('');
-  const [subscribeLoading, setSubscribeLoading] = useState(false);
-  const [subscribeSuccess, setSubscribeSuccess] = useState(false);
-  const [activeUpdate, setActiveUpdate] = useState(null);
-  const [showDetailModal, setShowDetailModal] = useState(false);
-  const [viewMode, setViewMode] = useState(() => {
-    try {
-      return localStorage.getItem('nebula_updates_view_mode') || 'list';
-    } catch {
-      return 'list';
-    }
-  }); // 'cards' or 'list' - default to list view with localStorage persistence
-  
-  // Sample update categories with associated icons/colors
-  const categories = {
+  const itemsPerPage = 5;
+
+  // STABILIZED: Sample update categories
+  const categories = useMemo(() => ({
     'project': { label: 'Project Update', icon: '🚀', color: 'primary' },
     'release': { label: 'New Release', icon: '✨', color: 'success' },
     'news': { label: 'News', icon: '📰', color: 'info' },
     'event': { label: 'Event', icon: '📅', color: 'warning' },
-    'announcement': { label: 'Announcement', icon: '📣', color: 'danger' }
-  };
+    'announcement': { label: 'Announcement', icon: '📣', color: 'danger' },
+    'portfolio': { label: 'Portfolio', icon: '🎨', color: 'info' },
+    'tutorial': { label: 'Tutorial', icon: '📚', color: 'warning' },
+    'showcase': { label: 'Showcase', icon: '🌟', color: 'success' },
+    'behind-scenes': { label: 'Behind the Scenes', icon: '🎬', color: 'secondary' }
+  }), []);
 
-  // Add the missing calculateReadingTime function
-  const calculateReadingTime = (content) => {
+  // STABILIZED: Helper functions
+  const calculateReadingTime = useCallback((content) => {
     const wordsPerMinute = 200;
     const wordCount = content.split(/\s+/).length;
     const readingTime = Math.ceil(wordCount / wordsPerMinute);
     return readingTime < 1 ? '< 1 min read' : `${readingTime} min read`;
-  };
+  }, []);
 
-  // Add the missing shareUpdate function
-  const shareUpdate = (update, platform) => {
+  const shareUpdate = useCallback((update, platform) => {
     const url = `${window.location.origin}/updates/${update.id}`;
     const text = `Check out "${update.title}" by Colin Nebula`;
     
@@ -528,101 +530,91 @@ const Updates = () => {
     
     window.open(shareUrl, '_blank', 'noopener,noreferrer,width=600,height=500');
     console.info('Analytics: shared update', platform, update.id);
-  };
+  }, []);
 
-  // Fetch updates (simulated API call with sample data)
-  const fetchUpdates = useCallback(async () => {
-    try {
-      setLoading(true);
-      
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      // Use the enhancedSampleUpdates from outside the component
-      setUpdates(enhancedSampleUpdates);
-      setError(null);
-    } catch (err) {
-      setError('Failed to load updates. Please try again.');
-      console.error('Error fetching updates:', err);
-    } finally {
-      setLoading(false);
-    }
-  }, []); // Empty dependency array since enhancedSampleUpdates is constant
-
-  // Initialize updates on mount
-  useEffect(() => {
-    fetchUpdates();
-    showNotification('Updates page loaded', 'info', 2000, {
-      category: 'navigation',
-      icon: '📄',
-      public: true // Make this notification public so it shows even when not logged in
-    });
-  }, [fetchUpdates, showNotification]);
-
-  // Persist viewMode preference to localStorage
-  useEffect(() => {
-    try {
-      localStorage.setItem('nebula_updates_view_mode', viewMode);
-    } catch (error) {
-      console.warn('Failed to save view mode preference:', error);
-    }
-  }, [viewMode]);
-
-  // Format date for display
-  const formatDate = (dateString) => {
+  // STABILIZED: Format date function
+  const formatDate = useCallback((dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
       day: 'numeric'
     });
-  };
+  }, []);
 
-  // New state for bookmarked updates (persisted to localStorage)
-  const [bookmarkedUpdates, setBookmarkedUpdates] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem('nebula_bookmarked_updates') || '[]');
-    } catch {
-      return [];
-    }
-  });
-  
-  // New state for view history
-  const [viewHistory, setViewHistory] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem('nebula_update_view_history') || '[]');
-    } catch {
-      return [];
-    }
-  });
-  
-  // Track if it's the first visit
-  const [isFirstVisit, setIsFirstVisit] = useState(() => {
-    return !localStorage.getItem('nebula_updates_visited');
-  });
-  
-  // Additional filter for bookmarked items
-  const [showBookmarked, setShowBookmarked] = useState(false);
-  
-  // Accessibility improvements - focus management
-  const listRef = React.useRef(null);
+  // STABILIZED: Fetch updates - single useEffect for initialization
+  useEffect(() => {
+    let isMounted = true;
+    
+    const initializeUpdates = async () => {
+      try {
+        setState(prev => ({ ...prev, loading: true, error: null }));
+        
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        if (!isMounted) return;
+        
+        // Use the enhancedSampleUpdates
+        setState(prev => ({ 
+          ...prev, 
+          updates: enhancedSampleUpdates, 
+          loading: false,
+          error: null 
+        }));
+        
+        // Show notification only once
+        showNotification('Updates page loaded', 'info', 2000, {
+          category: 'navigation',
+          icon: '📄',
+          public: true
+        });
+        
+      } catch (err) {
+        if (!isMounted) return;
+        setState(prev => ({ 
+          ...prev, 
+          error: 'Failed to load updates. Please try again.',
+          loading: false 
+        }));
+        console.error('Error fetching updates:', err);
+      }
+    };
+    
+    initializeUpdates();
+    
+    return () => {
+      isMounted = false;
+    };
+  }, [showNotification]); // Only depend on showNotification
 
-  // Optimization: Use useMemo for filtered updates
+  // STABILIZED: Persist viewMode preference
+  useEffect(() => {
+    try {
+      localStorage.setItem('nebula_updates_view_mode', state.viewMode);
+    } catch (error) {
+      console.warn('Failed to save view mode preference:', error);
+    }
+  }, [state.viewMode]);
+
+  // STABILIZED: Enhanced filtered updates with proper memoization
   const enhancedFilteredUpdates = useMemo(() => {
-    return updates
+    if (!state.updates || state.updates.length === 0) return [];
+    
+    return state.updates
       .filter(update => {
         // Apply bookmarks filter if active
-        if (showBookmarked && !bookmarkedUpdates.includes(update.id)) {
+        if (state.showBookmarked && !state.bookmarkedUpdates.includes(update.id)) {
           return false;
         }
         
         // Apply category filter if not 'all'
-        if (filter !== 'all' && update.category !== filter) {
+        if (state.filter !== 'all' && update.category !== state.filter) {
           return false;
         }
         
         // Apply search filter if search query exists
-        if (searchQuery) {
-          const query = searchQuery.toLowerCase();
+        if (state.searchQuery) {
+          const query = state.searchQuery.toLowerCase();
           return (
             update.title.toLowerCase().includes(query) ||
             update.content.toLowerCase().includes(query) ||
@@ -633,119 +625,124 @@ const Updates = () => {
         return true;
       })
       .sort((a, b) => {
-        if (sortBy === 'newest') {
+        if (state.sortBy === 'newest') {
           return new Date(b.date) - new Date(a.date);
-        } else if (sortBy === 'oldest') {
+        } else if (state.sortBy === 'oldest') {
           return new Date(a.date) - new Date(b.date);
-        } else if (sortBy === 'popular') {
-          const viewsA = viewHistory.find(v => v.id === a.id)?.viewCount || 0;
-          const viewsB = viewHistory.find(v => v.id === b.id)?.viewCount || 0;
+        } else if (state.sortBy === 'popular') {
+          const viewsA = state.viewHistory.find(v => v.id === a.id)?.viewCount || 0;
+          const viewsB = state.viewHistory.find(v => v.id === b.id)?.viewCount || 0;
           return viewsB - viewsA;
         }
         return 0;
       })
       .map(update => ({
         ...update,
-        isBookmarked: bookmarkedUpdates.includes(update.id),
-        viewCount: viewHistory.find(v => v.id === update.id)?.viewCount || 0,
-        lastViewed: viewHistory.find(v => v.id === update.id)?.lastViewed || null,
+        isBookmarked: state.bookmarkedUpdates.includes(update.id),
+        viewCount: state.viewHistory.find(v => v.id === update.id)?.viewCount || 0,
+        lastViewed: state.viewHistory.find(v => v.id === update.id)?.lastViewed || null,
       }));
-  }, [updates, filter, searchQuery, sortBy, showBookmarked, bookmarkedUpdates, viewHistory]);
+  }, [state.updates, state.filter, state.searchQuery, state.sortBy, state.showBookmarked, state.bookmarkedUpdates, state.viewHistory]);
 
-  // Pagination logic
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = enhancedFilteredUpdates.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(enhancedFilteredUpdates.length / itemsPerPage);
+  // STABILIZED: Pagination calculations
+  const paginationData = useMemo(() => {
+    const indexOfLastItem = state.currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = enhancedFilteredUpdates.slice(indexOfFirstItem, indexOfLastItem);
+    const totalPages = Math.ceil(enhancedFilteredUpdates.length / itemsPerPage);
+    
+    return {
+      currentItems,
+      totalPages,
+      indexOfFirstItem,
+      indexOfLastItem: Math.min(indexOfLastItem, enhancedFilteredUpdates.length)
+    };
+  }, [enhancedFilteredUpdates, state.currentPage, itemsPerPage]);
 
-  // Toggle bookmark status for an update
+  // STABILIZED: Event handlers with useCallback
+  const updateState = useCallback((updates) => {
+    setState(prev => ({ ...prev, ...updates }));
+  }, []);
+
   const toggleBookmark = useCallback((updateId) => {
-    setBookmarkedUpdates(prev => {
-      const isAlreadyBookmarked = prev.includes(updateId);
+    setState(prev => {
+      const isAlreadyBookmarked = prev.bookmarkedUpdates.includes(updateId);
       const newBookmarks = isAlreadyBookmarked
-        ? prev.filter(id => id !== updateId)
-        : [...prev, updateId];
+        ? prev.bookmarkedUpdates.filter(id => id !== updateId)
+        : [...prev.bookmarkedUpdates, updateId];
       
-      localStorage.setItem('nebula_bookmarked_updates', JSON.stringify(newBookmarks));
-      return newBookmarks;
+      try {
+        localStorage.setItem('nebula_bookmarked_updates', JSON.stringify(newBookmarks));
+      } catch (error) {
+        console.warn('Failed to save bookmarks:', error);
+      }
+      
+      return { ...prev, bookmarkedUpdates: newBookmarks };
     });
   }, []);
 
-  // Track update viewing
   const trackUpdateView = useCallback((updateId) => {
-    setViewHistory(prev => {
+    setState(prev => {
       const now = new Date().toISOString();
-      const existingIndex = prev.findIndex(item => item.id === updateId);
+      const existingIndex = prev.viewHistory.findIndex(item => item.id === updateId);
       
       let newHistory;
       if (existingIndex >= 0) {
-        newHistory = [...prev];
+        newHistory = [...prev.viewHistory];
         newHistory[existingIndex] = { 
           ...newHistory[existingIndex], 
           viewCount: (newHistory[existingIndex].viewCount || 0) + 1,
           lastViewed: now
         };
       } else {
-        newHistory = [...prev, { id: updateId, firstViewed: now, lastViewed: now, viewCount: 1 }];
+        newHistory = [...prev.viewHistory, { id: updateId, firstViewed: now, lastViewed: now, viewCount: 1 }];
       }
       
-      localStorage.setItem('nebula_update_view_history', JSON.stringify(newHistory));
-      return newHistory;
+      try {
+        localStorage.setItem('nebula_update_view_history', JSON.stringify(newHistory));
+      } catch (error) {
+        console.warn('Failed to save view history:', error);
+      }
+      
+      return { ...prev, viewHistory: newHistory };
     });
   }, []);
 
-  // Open detail modal with tracking
   const openDetailModal = useCallback((update) => {
-    setActiveUpdate(update);
-    setShowDetailModal(true);
+    setState(prev => ({ 
+      ...prev, 
+      activeUpdate: update, 
+      showDetailModal: true 
+    }));
     trackUpdateView(update.id);
   }, [trackUpdateView]);
 
-  // Handle page change
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-    // Scroll to top of updates section
-    document.getElementById('updates-container').scrollIntoView({ behavior: 'smooth' });
-  };
-
-  // Enhanced subscription state management
-  const [subscribers, setSubscribers] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem('nebula_update_subscribers') || '[]');
-    } catch {
-      return [];
-    }
-  });
-
-  const [subscriptionPreferences, setSubscriptionPreferences] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem('nebula_subscription_preferences') || '{}');
-    } catch {
-      return {};
-    }
-  });
+  const handlePageChange = useCallback((pageNumber) => {
+    setState(prev => ({ ...prev, currentPage: pageNumber }));
+    document.getElementById('updates-container')?.scrollIntoView({ behavior: 'smooth' });
+  }, []);
 
   // Email validation helper
-  const validateEmail = (email) => {
+  const validateEmail = useCallback((email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
-  };
+  }, []);
 
   // Check if email is already subscribed
-  const isAlreadySubscribed = (email) => {
-    return subscribers.some(sub => sub.email.toLowerCase() === email.toLowerCase());
-  };
+  const isAlreadySubscribed = useCallback((email) => {
+    return state.subscribers.some(sub => sub.email.toLowerCase() === email.toLowerCase());
+  }, [state.subscribers]);
 
   // Handle subscription form submission with real functionality
-  const handleSubscribe = async (e) => {
+  const handleSubscribe = useCallback(async (e) => {
     e.preventDefault();
     
     // Reset messages
-    setSubscribeMessage('');
+    setState(prev => ({ ...prev, subscribeMessage: '' }));
     
     // Validation
-    if (!subscribeEmail.trim()) {
-      setSubscribeMessage('Please enter your email address.');
+    if (!state.subscribeEmail.trim()) {
+      setState(prev => ({ ...prev, subscribeMessage: 'Please enter your email address.' }));
       showNotification('Email address is required', 'warning', 3000, {
         category: 'updates',
         icon: '⚠️',
@@ -754,8 +751,8 @@ const Updates = () => {
       return;
     }
     
-    if (!validateEmail(subscribeEmail.trim())) {
-      setSubscribeMessage('Please enter a valid email address.');
+    if (!validateEmail(state.subscribeEmail.trim())) {
+      setState(prev => ({ ...prev, subscribeMessage: 'Please enter a valid email address.' }));
       showNotification('Please enter a valid email address', 'warning', 3000, {
         category: 'updates',
         icon: '⚠️',
@@ -764,8 +761,8 @@ const Updates = () => {
       return;
     }
 
-    if (!subscribeName.trim()) {
-      setSubscribeMessage('Please enter your name.');
+    if (!state.subscribeName.trim()) {
+      setState(prev => ({ ...prev, subscribeMessage: 'Please enter your name.' }));
       showNotification('Name is required', 'warning', 3000, {
         category: 'updates',
         icon: '⚠️',
@@ -774,12 +771,12 @@ const Updates = () => {
       return;
     }
     
-    const email = subscribeEmail.trim().toLowerCase();
-    const name = subscribeName.trim();
+    const email = state.subscribeEmail.trim().toLowerCase();
+    const name = state.subscribeName.trim();
     
     // Check if already subscribed
     if (isAlreadySubscribed(email)) {
-      setSubscribeMessage('This email is already subscribed to updates.');
+      setState(prev => ({ ...prev, subscribeMessage: 'This email is already subscribed to updates.' }));
       showNotification('Email already subscribed', 'info', 3000, {
         category: 'updates',
         icon: 'ℹ️',
@@ -788,7 +785,7 @@ const Updates = () => {
       return;
     }
     
-    setSubscribeLoading(true);
+    setState(prev => ({ ...prev, subscribeLoading: true }));
     
     try {
       // Send confirmation email using EmailJS
@@ -822,23 +819,40 @@ const Updates = () => {
       };
       
       // Add to subscribers list
-      const updatedSubscribers = [...subscribers, newSubscription];
-      setSubscribers(updatedSubscribers);
-      
-      // Save to localStorage
-      localStorage.setItem('nebula_update_subscribers', JSON.stringify(updatedSubscribers));
-      localStorage.setItem('nebula_subscription_preferences', JSON.stringify({
-        ...subscriptionPreferences,
-        [email]: newSubscription.preferences
-      }));
+      setState(prev => {
+        const updatedSubscribers = [...prev.subscribers, newSubscription];
+        
+        try {
+          localStorage.setItem('nebula_update_subscribers', JSON.stringify(updatedSubscribers));
+          localStorage.setItem('nebula_subscription_preferences', JSON.stringify({
+            ...prev.subscriptionPreferences,
+            [email]: newSubscription.preferences
+          }));
+        } catch (error) {
+          console.warn('Failed to save subscription data:', error);
+        }
+        
+        return { 
+          ...prev, 
+          subscribers: updatedSubscribers,
+          subscriptionPreferences: {
+            ...prev.subscriptionPreferences,
+            [email]: newSubscription.preferences
+          }
+        };
+      });
       
       // Set success state
-      setSubscribeSuccess(true);
       const isEmailConfigured = emailjsConfig.serviceId !== 'YOUR_SERVICE_ID';
       const successMessage = isEmailConfigured 
         ? `Thank you ${name}! You've successfully subscribed to updates. A personalized thank you email with welcome details has been sent to ${email}.`
         : `Thank you ${name}! You've successfully subscribed to updates. A thank you email will be sent once email service is configured.`;
-      setSubscribeMessage(successMessage);
+      
+      setState(prev => ({ 
+        ...prev, 
+        subscribeSuccess: true,
+        subscribeMessage: successMessage
+      }));
       
       // Show success notification
       const notificationMessage = isEmailConfigured
@@ -851,12 +865,15 @@ const Updates = () => {
       });
       
       // Clear form
-      setSubscribeEmail('');
-      setSubscribeName('');
+      setState(prev => ({ 
+        ...prev, 
+        subscribeEmail: '',
+        subscribeName: ''
+      }));
       
       // Close modal after success with delay
       setTimeout(() => {
-        setShowSubscribeModal(false);
+        setState(prev => ({ ...prev, showSubscribeModal: false }));
         
         // Show additional info notification
         setTimeout(() => {
@@ -869,8 +886,11 @@ const Updates = () => {
         
         // Reset success state after modal closes
         setTimeout(() => {
-          setSubscribeSuccess(false);
-          setSubscribeMessage('');
+          setState(prev => ({ 
+            ...prev, 
+            subscribeSuccess: false,
+            subscribeMessage: ''
+          }));
         }, 500);
       }, 3000);
       
@@ -885,19 +905,19 @@ const Updates = () => {
         errorMessage = 'Unable to send confirmation email. Please check your email address and try again.';
       }
       
-      setSubscribeMessage(errorMessage);
+      setState(prev => ({ ...prev, subscribeMessage: errorMessage }));
       showNotification('Subscription failed. Please try again.', 'error', 4000, {
         category: 'updates',
         icon: '❌',
         public: true
       });
     } finally {
-      setSubscribeLoading(false);
+      setState(prev => ({ ...prev, subscribeLoading: false }));
     }
-  };
+  }, [state.subscribeEmail, state.subscribeName, validateEmail, isAlreadySubscribed, showNotification]);
 
   return (
-    <Container id="updates-container" className="updates-container py-5">
+    <Container id="updates-container" className="updates-container no-animations py-5">
       {/* Professional Hero Section */}
       <div className="updates-hero">
         <div className="updates-hero-content">
@@ -909,7 +929,7 @@ const Updates = () => {
           
           <div className="updates-stats">
             <div className="stat-item">
-              <span className="stat-number">{updates.length}</span>
+              <span className="stat-number">{state.updates.length}</span>
               <span className="stat-label">Total Updates</span>
             </div>
             <div className="stat-item">
@@ -917,11 +937,11 @@ const Updates = () => {
               <span className="stat-label">Categories</span>
             </div>
             <div className="stat-item">
-              <span className="stat-number">{bookmarkedUpdates.length}</span>
+              <span className="stat-number">{state.bookmarkedUpdates.length}</span>
               <span className="stat-label">Bookmarked</span>
             </div>
             <div className="stat-item">
-              <span className="stat-number">{viewHistory.length}</span>
+              <span className="stat-number">{state.viewHistory.length}</span>
               <span className="stat-label">Views</span>
             </div>
           </div>
@@ -929,13 +949,13 @@ const Updates = () => {
       </div>
 
       {/* First visit welcome message */}
-      {isFirstVisit && (
+      {state.isFirstVisit && (
         <Alert 
           variant="info" 
           className="welcome-alert" 
           dismissible 
           onClose={() => {
-            setIsFirstVisit(false);
+            updateState({ isFirstVisit: false });
             localStorage.setItem('nebula_updates_visited', 'true');
           }}
         >
@@ -948,19 +968,19 @@ const Updates = () => {
       {/* Professional Filter panel */}
       <div className="filter-panel">
         <FilterPanel 
-          filter={filter}
-          setFilter={setFilter}
-          sortBy={sortBy}
-          setSortBy={setSortBy}
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          viewMode={viewMode}
-          setViewMode={setViewMode}
+          filter={state.filter}
+          setFilter={(value) => updateState({ filter: value, currentPage: 1 })}
+          sortBy={state.sortBy}
+          setSortBy={(value) => updateState({ sortBy: value })}
+          searchQuery={state.searchQuery}
+          setSearchQuery={(value) => updateState({ searchQuery: value, currentPage: 1 })}
+          viewMode={state.viewMode}
+          setViewMode={(value) => updateState({ viewMode: value })}
           categories={categories}
-          showBookmarked={showBookmarked}
-          setShowBookmarked={setShowBookmarked}
-          bookmarkedCount={bookmarkedUpdates.length}
-          setCurrentPage={setCurrentPage}
+          showBookmarked={state.showBookmarked}
+          setShowBookmarked={(value) => updateState({ showBookmarked: value, currentPage: 1 })}
+          bookmarkedCount={state.bookmarkedUpdates.length}
+          setCurrentPage={(value) => updateState({ currentPage: value })}
         />
       </div>
 
@@ -975,7 +995,7 @@ const Updates = () => {
                 `${enhancedFilteredUpdates.length} updates found`
             }
             <span className="results-detail">
-              {enhancedFilteredUpdates.length > 0 && ` • Showing ${indexOfFirstItem + 1}-${Math.min(indexOfLastItem, enhancedFilteredUpdates.length)}`}
+              {enhancedFilteredUpdates.length > 0 && ` • Showing ${paginationData.indexOfFirstItem + 1}-${paginationData.indexOfLastItem}`}
             </span>
           </p>
         </div>
@@ -984,28 +1004,27 @@ const Updates = () => {
             variant="primary" 
             size="sm" 
             className="subscribe-button"
-            onClick={() => setShowSubscribeModal(true)}
+            onClick={() => updateState({ showSubscribeModal: true })}
           >
             <i className="bi bi-envelope me-2"></i>Subscribe for Updates
           </Button>
         </div>
       </div>
 
-      {/* Updates List - with improved transitions and accessibility */}
+      {/* STABILIZED: Updates List - with no animations */}
       <div 
-        className={`update-container ${viewMode === 'cards' ? 'card-view' : 'list-view'}`}
-        ref={listRef}
-        tabIndex={-1}
+        className={`update-container no-animations ${state.viewMode === 'cards' ? 'card-view' : 'list-view'}`}
+        style={{ opacity: 1, visibility: 'visible', transform: 'none' }}
         aria-live="polite"
       >
-        {loading ? (
-          <SkeletonLoader count={3} viewMode={viewMode} />
-        ) : error ? (
+        {state.loading ? (
+          <SkeletonLoader count={3} viewMode={state.viewMode} />
+        ) : state.error ? (
           <div className="text-center py-5">
             <div className="error-message">
               <div className="error-icon mb-3">⚠️</div>
               <h4>Something went wrong</h4>
-              <p>{error}</p>
+              <p>{state.error}</p>
               <Button variant="outline-primary" onClick={() => window.location.reload()}>
                 <i className="bi bi-arrow-clockwise me-2"></i> Try Again
               </Button>
@@ -1019,23 +1038,24 @@ const Updates = () => {
               <p>Try changing your filters or search query</p>
               <Button 
                 variant="outline-primary" 
-                onClick={() => {
-                  setFilter('all');
-                  setSearchQuery('');
-                  setShowBookmarked(false);
-                  setCurrentPage(1);
-                }}
+                onClick={() => updateState({
+                  filter: 'all',
+                  searchQuery: '',
+                  showBookmarked: false,
+                  currentPage: 1
+                })}
               >
                 <i className="bi bi-x-circle me-2"></i> Clear Filters
               </Button>
             </div>
           </div>
-        ) : viewMode === 'cards' ? (
-          <div className="update-list">
-            {currentItems.map((update, index) => (
+        ) : state.viewMode === 'cards' ? (
+          <div className="update-list no-animations">
+            {paginationData.currentItems.map((update, index) => (
               <div 
-                key={update.id}
-                className={`update-card ${update.featured ? 'featured-update' : ''} ${update.isBookmarked ? 'bookmarked' : ''}`}
+                key={`update-${update.id}-${index}`}
+                className={`update-card no-animations ${update.featured ? 'featured-update' : ''} ${update.isBookmarked ? 'bookmarked' : ''}`}
+                style={{ opacity: 1, visibility: 'visible', transform: 'none' }}
                 tabIndex={0}
                 onKeyPress={(e) => {
                   if (e.key === 'Enter') openDetailModal(update);
@@ -1044,171 +1064,135 @@ const Updates = () => {
                 aria-label={`Update: ${update.title}`}
                 data-testid={`update-card-${update.id}`}
               >
-                  {/* Bookmark button */}
-                  <Button 
-                    variant="link" 
-                    className={`bookmark-button ${update.isBookmarked ? 'bookmarked' : ''}`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleBookmark(update.id);
-                    }}
-                    aria-label={update.isBookmarked ? 'Remove from bookmarks' : 'Add to bookmarks'}
-                    title={update.isBookmarked ? 'Remove from bookmarks' : 'Add to bookmarks'}
-                  >
-                    <i className={`bi ${update.isBookmarked ? 'bi-bookmark-fill' : 'bi-bookmark'}`}></i>
-                  </Button>
+                {/* Bookmark button */}
+                <Button 
+                  variant="link" 
+                  className={`bookmark-button ${update.isBookmarked ? 'bookmarked' : ''}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleBookmark(update.id);
+                  }}
+                  aria-label={update.isBookmarked ? 'Remove from bookmarks' : 'Add to bookmarks'}
+                  title={update.isBookmarked ? 'Remove from bookmarks' : 'Add to bookmarks'}
+                >
+                  <i className={`bi ${update.isBookmarked ? 'bi-bookmark-fill' : 'bi-bookmark'}`}></i>
+                </Button>
 
-                  {update.featured && (
-                    <div className="featured-badge" aria-hidden="true">
-                      <i className="bi bi-star-fill"></i> Featured
+                {update.featured && (
+                  <div className="featured-badge" aria-hidden="true">
+                    <i className="bi bi-star-fill"></i> Featured
+                  </div>
+                )}
+                
+                {update.image && (
+                  <div className="update-image-container">
+                    <img
+                      src={update.image} 
+                      alt="" // Decorative image, title describes content
+                      className="update-image" 
+                      loading="lazy" // Lazy load images
+                    />
+                    <div className="image-overlay">
+                      <Badge 
+                        bg={categories[update.category]?.color || 'secondary'}
+                        className="category-badge overlay-badge"
+                      >
+                        {categories[update.category]?.icon} 
+                        {categories[update.category]?.label}
+                      </Badge>
+                    </div>
+                  </div>
+                )}
+                
+                <div className="card-body d-flex flex-column">
+                  {!update.image && (
+                    <div className="mb-3">
+                      <Badge 
+                        bg={categories[update.category]?.color || 'secondary'}
+                        className="category-badge"
+                      >
+                        {categories[update.category]?.icon} 
+                        {categories[update.category]?.label}
+                      </Badge>
                     </div>
                   )}
                   
-                  {update.image && (
-                    <div className="update-image-container">
-                      <img
-                        src={update.image} 
-                        alt="" // Decorative image, title describes content
-                        className="update-image" 
-                        loading="lazy" // Lazy load images
-                      />
-                      <div className="image-overlay">
-                        <Badge 
-                          bg={categories[update.category]?.color || 'secondary'}
-                          className="category-badge overlay-badge"
-                        >
-                          {categories[update.category]?.icon} 
-                          {categories[update.category]?.label}
-                        </Badge>
-                      </div>
-                    </div>
-                  )}
+                  <div className="update-meta d-flex justify-content-between align-items-center mb-2">
+                    <small className="text-muted date-display">
+                      <i className="bi bi-calendar3 me-1"></i>
+                      {formatDate(update.date)}
+                    </small>
+                    <small className="text-muted reading-time">
+                      <i className="bi bi-clock me-1"></i>
+                      {calculateReadingTime(update.content)}
+                    </small>
+                  </div>
                   
-                  <div className="card-body d-flex flex-column">
-                    {!update.image && (
-                      <div className="mb-3">
-                        <Badge 
-                          bg={categories[update.category]?.color || 'secondary'}
-                          className="category-badge"
-                        >
-                          {categories[update.category]?.icon} 
-                          {categories[update.category]?.label}
-                        </Badge>
+                  <h3 className="update-title">{update.title}</h3>
+                  
+                  <p className="update-excerpt">
+                    {update.content.length > 120 
+                      ? `${update.content.substring(0, 120)}...` 
+                      : update.content}
+                  </p>
+                  
+                  {/* Push footer to bottom of card */}
+                  <div className="mt-auto">
+                    {update.tags && update.tags.length > 0 && (
+                      <div className="mb-3 tags-container">
+                        {update.tags.slice(0, 3).map(tag => (
+                          <Badge 
+                            bg="light" 
+                            text="dark" 
+                            key={tag} 
+                            className="me-2 tag-badge"
+                          >
+                            #{tag}
+                          </Badge>
+                        ))}
+                        {update.tags.length > 3 && (
+                          <Badge bg="light" text="dark" className="tag-badge">
+                            +{update.tags.length - 3}
+                          </Badge>
+                        )}
                       </div>
                     )}
                     
-                    <div className="update-meta d-flex justify-content-between align-items-center mb-2">
-                      <small className="text-muted date-display">
-                        <i className="bi bi-calendar3 me-1"></i>
-                        {formatDate(update.date)}
-                      </small>
-                      <small className="text-muted reading-time">
-                        <i className="bi bi-clock me-1"></i>
-                        {calculateReadingTime(update.content)}
-                      </small>
-                    </div>
-                    
-                    <h3 className="update-title">{update.title}</h3>
-                    
-                    <p className="update-excerpt">
-                      {update.content.length > 120 
-                        ? `${update.content.substring(0, 120)}...` 
-                        : update.content}
-                    </p>
-                    
-                    {/* Push footer to bottom of card */}
-                    <div className="mt-auto">
-                      {update.tags && update.tags.length > 0 && (
-                        <div className="mb-3 tags-container">
-                          {update.tags.slice(0, 3).map(tag => (
-                            <Badge 
-                              bg="light" 
-                              text="dark" 
-                              key={tag} 
-                              className="me-2 tag-badge"
-                            >
-                              #{tag}
-                            </Badge>
-                          ))}
-                          {update.tags.length > 3 && (
-                            <Badge bg="light" text="dark" className="tag-badge">
-                              +{update.tags.length - 3}
-                            </Badge>
-                          )}
-                        </div>
-                      )}
+                    <div className="update-actions d-flex justify-content-between align-items-center">
+                      <Button 
+                        variant="link" 
+                        className="read-more-btn p-0"
+                        onClick={() => openDetailModal(update)}
+                      >
+                        Read More <i className="bi bi-arrow-right ms-1"></i>
+                      </Button>
                       
-                      <div className="update-actions d-flex justify-content-between align-items-center">
+                      <div className="action-buttons">
                         <Button 
-                          variant="link" 
-                          className="read-more-btn p-0"
-                          onClick={() => openDetailModal(update)}
+                          variant="outline-secondary" 
+                          size="sm" 
+                          className="action-btn share-btn"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            shareUpdate(update, 'twitter');
+                          }}
+                          aria-label="Share on Twitter"
                         >
-                          Read More <i className="bi bi-arrow-right ms-1"></i>
+                          <i className="bi bi-share"></i>
                         </Button>
-                        
-                        <div className="action-buttons">
-                          <Button 
-                            variant="outline-secondary" 
-                            size="sm" 
-                            className="action-btn share-btn"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              // Create a dropdown for share options
-                              const dropdown = document.getElementById(`share-dropdown-${update.id}`);
-                              if (dropdown) dropdown.classList.toggle('show');
-                            }}
-                            aria-label="Share options"
-                          >
-                            <i className="bi bi-share"></i>
-                          </Button>
-                          
-                          {/* Share dropdown */}
-                          <div id={`share-dropdown-${update.id}`} className="share-dropdown">
-                            <Button 
-                              variant="link" 
-                              className="share-option"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                shareUpdate(update, 'twitter');
-                              }}
-                            >
-                              <i className="bi bi-twitter"></i> Twitter
-                            </Button>
-                            <Button 
-                              variant="link" 
-                              className="share-option"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                shareUpdate(update, 'facebook');
-                              }}
-                            >
-                              <i className="bi bi-facebook"></i> Facebook
-                            </Button>
-                            <Button 
-                              variant="link" 
-                              className="share-option"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                shareUpdate(update, 'linkedin');
-                              }}
-                            >
-                              <i className="bi bi-linkedin"></i> LinkedIn
-                            </Button>
-                          </div>
-                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
+              </div>
             ))}
           </div>
         ) : (
           // Enhanced List view with animations
-          <div className="update-list-view">
-            {currentItems.map((update, index) => (
+          <div className="update-list-view no-animations">
+            {paginationData.currentItems.map((update, index) => (
               <div 
-                className={`update-list-item ${update.featured ? 'featured-update' : ''} ${update.isBookmarked ? 'bookmarked' : ''}`}
+                className={`update-list-item no-animations ${update.featured ? 'featured-update' : ''} ${update.isBookmarked ? 'bookmarked' : ''}`}
                 onClick={() => openDetailModal(update)}
                 onKeyPress={(e) => {
                   if (e.key === 'Enter') openDetailModal(update);
@@ -1216,7 +1200,8 @@ const Updates = () => {
                 tabIndex={0}
                 role="button"
                 aria-label={`Read more about ${update.title}`}
-                key={update.id}
+                key={`list-update-${update.id}-${index}`}
+                style={{ opacity: 1, visibility: 'visible', transform: 'none' }}
               >
                 {/* Bookmark button */}
                 <Button 
@@ -1320,19 +1305,19 @@ const Updates = () => {
               <div className="pagination-container">
                 <Button 
                   variant="outline-secondary" 
-                  onClick={() => handlePageChange(currentPage - 1)} 
-                  disabled={currentPage === 1}
+                  onClick={() => handlePageChange(state.currentPage - 1)} 
+                  disabled={state.currentPage === 1}
                   className="me-2"
                 >
                   Previous
                 </Button>
                 
-                {[...Array(totalPages)].map((_, index) => {
+                {[...Array(paginationData.totalPages)].map((_, index) => {
                   const pageNumber = index + 1;
                   return (
                     <Button 
                       key={pageNumber}
-                      variant={currentPage === pageNumber ? "primary" : "outline-secondary"}
+                      variant={state.currentPage === pageNumber ? "primary" : "outline-secondary"}
                       onClick={() => handlePageChange(pageNumber)}
                       className="me-1"
                     >
@@ -1343,8 +1328,8 @@ const Updates = () => {
                 
                 <Button 
                   variant="outline-secondary" 
-                  onClick={() => handlePageChange(currentPage + 1)} 
-                  disabled={currentPage === totalPages}
+                  onClick={() => handlePageChange(state.currentPage + 1)} 
+                  disabled={state.currentPage === paginationData.totalPages}
                   className="ms-1"
                 >
                   Next
@@ -1357,29 +1342,29 @@ const Updates = () => {
 
       {/* Subscribe modal */}
       <SubscribeModal
-        show={showSubscribeModal}
-        handleClose={() => setShowSubscribeModal(false)}
-        loading={subscribeLoading}
-        success={subscribeSuccess}
-        email={subscribeEmail}
-        setEmail={setSubscribeEmail}
-        name={subscribeName}
-        setName={setSubscribeName}
-        message={subscribeMessage}
+        show={state.showSubscribeModal}
+        handleClose={() => updateState({ showSubscribeModal: false })}
+        loading={state.subscribeLoading}
+        success={state.subscribeSuccess}
+        email={state.subscribeEmail}
+        setEmail={(value) => updateState({ subscribeEmail: value })}
+        name={state.subscribeName}
+        setName={(value) => updateState({ subscribeName: value })}
+        message={state.subscribeMessage}
         handleSubscribe={handleSubscribe}
       />
 
       {/* Update Detail Modal with enhanced functionality */}
-      {showDetailModal && activeUpdate && (
+      {state.showDetailModal && state.activeUpdate && (
         <UpdateDetailModal
-          show={showDetailModal}
-          onHide={() => setShowDetailModal(false)}
-          update={activeUpdate}
+          show={state.showDetailModal}
+          onHide={() => updateState({ showDetailModal: false })}
+          update={state.activeUpdate}
           categories={categories}
           formatDate={formatDate}
           shareUpdate={shareUpdate}
-          isBookmarked={bookmarkedUpdates.includes(activeUpdate.id)}
-          toggleBookmark={() => toggleBookmark(activeUpdate.id)}
+          isBookmarked={state.bookmarkedUpdates.includes(state.activeUpdate.id)}
+          toggleBookmark={() => toggleBookmark(state.activeUpdate.id)}
         />
       )}
     </Container>
@@ -1387,4 +1372,3 @@ const Updates = () => {
 };
 
 export default Updates;
-

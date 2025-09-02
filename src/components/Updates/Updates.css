@@ -1,12 +1,14 @@
 /* ===== UPDATES COMPONENT STYLES ===== */
 
-/* CRITICAL: Anti-fade/animation override - must be first! */
+/* CRITICAL: Anti-fade/animation override - MUST BE FIRST! */
 .updates-container,
 .updates-container *,
 .update-list,
 .update-list *,
 .update-card,
-.update-card * {
+.update-card *,
+.no-animations,
+.no-animations * {
   animation: none !important;
   animation-name: none !important;
   animation-duration: 0s !important;
@@ -21,12 +23,33 @@
   transition: none !important;
   transition-duration: 0s !important;
   transition-delay: 0s !important;
+  transition-property: none !important;
+  will-change: auto !important;
+}
+
+/* FORCED VISIBILITY - OVERRIDE ALL ANIMATIONS */
+.update-card,
+.update-list-item,
+.skeleton-card,
+.updates-container .card,
+.updates-container .update-item {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+  transform: none !important;
+  scale: 1 !important;
+  animation: none !important;
+  transition: none !important;
+  position: relative !important;
+  z-index: 1 !important;
 }
 
 /* Ensure images are always visible */
 .update-image,
 .update-image-container,
-.update-card img {
+.update-card img,
+.update-thumbnail,
+.update-thumbnail img {
   opacity: 1 !important;
   visibility: visible !important;
   display: block !important;
@@ -34,28 +57,14 @@
   animation-name: none !important;
   animation-duration: 0s !important;
   transition: none !important;
-}
-
-/* Additional class-based anti-animation approach */
-.updates-container.no-animations,
-.updates-container.no-animations *,
-.no-animations .update-card,
-.no-animations .update-card * {
-  animation: none !important;
-  animation-name: none !important;
-  animation-duration: 0s !important;
-  animation-delay: 0s !important;
-  opacity: 1 !important;
-  visibility: visible !important;
   transform: none !important;
-  scale: 1 !important;
-  margin-left: 0 !important;
 }
 
-/* Container and Layout */
+/* Container and Layout - NO TRANSITIONS */
 .updates-container {
   min-height: 100vh;
-  transition: all 0.3s ease;
+  transition: none !important;
+  animation: none !important;
 }
 
 /* Hero Section */
