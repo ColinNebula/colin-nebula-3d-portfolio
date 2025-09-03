@@ -1346,12 +1346,19 @@ function Navigation(props) {
                 {/* Theme toggle button */}
                 <button
                   type="button"
-                  className={`btn btn-sm btn-outline-${appliedTheme === 'light' ? 'dark' : 'light'} rounded-pill`}
+                  className={`btn btn-sm rounded-pill`}
                   onClick={toggleTheme}
                   aria-pressed={appliedTheme === 'dark'}
                   aria-label={`Toggle theme (preference: ${theme}; applied: ${appliedTheme}). Press T to toggle.`}
                   title={`Theme: ${theme === 'auto' ? 'Auto (follows system)' : (theme === 'light' ? 'Light' : 'Dark')} — press T to toggle`}
-                  style={{ padding: '6px 10px', marginLeft: '8px' }}
+                  style={{ 
+                    padding: '6px 10px', 
+                    marginLeft: '8px',
+                    background: 'transparent',
+                    border: `1px solid ${appliedTheme === 'light' ? '#6c757d' : '#adb5bd'}`,
+                    color: appliedTheme === 'light' ? '#212529' : '#ffffff',
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                  }}
                 >
                   {theme === 'auto' ? '🌓 Auto' : (appliedTheme === 'light' ? '🌞 Light' : '🌙 Dark')}
                 </button>

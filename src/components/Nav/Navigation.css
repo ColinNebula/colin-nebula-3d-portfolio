@@ -237,9 +237,10 @@
   padding: 0.5rem 0.75rem !important;
   position: relative;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border-radius: 8px;
+  border-radius: 20px;
   font-weight: 500;
   overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 /* Hover effect for nav links */
@@ -247,6 +248,7 @@
   transform: translateY(-2px);
   background-color: rgba(255, 255, 255, 0.1);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-color: rgba(255, 255, 255, 0.4);
 }
 
 /* Light theme hover */
@@ -254,6 +256,18 @@
 [data-theme="light"] .nav-link:hover {
   background-color: rgba(0, 0, 0, 0.05);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: rgba(0, 0, 0, 0.3);
+}
+
+/* Theme-specific border colors */
+.theme-light .nav-link,
+[data-theme="light"] .nav-link {
+  border-color: rgba(0, 0, 0, 0.15);
+}
+
+.theme-dark .nav-link,
+[data-theme="dark"] .nav-link {
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 /* Animated underline for hover state */
@@ -291,6 +305,7 @@
 a.nav-link.navActive {
   color: #667eea !important;
   background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.1)) !important;
+  border-color: rgba(102, 126, 234, 0.4) !important;
 }
 
 /* Active state indicator - persistent highlight */
@@ -393,7 +408,7 @@ a.nav-link.navActive {
 /* Dropdown menu hover animations */
 .dropdown-menu {
   border: none;
-  border-radius: 12px;
+  border-radius: 20px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
   padding: 0.5rem;
   margin-top: 0.5rem;
@@ -413,7 +428,7 @@ a.nav-link.navActive {
 }
 
 .dropdown-item {
-  border-radius: 8px;
+  border-radius: 16px;
   padding: 0.5rem 1rem;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
@@ -544,7 +559,7 @@ a.nav-link.navActive {
   right: 0;
   width: 320px;
   max-height: 400px;
-  border-radius: 16px;
+  border-radius: 20px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   z-index: 1050;
   overflow: hidden;
@@ -1224,6 +1239,44 @@ a.nav-link.navActive {
     transform: scale(1.03);
   }
 }
+
+/* NavDropdown toggle border styling */
+.navbar-nav .dropdown-toggle {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 0.5rem 0.75rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.navbar-nav .dropdown-toggle:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.theme-light .navbar-nav .dropdown-toggle,
+[data-theme="light"] .navbar-nav .dropdown-toggle {
+  border-color: rgba(0, 0, 0, 0.15);
+}
+
+.theme-light .navbar-nav .dropdown-toggle:hover,
+[data-theme="light"] .navbar-nav .dropdown-toggle:hover {
+  border-color: rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Theme toggle and login button borders */
+.btn.rounded-pill {
+  border-width: 1px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn.rounded-pill:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Notification bell button already has border styling above */
 
 /* Reduce motion for accessibility */
 @media (prefers-reduced-motion: reduce) {
