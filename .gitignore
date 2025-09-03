@@ -18,6 +18,12 @@
 .env.test.local
 .env.production.local
 
+# Environment files with sensitive data
+# Note: .env and .env.production are committed with default/example values
+# .env.local should contain your actual sensitive credentials
+.env.local
+*.env.backup
+
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

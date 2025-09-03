@@ -64,10 +64,10 @@ const Portfolio = () => {
   const portfolioData = useMemo(() => [
     {
       id: 1,
-      title: 'Stellar Guardian Character',
+      title: 'Orc Character',
       description: 'High-poly sci-fi character with complete rigging and animation set. Designed for next-generation gaming applications with industry-standard topology and advanced material systems.',
       category: '3d-modeling',
-      technologies: ['blender', 'zbrush', 'substance-painter'],
+      technologies: ['blender', 'zbrush', 'photoshop'],
       images: [
         stellarGuardian,
         nebulaStarship,

@@ -444,7 +444,7 @@
   border-radius: 15px;
   overflow: hidden; /* Keep Bootstrap default for proper card display */
   position: relative;
-  min-height: clamp(520px, 65vh, 700px); /* Increased height for wider cards */
+  min-height: clamp(520px, 62vh, 680px); /* Slightly adjusted for wider cards */
   isolation: isolate; /* Fix z-index stacking issues */
   visibility: visible !important; /* Ensure card is visible */
   opacity: 1 !important; /* Ensure card is visible */
@@ -468,14 +468,24 @@
 
 /* FIXED: Single card image definition - responsive height with debug */
 .portfolio-card .card-img-top {
-  height: clamp(240px, 30vh, 360px); /* Increased proportionally for wider cards */
   width: 100%;
+  height: clamp(220px, 27vh, 320px); /* Restored height for wider cards */
   object-fit: cover;
   transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   filter: brightness(0.9) contrast(1.1);
   display: block !important;
   visibility: visible !important;
   opacity: 1 !important;
+}
+
+/* New image container for portfolio cards */
+.portfolio-card .card-image-container {
+  width: 100%;
+  height: clamp(220px, 27vh, 320px); /* Match image height */
+  overflow: hidden;
+  border-radius: 15px 15px 0 0;
+  background-color: rgba(255, 255, 255, 0.1);
+  position: relative;
 }
 
 /* FIXED: Single card title definition - separate from text */
@@ -569,7 +579,6 @@
   border-radius: 15px 15px 0 0;
   overflow: hidden;
   position: relative;
-  min-height: clamp(240px, 30vh, 360px); /* Updated to match wider card proportions */
   display: block !important;
   visibility: visible !important;
 }
@@ -611,10 +620,12 @@
   object-position: center;
   transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   filter: brightness(0.9) contrast(1.1);
-  display: block; /* Ensure image is displayed */
-  z-index: 1; /* Ensure image is above background */
-  border: none; /* Remove any default borders */
-  outline: none; /* Remove any focus outlines */
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  z-index: 1;
+  border: none;
+  outline: none;
 }
 
 /* Debugging: Show when image fails to load */
@@ -950,10 +961,10 @@
     min-height: 700px;
   }
   
-  /* Ensure proper 2-column layout for xl breakpoint - 50% wider cards */
-  .portfolio-grid .col-xl-6 {
-    flex: 0 0 50%; /* 50% width for 2-column layout */
-    max-width: 50%;
+  /* Wider cards layout - each card is 25% wider (41.67% width) */
+  .portfolio-grid .col-xl-5 {
+    flex: 0 0 41.666667%; /* ~42% width for wider cards */
+    max-width: 41.666667%;
   }
   
   /* Enhanced typography for ultra-wide */
@@ -1069,10 +1080,10 @@
     min-height: 600px;
   }
   
-  /* Clean two-column layout for XL screens - 50% wider cards */
-  .portfolio-grid .col-xl-6 {
-    flex: 0 0 50%; /* 2-column layout instead of 3-column */
-    max-width: 50%;
+  /* Wider cards layout for XL screens */
+  .portfolio-grid .col-xl-5 {
+    flex: 0 0 41.666667%; /* Wider cards layout */
+    max-width: 41.666667%;
     margin-bottom: 2rem;
   }
   
@@ -1981,21 +1992,21 @@
   margin-bottom: 1.5rem;
 }
 
-/* Fix 3rd card alignment issues - UPDATED for wider cards */
+/* Fix card alignment for wider card layout */
 @media (min-width: 1200px) {
-  .portfolio-grid .col-xl-6:nth-child(3) {
+  .portfolio-grid .col-xl-5 {
     margin-left: 0;
     margin-right: 0;
   }
   
   .portfolio-grid .row {
-    justify-content: flex-start;
+    justify-content: center; /* Center the cards since we may have 2+1 layout */
   }
   
-  /* Make cards 50% wider - change from 3-column to 2-column layout */
-  .portfolio-grid .col-xl-6 {
-    flex: 0 0 calc(50% - var(--bs-gutter-x)); /* 50% wider than original 33.33% */
-    max-width: calc(50% - var(--bs-gutter-x));
+  /* Ensure proper wider card layout */
+  .portfolio-grid .col-xl-5 {
+    flex: 0 0 calc(41.666667% - var(--bs-gutter-x)); /* Wider cards layout */
+    max-width: calc(41.666667% - var(--bs-gutter-x));
   }
 }
 
