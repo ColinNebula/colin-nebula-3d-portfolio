@@ -852,7 +852,7 @@ function VfxVideoEditing() {
             </div>
 
             <div className="row g-4">
-              <div className="col-12 col-lg-6 col-xl-4 mb-4 mb-lg-0">
+              <div className="col-12 col-lg-6 col-xl-6 mb-4 mb-lg-0">
                 <Card className="portfolio-card bg-dark text-white shadow-lg border-0 h-100 overflow-hidden">
                   <div className="position-relative">
                     <div className="ratio ratio-16x9">
@@ -953,7 +953,7 @@ function VfxVideoEditing() {
                   </Card.Body>
                 </Card>
               </div>
-              <div className="col-12 col-lg-6 col-xl-4 mb-4 mb-lg-0">
+              <div className="col-12 col-lg-6 col-xl-6 mb-4 mb-lg-0">
                 <Card className="portfolio-card bg-dark text-white shadow-lg border-0 h-100 overflow-hidden">
                   <div className="position-relative">
                     <div className="ratio ratio-16x9">
@@ -1055,7 +1055,7 @@ function VfxVideoEditing() {
               </div>
               
               {/* Additional Motion Graphics Card */}
-              <div className="col-12 col-lg-6 col-xl-4 mb-4 mb-lg-0">
+              <div className="col-12 col-lg-6 col-xl-6 mb-4 mb-lg-0">
                 <Card className="portfolio-card bg-dark text-white shadow-lg border-0 h-100 overflow-hidden">
                   <div className="position-relative">
                     <div className="ratio ratio-16x9">

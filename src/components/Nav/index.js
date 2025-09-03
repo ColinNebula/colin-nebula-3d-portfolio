@@ -624,25 +624,41 @@ function Navigation(props) {
       resetAuthForm();
     };
 
-    // initialize theme preference
+    // Enhanced theme preference initialization with fallback
     const [theme, setTheme] = useState(() => {
       try {
         const saved = localStorage.getItem('nebula_theme');
-        if (saved) return saved;
-        return 'auto';
-      } catch (e) { return 'auto'; }
+        if (saved && ['light', 'dark', 'auto'].includes(saved)) return saved;
+        
+        // Check if user has system preference and no saved preference
+        if (typeof window !== 'undefined' && window.matchMedia) {
+          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+          if (prefersDark || prefersLight) {
+            return 'auto'; // Default to auto if system has preference
+          }
+        }
+        return 'dark'; // Fallback to dark
+      } catch (e) { 
+        console.warn('Theme initialization error:', e);
+        return 'auto'; 
+      }
     });
 
-    // appliedTheme is the actual mode ('light'|'dark') currently in effect
+    // Enhanced appliedTheme with better system detection
     const [appliedTheme, setAppliedTheme] = useState(() => {
       try {
         const saved = localStorage.getItem('nebula_theme');
         if (saved && saved !== 'auto') return saved;
+        
         if (typeof window !== 'undefined' && window.matchMedia) {
-          return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          return prefersDark ? 'dark' : 'light';
         }
-      } catch (e) {}
-      return 'dark';
+      } catch (e) {
+        console.warn('Applied theme initialization error:', e);
+      }
+      return 'dark'; // Safe fallback
     });
     
     // respect reduced-motion preference for transitions
@@ -659,43 +675,108 @@ function Navigation(props) {
       return () => window.removeEventListener('scroll', onScroll);
     }, []);
 
-    // apply theme (supports 'auto' which follows system preference)
+    // Enhanced theme application with better transitions and system detection
     useEffect(() => {
       let mq;
-      const apply = (mode) => {
+      const apply = (mode, isSystemChange = false) => {
         try {
+          // Add smooth transition class for visual changes
           if (!prefersReducedMotion) {
-            try { document.documentElement.classList.add('theme-transition'); } catch(e){}
-            setTimeout(() => { try { document.documentElement.classList.remove('theme-transition'); } catch(e){} }, 240);
+            document.documentElement.classList.add('theme-transition');
+            setTimeout(() => { 
+              try { document.documentElement.classList.remove('theme-transition'); } catch(e){} 
+            }, 350);
           }
+          
+          // Apply theme classes
           document.body.classList.remove('theme-light', 'theme-dark');
           document.body.classList.add(mode === 'light' ? 'theme-light' : 'theme-dark');
           document.documentElement.setAttribute('data-theme', mode);
+          
+          // Update meta theme-color for mobile browsers
+          const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+          if (metaThemeColor) {
+            metaThemeColor.setAttribute('content', mode === 'light' ? '#f8f9fa' : '#212529');
+          } else {
+            const meta = document.createElement('meta');
+            meta.name = 'theme-color';
+            meta.content = mode === 'light' ? '#f8f9fa' : '#212529';
+            document.getElementsByTagName('head')[0].appendChild(meta);
+          }
+          
           setAppliedTheme(mode);
-          setThemeAnnounce(`${mode === 'light' ? 'Light' : 'Dark'} theme active${theme === 'auto' ? ' (auto)' : ''}`);
-        } catch (e) {}
+          
+          // Enhanced accessibility announcement
+          const modeText = mode === 'light' ? 'Light' : 'Dark';
+          const sourceText = theme === 'auto' 
+            ? isSystemChange ? ' (system preference changed)' : ' (auto)' 
+            : '';
+          setThemeAnnounce(`${modeText} theme activated${sourceText}`);
+          
+          // Save user preference
+          try { 
+            localStorage.setItem('nebula_theme', theme); 
+            localStorage.setItem('nebula_last_applied', mode);
+          } catch (e) {
+            console.warn('Failed to save theme preference:', e);
+          }
+        } catch (e) {
+          console.error('Theme application error:', e);
+        }
       };
 
       if (theme === 'auto' && typeof window !== 'undefined' && window.matchMedia) {
         mq = window.matchMedia('(prefers-color-scheme: dark)');
         apply(mq.matches ? 'dark' : 'light');
-        const onChange = (ev) => apply(ev.matches ? 'dark' : 'light');
-        try { mq.addEventListener ? mq.addEventListener('change', onChange) : mq.addListener(onChange); } catch (e) {}
-        try { localStorage.setItem('nebula_theme', 'auto'); } catch (e) {}
-        const t = setTimeout(() => setThemeAnnounce(''), 1200);
-        return () => { try { mq.removeEventListener ? mq.removeEventListener('change', onChange) : mq.removeListener(onChange); } catch(e){}; clearTimeout(t); };
+        
+        const onChange = (ev) => {
+          apply(ev.matches ? 'dark' : 'light', true);
+        };
+        
+        try { 
+          if (mq.addEventListener) {
+            mq.addEventListener('change', onChange);
+          } else {
+            mq.addListener(onChange);
+          }
+        } catch (e) {
+          console.warn('Failed to add system theme listener:', e);
+        }
+        
+        const t = setTimeout(() => setThemeAnnounce(''), 2000);
+        return () => { 
+          try { 
+            if (mq.removeEventListener) {
+              mq.removeEventListener('change', onChange);
+            } else {
+              mq.removeListener(onChange);
+            }
+          } catch(e){
+            console.warn('Failed to remove system theme listener:', e);
+          }
+          clearTimeout(t); 
+        };
       } else {
         apply(theme === 'light' ? 'light' : 'dark');
-        try { localStorage.setItem('nebula_theme', theme); } catch (e) {}
-        const t = setTimeout(() => setThemeAnnounce(''), 1200);
+        const t = setTimeout(() => setThemeAnnounce(''), 2000);
         return () => clearTimeout(t);
       }
     }, [theme, prefersReducedMotion]);
 
-    // cycle theme: light -> dark -> auto -> light
+    // Enhanced theme toggle with better cycling and feedback
     const toggleTheme = useCallback(() => {
-      setTheme(prev => prev === 'light' ? 'dark' : prev === 'dark' ? 'auto' : 'light');
-    }, []);
+      const nextTheme = theme === 'light' ? 'dark' : theme === 'dark' ? 'auto' : 'light';
+      setTheme(nextTheme);
+      
+      // Provide immediate feedback
+      const feedbackText = nextTheme === 'auto' 
+        ? 'Switching to auto (follows system)' 
+        : `Switching to ${nextTheme} theme`;
+      setThemeAnnounce(feedbackText);
+      
+      // Clear feedback after transition
+      setTimeout(() => setThemeAnnounce(''), 1000);
+    }, [theme]);
     
     // keyboard shortcut: 't' toggles theme (ignore typing in inputs)
     useEffect(() => {
@@ -859,7 +940,7 @@ function Navigation(props) {
         }}
       >
         <Container>
-          <Navbar.Brand as={Link} to="/" style={{ color: appliedTheme === 'light' ? '#212529' : '#ffffff' }}>
+          <Navbar.Brand as={Link} to="/" style={{ color: appliedTheme === 'light' ? '#212529' : '#e9ecef' }}>
             <img src={logoM} width="90px" height="40px" alt="logo" />
             Colin Nebula 3D 
           </Navbar.Brand>
@@ -870,7 +951,7 @@ function Navigation(props) {
                 to="/"
                 className={({isActive}) => `nav-link mx-2 ${isActive ? 'navActive' : ''}`}
                 style={({isActive}) => ({ 
-                  color: isActive ? undefined : (appliedTheme === 'light' ? '#212529' : '#ffffff') 
+                  color: isActive ? undefined : (appliedTheme === 'light' ? '#212529' : '#e9ecef') 
                 })}
                 end
               >
@@ -881,7 +962,7 @@ function Navigation(props) {
                 to="/portfolio"
                 className={({isActive}) => `nav-link mx-2 ${isActive ? 'navActive' : ''}`}
                 style={({isActive}) => ({ 
-                  color: isActive ? undefined : (appliedTheme === 'light' ? '#212529' : '#ffffff') 
+                  color: isActive ? undefined : (appliedTheme === 'light' ? '#212529' : '#e9ecef') 
                 })}
               >
                 Portfolio
@@ -891,7 +972,7 @@ function Navigation(props) {
                 to="/artwork"
                 className={({isActive}) => `nav-link mx-2 ${isActive ? 'navActive' : ''}`}
                 style={({isActive}) => ({ 
-                  color: isActive ? undefined : (appliedTheme === 'light' ? '#212529' : '#ffffff') 
+                  color: isActive ? undefined : (appliedTheme === 'light' ? '#212529' : '#e9ecef') 
                 })}
               >
                 Artwork
@@ -901,7 +982,7 @@ function Navigation(props) {
                 to="/animation"
                 className={({isActive}) => `nav-link mx-2 ${isActive ? 'navActive' : ''}`}
                 style={({isActive}) => ({ 
-                  color: isActive ? undefined : (appliedTheme === 'light' ? '#212529' : '#ffffff') 
+                  color: isActive ? undefined : (appliedTheme === 'light' ? '#212529' : '#e9ecef') 
                 })}
               >
                 Animation
@@ -911,7 +992,7 @@ function Navigation(props) {
                 to="/video-editing"
                 className={({isActive}) => `nav-link mx-2 ${isActive ? 'navActive' : ''}`}
                 style={({isActive}) => ({ 
-                  color: isActive ? undefined : (appliedTheme === 'light' ? '#212529' : '#ffffff') 
+                  color: isActive ? undefined : (appliedTheme === 'light' ? '#212529' : '#e9ecef') 
                 })}
               >
                 VFX
@@ -944,7 +1025,7 @@ function Navigation(props) {
                       style={{
                         background: 'transparent',
                         border: `1px solid ${appliedTheme === 'light' ? '#6c757d' : '#adb5bd'}`,
-                        color: appliedTheme === 'light' ? '#212529' : '#ffffff',
+                        color: appliedTheme === 'light' ? '#212529' : '#e9ecef',
                         borderRadius: '20px',
                         padding: '6px 10px',
                         cursor: 'pointer'
@@ -1296,7 +1377,7 @@ function Navigation(props) {
                             color: appliedTheme === 'light' ? '#495057' : '#adb5bd'
                           }}>
                             <div className="empty-icon" style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🔔</div>
-                            <p style={{ color: appliedTheme === 'light' ? '#212529' : '#ffffff' }}>No notifications to display</p>
+                            <p style={{ color: appliedTheme === 'light' ? '#212529' : '#e9ecef' }}>No notifications to display</p>
                           </div>
                         ) : (
                           <ul className="notification-list" style={{
@@ -1343,56 +1424,145 @@ function Navigation(props) {
                   </div>
                 )}
                 
-                {/* Theme toggle button */}
+                {/* Enhanced Theme toggle button with better visual feedback */}
                 <button
                   type="button"
-                  className={`btn btn-sm rounded-pill`}
-                  onClick={toggleTheme}
+                  className={`btn btn-sm rounded-pill theme-toggle-btn`}
                   aria-pressed={appliedTheme === 'dark'}
                   aria-label={`Toggle theme (preference: ${theme}; applied: ${appliedTheme}). Press T to toggle.`}
                   title={`Theme: ${theme === 'auto' ? 'Auto (follows system)' : (theme === 'light' ? 'Light' : 'Dark')} — press T to toggle`}
                   style={{ 
-                    padding: '6px 10px', 
+                    padding: '6px 12px', 
                     marginLeft: '8px',
-                    background: 'transparent',
-                    border: `1px solid ${appliedTheme === 'light' ? '#6c757d' : '#adb5bd'}`,
-                    color: appliedTheme === 'light' ? '#212529' : '#ffffff',
-                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                    background: theme === 'auto' 
+                      ? 'linear-gradient(45deg, #ffd700, #ff6b6b, #4ecdc4)' 
+                      : appliedTheme === 'light' 
+                        ? 'linear-gradient(135deg, #ffeaa7, #fab1a0)' 
+                        : 'linear-gradient(135deg, #2d3436, #636e72)',
+                    border: `2px solid ${appliedTheme === 'light' ? '#6c757d' : '#adb5bd'}`,
+                    color: theme === 'auto' 
+                      ? '#000000' 
+                      : appliedTheme === 'light' ? '#212529' : '#e9ecef',
+                    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                    transform: 'scale(1)',
+                    boxShadow: theme === 'auto' 
+                      ? '0 0 15px rgba(255, 215, 0, 0.3)'
+                      : appliedTheme === 'light'
+                        ? '0 4px 12px rgba(255, 234, 167, 0.4)'
+                        : '0 4px 12px rgba(45, 52, 54, 0.4)',
+                    fontWeight: '600',
+                    position: 'relative',
+                    overflow: 'hidden'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.transform = 'scale(1.05)';
+                    e.target.style.boxShadow = theme === 'auto' 
+                      ? '0 0 20px rgba(255, 215, 0, 0.5)'
+                      : appliedTheme === 'light'
+                        ? '0 6px 16px rgba(255, 234, 167, 0.6)'
+                        : '0 6px 16px rgba(45, 52, 54, 0.6)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.transform = 'scale(1)';
+                    e.target.style.boxShadow = theme === 'auto' 
+                      ? '0 0 15px rgba(255, 215, 0, 0.3)'
+                      : appliedTheme === 'light'
+                        ? '0 4px 12px rgba(255, 234, 167, 0.4)'
+                        : '0 4px 12px rgba(45, 52, 54, 0.4)';
+                  }}
+                  onClick={(e) => {
+                    // Add click animation then toggle theme
+                    e.target.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                      e.target.style.transform = 'scale(1.05)';
+                      setTimeout(() => {
+                        e.target.style.transform = 'scale(1)';
+                      }, 100);
+                    }, 100);
+                    
+                    // Call the toggle function
+                    toggleTheme();
                   }}
                 >
-                  {theme === 'auto' ? '🌓 Auto' : (appliedTheme === 'light' ? '🌞 Light' : '🌙 Dark')}
+                  <span style={{ 
+                    display: 'inline-flex', 
+                    alignItems: 'center', 
+                    gap: '4px',
+                    fontSize: '0.85rem'
+                  }}>
+                    <span style={{ 
+                      fontSize: '1.1em',
+                      transition: 'transform 0.3s ease',
+                      display: 'inline-block'
+                    }}>
+                      {theme === 'auto' ? '🌓' : (appliedTheme === 'light' ? '🌞' : '🌙')}
+                    </span>
+                    <span style={{ fontWeight: '700' }}>
+                      {theme === 'auto' ? 'Auto' : (appliedTheme === 'light' ? 'Light' : 'Dark')}
+                    </span>
+                  </span>
                 </button>
                 
-                {/* Login/Logout button */}
+                {/* Enhanced Login/Logout button with custom border */}
                 <button
                    type="button"
-                   className={`btn btn-sm btn-outline-${appliedTheme === 'light' ? 'primary' : 'light'} ms-2 rounded-pill`}
+                   className={`btn btn-sm ms-2 rounded-pill login-logout-btn`}
                    onClick={() => { authToken ? logout() : setShowLogin(true); }}
                    aria-label={authToken ? 'Logout' : 'Login'}
+                   style={{
+                     padding: '6px 12px',
+                     background: 'transparent',
+                     border: `2px solid ${appliedTheme === 'light' ? '#0d6efd' : '#86b7fe'}`,
+                     color: appliedTheme === 'light' ? '#0d6efd' : '#86b7fe',
+                     fontWeight: '600',
+                     transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                     position: 'relative',
+                     overflow: 'hidden'
+                   }}
+                   onMouseEnter={(e) => {
+                     e.target.style.background = appliedTheme === 'light' 
+                       ? 'linear-gradient(135deg, #0d6efd, #0056b3)' 
+                       : 'linear-gradient(135deg, #86b7fe, #6ea8fe)';
+                     e.target.style.color = '#ffffff';
+                     e.target.style.transform = 'translateY(-2px) scale(1.05)';
+                     e.target.style.boxShadow = `0 6px 16px ${appliedTheme === 'light' ? 'rgba(13, 110, 253, 0.4)' : 'rgba(134, 183, 254, 0.4)'}`;
+                   }}
+                   onMouseLeave={(e) => {
+                     e.target.style.background = 'transparent';
+                     e.target.style.color = appliedTheme === 'light' ? '#0d6efd' : '#86b7fe';
+                     e.target.style.transform = 'translateY(0) scale(1)';
+                     e.target.style.boxShadow = 'none';
+                   }}
                  >
                    {authToken ? 'Logout' : 'Login'}
                 </button>
                  
-                 {/* Enhanced Authentication Modal */}
+                 {/* Enhanced Authentication Modal - Compact Size with White Backdrop */}
                  <Modal 
                    show={showLogin} 
                    onHide={() => {setShowLogin(false); resetAuthForm();}} 
                    centered 
-                   fullscreen="sm-down" 
+                   size="sm"
+                   fullscreen="xs-down" 
                    aria-labelledby="nav-auth-title"
-                   className="auth-modal"
+                   className="auth-modal compact-modal"
+                   backdrop="static"
+                   backdropClassName="white-modal-backdrop"
+                   style={{
+                     '--bs-modal-backdrop-bg': 'rgba(255, 255, 255, 0.9)'
+                   }}
                  >
                    <form onSubmit={(e) => { e.preventDefault(); handleAuth(); }}>
-                     <Modal.Header closeButton className="border-0 pb-0">
+                     <Modal.Header closeButton className="border-0 pb-1">
                        <Modal.Title id="nav-auth-title" className="w-100 text-center">
                          <div className="d-flex flex-column align-items-center">
-                           <div className="auth-icon mb-2">
+                           <div className="auth-icon mb-1" style={{ fontSize: '2rem' }}>
                              {authMode === 'login' ? '🔐' : '🆕'}
                            </div>
-                           <h4 className="mb-0">
+                           <h5 className="mb-0">
                              {authMode === 'login' ? 'Welcome Back' : 'Create Account'}
-                           </h4>
-                           <small className="text-body">
+                           </h5>
+                           <small className="text-body" style={{ fontSize: '0.8rem' }}>
                              {authMode === 'login' 
                                ? 'Sign in to access your account' 
                                : 'Join Colin Nebula\'s creative community'
@@ -1401,20 +1571,20 @@ function Navigation(props) {
                          </div>
                        </Modal.Title>
                      </Modal.Header>
-                     <Modal.Body className="px-4">
+                     <Modal.Body className="px-3 py-2">
                        {/* Mode Toggle Buttons */}
-                       <div className="auth-mode-toggle mb-4">
+                       <div className="auth-mode-toggle mb-3">
                          <div className="btn-group w-100" role="group">
                            <button
                              type="button"
-                             className={`btn ${authMode === 'login' ? 'btn-primary' : 'btn-outline-primary'} rounded-pill`}
+                             className={`btn btn-sm ${authMode === 'login' ? 'btn-primary' : 'btn-outline-primary'} rounded-pill`}
                              onClick={() => switchAuthMode('login')}
                            >
                              Sign In
                            </button>
                            <button
                              type="button"
-                             className={`btn ${authMode === 'signup' ? 'btn-primary' : 'btn-outline-primary'} rounded-pill`}
+                             className={`btn btn-sm ${authMode === 'signup' ? 'btn-primary' : 'btn-outline-primary'} rounded-pill`}
                              onClick={() => switchAuthMode('signup')}
                            >
                              Create Account
@@ -1582,12 +1752,13 @@ function Navigation(props) {
                          )}
                        </div>
                      </Modal.Body>
-                     <Modal.Footer className="border-0 pt-0">
+                     <Modal.Footer className="border-0 pt-0 px-3 pb-2">
                        <div className="d-flex flex-column w-100">
                          <div className="d-flex gap-2 justify-content-end">
                            <Button 
                              variant="outline-secondary" 
-                             className="rounded-pill px-4" 
+                             size="sm"
+                             className="rounded-pill px-3" 
                              onClick={() => {setShowLogin(false); resetAuthForm();}}
                            >
                              Cancel
@@ -1595,7 +1766,8 @@ function Navigation(props) {
                            <Button 
                              type="submit" 
                              variant="primary" 
-                             className="rounded-pill px-4"
+                             size="sm"
+                             className="rounded-pill px-3"
                              disabled={loginBusy || !loginValid}
                            >
                              {loginBusy ? (
