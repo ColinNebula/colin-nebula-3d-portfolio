@@ -4,12 +4,12 @@ import { useNotifications } from '../../App';
 import './Portfolio.css';
 
 // Import professional images
-import stellarGuardian from '../../assets/images/3dModels.png';
+import stellarGuardian from '../../assets/images/orc_01.jpg';
 import nebulaStarship from '../../assets/images/Sniper_wireCombo0001.jpg';
 import facialRigging from '../../assets/images/rigging.png';
 import spaceBattleVFX from '../../assets/images/SniperRifleTestxx6.jpg';
 import architecturalViz from '../../assets/images/TruckB_01.jpg';
-import gameEnvironment from '../../assets/images/maps.jpg';
+import gameEnvironment from '../../assets/images/mech1.png';
 import motionGraphics from '../../assets/images/shapeAnimation.png';
 import knivesModel from '../../assets/images/knives.png';
 import maskDesign from '../../assets/images/maskall.png';
@@ -166,8 +166,8 @@ const Portfolio = () => {
     },
     {
       id: 6,
-      title: 'Game Environment Assets',
-      description: 'Modular environment pieces for fantasy game including optimized models, detailed textures, and game-ready materials with multiple LOD versions.',
+      title: 'Mechanical Assets',
+      description: 'Detailed mechanical models including robots, mechs, and sci-fi machinery with optimized topology, detailed textures, and game-ready materials.',
       category: 'game-assets',
       technologies: ['blender', 'unity', 'substance-painter'],
       images: [
@@ -179,7 +179,7 @@ const Portfolio = () => {
       duration: '6 weeks',
       client: 'Indie Game Studio',
       status: 'in-progress',
-      tags: ['game-ready', 'modular', 'fantasy', 'optimized']
+      tags: ['mech', 'sci-fi', 'mechanical', 'optimized']
     },
     {
       id: 7,

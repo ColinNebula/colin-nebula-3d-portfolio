@@ -129,7 +129,7 @@
 /* Subscribe Button and Modal Styles */
 .subscribe-btn {
   background: linear-gradient(135deg, #40e0ff 0%, #ff6384 100%);
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.3);
   color: #ffffff;
   font-weight: 600;
   padding: 0.8rem 2rem;
@@ -148,6 +148,7 @@
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(64, 224, 255, 0.3);
   background: linear-gradient(135deg, #ff6384 0%, #40e0ff 100%);
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
 /* Subscribe Modal */
@@ -331,7 +332,7 @@
 
 .footer-cta .btn {
   background: linear-gradient(135deg, #40e0ff 0%, #ff6384 100%);
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.3);
   color: #ffffff;
   font-weight: 600;
   padding: 0.8rem 2rem;
@@ -346,6 +347,7 @@
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(64, 224, 255, 0.3);
   background: linear-gradient(135deg, #ff6384 0%, #40e0ff 100%);
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
 /* Original styles below */

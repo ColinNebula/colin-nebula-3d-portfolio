@@ -941,7 +941,7 @@ function Navigation(props) {
       >
         <Container>
           <Navbar.Brand as={Link} to="/" style={{ color: appliedTheme === 'light' ? '#212529' : '#e9ecef' }}>
-            <img src={logoM} width="90px" height="40px" alt="logo" />
+            <img src={logoM} width="90px" height="40px" alt="logo" className="nav-logo" />
             Colin Nebula 3D 
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" aria-label="Toggle navigation" />

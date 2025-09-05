@@ -35,6 +35,48 @@
   transition: all 0.3s ease;
 }
 
+/* Logo styling with border */
+.nav-logo {
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+  padding: 4px;
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  vertical-align: middle;
+  margin-right: 8px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(2px);
+}
+
+.nav-logo:hover {
+  border-color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.1);
+  transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Theme-specific logo border colors */
+[data-theme="light"] .nav-logo {
+  border-color: rgba(33, 37, 41, 0.6);
+  background: rgba(33, 37, 41, 0.05);
+}
+
+[data-theme="light"] .nav-logo:hover {
+  border-color: rgba(33, 37, 41, 0.9);
+  background: rgba(33, 37, 41, 0.1);
+}
+
+[data-theme="dark"] .nav-logo {
+  border-color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="dark"] .nav-logo:hover {
+  border-color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.1);
+}
+
 /* Enhanced Authentication Modal Styles - Compact Version */
 .auth-modal .modal-content {
   border: 2px solid #343a40;
@@ -1386,6 +1428,17 @@ a.nav-link.navActive {
 .navbar-brand {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Adjust text positioning in navbar brand */
+.navbar-brand {
+  line-height: 1;
+}
+
+.navbar-brand > :not(img) {
+  margin-top: 2px;
 }
 
 .navbar-brand:hover {
