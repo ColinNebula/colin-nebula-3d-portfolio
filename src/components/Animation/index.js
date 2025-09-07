@@ -242,24 +242,6 @@ function Animation() {
         comments: '28'
       },
       type: 'local'
-    },
-    {
-      id: 'intro',
-      title: 'Nebula Media Intro',
-      subtitle: 'Brand Identity Animation',
-      description: 'Professional brand introduction animation featuring dynamic logo animation, particle effects, and cinematic presentation.',
-      thumbnail: g1,
-      videoSrc: '/colin-nebula-3d-portfolio/videos/Intro1.avi',
-      duration: '0:30',
-      year: '2024',
-      software: ['After Effects', 'Cinema 4D'],
-      techniques: ['Logo Animation', 'Particle Systems', 'Motion Graphics', 'Brand Design'],
-      metrics: {
-        views: '5.8K',
-        likes: '95%',
-        comments: '42'
-      },
-      type: 'local'
     }
   ];
 
