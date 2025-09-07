@@ -676,39 +676,87 @@ function Navigation(props) {
             setLoginBusy(false);
           }, 1200);
           
-        } 
-        // Login mode is handled in the enhanced authentication above
+        } else {
+          // Handle login (existing logic with enhanced admin support)
+          setTimeout(() => {
+            // Admin credentials for demo (you can change these)
+            const adminCredentials = {
+              email: 'admin@colin-nebula.com',
+              password: 'gT6S-N4k@-9gY?-%D7xk',
+              altEmail: 'colin@admin.com',
+              altPassword: 'alphaadmin'
+            };
+            
+            // Check for admin login
+            const isAdminLogin = (
+              (loginEmail === adminCredentials.email && loginPassword === adminCredentials.password) ||
+              (loginEmail === adminCredentials.altEmail && loginPassword === adminCredentials.altPassword) ||
+              (loginEmail.includes('admin') && loginPassword === 'ntL6-?w2F-pG8!-v3Da') ||
+              (loginEmail === 'colin@nebula.com' && loginPassword === 'admin')
+            );
+            
+            // Check if user exists (for demo)
+            const existingUsers = JSON.parse(localStorage.getItem('nebula_users') || '[]');
+            const existingUser = existingUsers.find(u => u.email === loginEmail);
+            
+            const user = existingUser || { 
+              username: loginEmail, 
+              email: loginEmail,
+              name: isAdminLogin ? 'Colin Nebula (Admin)' : loginEmail.split('@')[0],
+              isAdmin: isAdminLogin || loginEmail.includes('admin'),
+              role: isAdminLogin ? 'administrator' : 'user',
+              permissions: isAdminLogin ? ['read', 'write', 'admin', 'notifications'] : ['read']
+            };
+            
+            // If it's an admin login, update existing user to admin if needed
+            if (isAdminLogin && existingUser && !existingUser.isAdmin) {
+              existingUser.isAdmin = true;
+              existingUser.role = 'administrator';
+              existingUser.permissions = ['read', 'write', 'admin', 'notifications'];
+              const updatedUsers = existingUsers.map(u => u.email === loginEmail ? existingUser : u);
+              localStorage.setItem('nebula_users', JSON.stringify(updatedUsers));
+            }
+            
+            setAuthToken('demo-token-' + Date.now());
+            setAuthUser(user);
+            
+            if (rememberMe) {
+              localStorage.setItem('nebula_auth_token', 'demo-token-' + Date.now());
+              localStorage.setItem('nebula_auth_user', JSON.stringify(user));
+            }
+            
+            // Reset form
+            resetAuthForm();
+            setShowLogin(false);
+            
+            const welcomeMessage = isAdminLogin 
+              ? `Welcome back, Administrator! You have full access to all features.`
+              : `Welcome back${user.name ? ', ' + user.name : ''}! Successfully logged in.`;
+            
+            showNotification(welcomeMessage, 'success', 4000, {
+              category: 'account',
+              icon: isAdminLogin ? '👑' : '✅'
+            });
+            
+            // Show admin-specific or regular notification features tip
+            setTimeout(() => {
+              const tipMessage = isAdminLogin
+                ? 'As admin, you have access to all notifications and system features! 🔔'
+                : 'Click the 🔔 bell icon to view your notifications';
+              
+              showNotification(tipMessage, 'info', 3000, {
+                category: 'system',
+                icon: '🔔'
+              });
+            }, 1000);
+            
+            setLoginBusy(false);
+          }, 800);
+        }
         
       } catch (e) {
         setLoginMsg(`Network error during ${authMode}`);
         setLoginBusy(false);
-      }
-    };
-
-    // Handle email verification completion
-    const handleVerificationComplete = (success) => {
-      if (success && pendingUser) {
-        // Mark email as verified
-        const verifiedUser = markEmailVerified(pendingUser);
-        UserManager.updateUser(verifiedUser);
-        
-        // Auto-login after verification
-        setAuthToken('demo-token-' + Date.now());
-        setAuthUser(verifiedUser);
-        
-        if (rememberMe) {
-          localStorage.setItem('nebula_auth_token', 'demo-token-' + Date.now());
-          localStorage.setItem('nebula_auth_user', JSON.stringify(verifiedUser));
-        }
-        
-        showNotification(`Welcome, ${verifiedUser.name}! Your email has been verified and you're now logged in.`, 'success', 5000, {
-          category: 'account',
-          icon: '🎉'
-        });
-        
-        setPendingUser(null);
-        setVerificationRequired(false);
-        resetAuthForm();
       }
     };
     
@@ -1026,7 +1074,6 @@ function Navigation(props) {
     };
 
     return (
-      <>
       <Navbar
         expanded={expanded}
         onToggle={setExpanded}
@@ -1964,20 +2011,6 @@ function Navigation(props) {
         <div aria-live="polite" className="visually-hidden">{themeAnnounce}</div>
         <div aria-live="polite" className="visually-hidden">{notifAnnounce}</div>
       </Navbar>
-      
-      {/* Email Verification Modal */}
-      <EmailVerification
-        show={showEmailVerification}
-        onHide={() => {
-          setShowEmailVerification(false);
-          setPendingUser(null);
-          setVerificationRequired(false);
-        }}
-        userEmail={pendingUser?.email || loginEmail}
-        userName={pendingUser?.name || `${firstName} ${lastName}`.trim()}
-        onVerificationComplete={handleVerificationComplete}
-      />
-    </>
     );
 }
 

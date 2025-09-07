@@ -1,0 +1,96 @@
+/* Email Verification Modal Styles */
+.email-verification-modal .modal-dialog {
+  max-width: 450px;
+}
+
+.email-verification-modal .modal-content {
+  border-radius: 16px;
+  border: none;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+.verification-header-icon {
+  font-size: 2.5rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.verification-icon {
+  font-size: 3rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.verification-success {
+  font-size: 4rem;
+  animation: verificationSuccess 0.6s ease-in-out;
+}
+
+@keyframes verificationSuccess {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.verification-input {
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: 0.5rem;
+  text-align: center;
+  padding: 12px;
+  border-radius: 12px;
+  border: 2px solid var(--bs-border-color);
+  transition: all 0.3s ease;
+}
+
+.verification-input:focus {
+  border-color: var(--bs-primary);
+  box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+  transform: scale(1.02);
+}
+
+.verification-input::placeholder {
+  color: var(--bs-gray-400);
+  font-weight: 400;
+}
+
+/* Dark mode support */
+[data-bs-theme="dark"] .email-verification-modal .modal-content {
+  background-color: var(--bs-dark);
+  color: var(--bs-light);
+}
+
+[data-bs-theme="dark"] .verification-input {
+  background-color: var(--bs-gray-800);
+  border-color: var(--bs-gray-600);
+  color: var(--bs-light);
+}
+
+[data-bs-theme="dark"] .verification-input:focus {
+  background-color: var(--bs-gray-700);
+  border-color: var(--bs-primary);
+}
+
+/* Loading spinner animation */
+.spinner-border {
+  animation: spinner-border 0.75s linear infinite;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+  .email-verification-modal .modal-dialog {
+    margin: 1rem;
+    max-width: calc(100% - 2rem);
+  }
+  
+  .verification-input {
+    font-size: 1.25rem;
+    letter-spacing: 0.25rem;
+  }
+}
