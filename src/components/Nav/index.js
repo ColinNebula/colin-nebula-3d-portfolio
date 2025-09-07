@@ -527,16 +527,16 @@ function Navigation(props) {
             // Admin credentials for demo (you can change these)
             const adminCredentials = {
               email: 'admin@colin-nebula.com',
-              password: 'admin123',
+              password: 'gT6S-N4k@-9gY?-%D7xk',
               altEmail: 'colin@admin.com',
-              altPassword: 'colinadmin'
+              altPassword: 'alphaadmin'
             };
             
             // Check for admin login
             const isAdminLogin = (
               (loginEmail === adminCredentials.email && loginPassword === adminCredentials.password) ||
               (loginEmail === adminCredentials.altEmail && loginPassword === adminCredentials.altPassword) ||
-              (loginEmail.includes('admin') && loginPassword === 'admin123') ||
+              (loginEmail.includes('admin') && loginPassword === 'ntL6-?w2F-pG8!-v3Da') ||
               (loginEmail === 'colin@nebula.com' && loginPassword === 'admin')
             );
             

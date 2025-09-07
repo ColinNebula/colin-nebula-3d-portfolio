@@ -789,17 +789,17 @@ const Resume = () => {
                       <div className="timeline-marker education-marker"></div>
                       <div className="timeline-content">
                         <div className="education-header">
-                          <h4>MFA in Digital Arts and Animation</h4>
+                          <h4>Diploma in Digital Arts and Animation</h4>
                           <div className="education-subheader">
-                            <span className="institution">Digital Arts Institute</span>
-                            <span className="year">2015</span>
+                            <span className="institution">Centennial College</span>
+                            <span className="year">2010</span>
                           </div>
                         </div>
                         <p>Specialized in 3D modeling and interactive media. Thesis: "Interactive 3D Environments in Web Applications"</p>
                         <div className="education-highlights">
                           <span className="badge bg-info me-2">Dean's List</span>
                           <span className="badge bg-info me-2">Outstanding Graduate Award</span>
-                          <span className="badge bg-info">3.95 GPA</span>
+                          <span className="badge bg-info">4.95 GPA</span>
                         </div>
                       </div>
                     </div>
@@ -808,16 +808,16 @@ const Resume = () => {
                       <div className="timeline-marker education-marker"></div>
                       <div className="timeline-content">
                         <div className="education-header">
-                          <h4>BS in Computer Science</h4>
+                          <h4>Certificate in Computer Science</h4>
                           <div className="education-subheader">
-                            <span className="institution">Tech University</span>
+                            <span className="institution">University of Toronto</span>
                             <span className="year">2013</span>
                           </div>
                         </div>
                         <p>Minor in Digital Media. Focus on graphics programming and web development.</p>
                         <div className="education-highlights">
-                          <span className="badge bg-info me-2">Magna Cum Laude</span>
-                          <span className="badge bg-info">3.8 GPA</span>
+                          <span className="badge bg-info me-2">University of Toronto</span>
+                          <span className="badge bg-info">4.8 GPA</span>
                         </div>
                       </div>
                     </div>
@@ -890,13 +890,7 @@ const Resume = () => {
                     <div className="additional-projects mt-4">
                       <h5 className="mb-3">Additional Notable Projects</h5>
                       <Row>
-                        <Col md={6}>
-                          <ul className="additional-project-list">
-                            <li><strong>Neural Network Visualization Tool</strong> - Interactive 3D representation of AI model architectures</li>
-                            <li><strong>Real-time Ocean Simulation</strong> - WebGL-based fluid dynamics for maritime training</li>
-                            <li><strong>Virtual Museum Platform</strong> - Accessible 3D cultural heritage preservation system</li>
-                          </ul>
-                        </Col>
+  
                         <Col md={6}>
                           <ul className="additional-project-list">
                             <li><strong>Procedural City Generator</strong> - Open-source tool for urban planning visualization</li>
