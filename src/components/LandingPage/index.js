@@ -103,9 +103,28 @@ const LandingPage = () => {
         <Row className="landing-content text-center">
           <Col md={7} className="landing-text-col">
             <div className="landing-text-wrapper">
-              <h1 className={`display-1 fw-bold mb-4 text-white landing-title ${isLoaded ? 'animate' : ''}`}>
-                <span className="welcome-accent">Colin Nebula</span>
-                <span className="lastly">3D</span>
+              <h1 className={`display-1 fw-bold mb-4 text-white landing-title enhanced-title ${isLoaded ? 'animate' : ''}`}>
+                <span className="welcome-accent enhanced-name">
+                  <span className="letter-1">C</span>
+                  <span className="letter-2">o</span>
+                  <span className="letter-3">l</span>
+                  <span className="letter-4">i</span>
+                  <span className="letter-5">n</span>
+                  <span className="space">&nbsp;</span>
+                  <span className="letter-6">N</span>
+                  <span className="letter-7">e</span>
+                  <span className="letter-8">b</span>
+                  <span className="letter-9">u</span>
+                  <span className="letter-10">l</span>
+                  <span className="letter-11">a</span>
+                </span>
+                <span className="lastly enhanced-3d">3D</span>
+                <div className="text-decoration">
+                  <div className="sparkle sparkle-1">✨</div>
+                  <div className="sparkle sparkle-2">✦</div>
+                  <div className="sparkle sparkle-3">✨</div>
+                  <div className="hologram-line"></div>
+                </div>
               </h1>
               <p className={`lead mb-5 text-white-50 landing-description typewriter ${isLoaded ? 'animate' : ''}`}>
                 Professional 3D Artist & Visual Effects Designer

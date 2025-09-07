@@ -78,6 +78,7 @@
   transform: translateY(50px) scale(0.9);
   transition: all 1.2s cubic-bezier(0.23, 1, 0.32, 1);
   text-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  position: relative;
 }
 
 .landing-title.animate {
@@ -85,6 +86,217 @@
   transform: translateY(0) scale(1);
 }
 
+/* Enhanced Name Styling */
+.enhanced-title {
+  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+  font-weight: 800;
+  letter-spacing: 2px;
+  position: relative;
+  overflow: visible;
+}
+
+.enhanced-name {
+  background: linear-gradient(
+    45deg,
+    #00d4ff 0%,
+    #5aa8ff 25%,
+    #a855f7 50%,
+    #ff6b9d 75%,
+    #00d4ff 100%
+  );
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-shift 4s ease-in-out infinite;
+  display: inline-block;
+  position: relative;
+  filter: drop-shadow(0 4px 8px rgba(90, 168, 255, 0.3));
+}
+
+.enhanced-name span {
+  display: inline-block;
+  animation: letter-bounce 2s ease-in-out infinite;
+}
+
+.enhanced-name .letter-1 { animation-delay: 0.1s; }
+.enhanced-name .letter-2 { animation-delay: 0.2s; }
+.enhanced-name .letter-3 { animation-delay: 0.3s; }
+.enhanced-name .letter-4 { animation-delay: 0.4s; }
+.enhanced-name .letter-5 { animation-delay: 0.5s; }
+.enhanced-name .letter-6 { animation-delay: 0.7s; }
+.enhanced-name .letter-7 { animation-delay: 0.8s; }
+.enhanced-name .letter-8 { animation-delay: 0.9s; }
+.enhanced-name .letter-9 { animation-delay: 1.0s; }
+.enhanced-name .letter-10 { animation-delay: 1.1s; }
+.enhanced-name .letter-11 { animation-delay: 1.2s; }
+
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes letter-bounce {
+  0%, 100% { transform: translateY(0) rotateX(0deg); }
+  50% { transform: translateY(-8px) rotateX(10deg); }
+}
+
+.enhanced-3d {
+  font-size: 4rem;
+  font-weight: 900;
+  background: linear-gradient(
+    135deg,
+    #ff9b4a 0%,
+    #ff6b35 25%,
+    #f7931e 50%,
+    #ffab00 75%,
+    #ff9b4a 100%
+  );
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: 
+    threed-rotate 6s ease-in-out infinite,
+    gradient-shift 3s ease-in-out infinite;
+  display: block;
+  margin-top: 0.5rem;
+  transform-style: preserve-3d;
+  text-shadow: 
+    2px 2px 0 rgba(255, 155, 74, 0.8),
+    4px 4px 0 rgba(255, 107, 53, 0.6),
+    6px 6px 0 rgba(247, 147, 30, 0.4),
+    8px 8px 0 rgba(255, 171, 0, 0.2),
+    10px 10px 20px rgba(0, 0, 0, 0.3);
+  filter: drop-shadow(0 6px 12px rgba(255, 155, 74, 0.4));
+}
+
+@keyframes threed-rotate {
+  0%, 100% { 
+    transform: perspective(1000px) rotateX(0deg) rotateY(0deg) rotateZ(0deg); 
+  }
+  25% { 
+    transform: perspective(1000px) rotateX(5deg) rotateY(-10deg) rotateZ(2deg); 
+  }
+  50% { 
+    transform: perspective(1000px) rotateX(-5deg) rotateY(10deg) rotateZ(-2deg); 
+  }
+  75% { 
+    transform: perspective(1000px) rotateX(3deg) rotateY(-5deg) rotateZ(1deg); 
+  }
+}
+
+/* Text Decorations */
+.text-decoration {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.sparkle {
+  position: absolute;
+  font-size: 1.2rem;
+  animation: sparkle-twinkle 2s ease-in-out infinite;
+  opacity: 0.8;
+}
+
+.sparkle-1 {
+  top: -10%;
+  right: 20%;
+  animation-delay: 0s;
+  color: #00d4ff;
+}
+
+.sparkle-2 {
+  top: 30%;
+  right: -5%;
+  animation-delay: 0.7s;
+  color: #a855f7;
+  font-size: 1rem;
+}
+
+.sparkle-3 {
+  bottom: 10%;
+  left: 15%;
+  animation-delay: 1.4s;
+  color: #ff6b9d;
+}
+
+@keyframes sparkle-twinkle {
+  0%, 100% { 
+    opacity: 0.3; 
+    transform: scale(0.8) rotate(0deg); 
+  }
+  50% { 
+    opacity: 1; 
+    transform: scale(1.2) rotate(180deg); 
+  }
+}
+
+.hologram-line {
+  position: absolute;
+  top: 50%;
+  left: -10%;
+  right: -10%;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(0, 212, 255, 0.6) 20%,
+    rgba(90, 168, 255, 0.8) 50%,
+    rgba(168, 85, 247, 0.6) 80%,
+    transparent 100%
+  );
+  animation: hologram-scan 3s ease-in-out infinite;
+  transform: translateY(-50%);
+}
+
+@keyframes hologram-scan {
+  0%, 100% { 
+    opacity: 0; 
+    transform: translateY(-50%) scaleX(0); 
+  }
+  50% { 
+    opacity: 1; 
+    transform: translateY(-50%) scaleX(1); 
+  }
+}
+
+/* Hover Effects for Title */
+.enhanced-title:hover .enhanced-name {
+  animation: 
+    gradient-shift 1s ease-in-out infinite,
+    name-hover-glow 0.5s ease-out forwards;
+}
+
+.enhanced-title:hover .enhanced-3d {
+  animation: 
+    threed-rotate 2s ease-in-out infinite,
+    gradient-shift 1s ease-in-out infinite,
+    threed-hover-pulse 0.5s ease-out forwards;
+}
+
+@keyframes name-hover-glow {
+  0% { filter: drop-shadow(0 4px 8px rgba(90, 168, 255, 0.3)); }
+  100% { filter: drop-shadow(0 8px 16px rgba(90, 168, 255, 0.6)); }
+}
+
+@keyframes threed-hover-pulse {
+  0% { 
+    filter: drop-shadow(0 6px 12px rgba(255, 155, 74, 0.4)); 
+    transform: perspective(1000px) scale(1);
+  }
+  100% { 
+    filter: drop-shadow(0 12px 24px rgba(255, 155, 74, 0.7)); 
+    transform: perspective(1000px) scale(1.05);
+  }
+}
+
+/* Legacy styles for compatibility */
 .welcome-accent {
   color: #5aa8ff;
   display: inline-block;
@@ -97,6 +309,45 @@
   font-size: 3.5rem;
   margin-top: 0.5rem;
   animation: float 4s ease-in-out infinite;
+}
+
+/* Mobile responsiveness for enhanced title */
+@media (max-width: 768px) {
+  .enhanced-title {
+    font-size: 2.5rem;
+    letter-spacing: 1px;
+  }
+  
+  .enhanced-3d {
+    font-size: 3rem;
+  }
+  
+  .sparkle {
+    font-size: 1rem;
+  }
+  
+  .hologram-line {
+    height: 1px;
+  }
+}
+
+@media (max-width: 576px) {
+  .enhanced-title {
+    font-size: 2rem;
+    letter-spacing: 0.5px;
+  }
+  
+  .enhanced-3d {
+    font-size: 2.5rem;
+  }
+  
+  .sparkle {
+    font-size: 0.8rem;
+  }
+  
+  .text-decoration {
+    display: none; /* Hide decorative elements on very small screens */
+  }
 }
 
 /* Typewriter Effect */

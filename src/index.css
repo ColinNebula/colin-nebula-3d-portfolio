@@ -1,23 +1,6 @@
 /* Main component styles - theme variables are centralized in theme.css */
 
-/* Define CSS variables for colors and transitions (legacy - moved to theme.css) */
-:root {
-	--primary: #0ea5e9;     /* bright sky blue (accent) */
-	--secondary: #ffb347;   /* warm orange (accent) */
-	--dark: #f6f9fc;        /* very light background */
-	--darker: #edf6fb;      /* soft blue tint */
-	--text: #0b2335;        /* darker slate for improved contrast on light bg */
-	--light: #ffffff;
-	--transition-duration: 0.5s;
-	--hover-transform: translateY(5px);
-
-	/* Enhanced theme variables for UI surfaces, cards, nav, and focus */
-	--surface: var(--dark);        /* page surface / background */
-	--card-bg: #ffffff;           /* default card background */
-	--nav-bg: #ffffff;            /* nav background */
-	--muted: #64748b;             /* secondary text */
-	--focus: #0ea5e9;             /* focus outline */
-}
+/* Remove duplicate CSS variables - they're now handled centrally in theme.css */
 
 * {
 	box-sizing: border-box;

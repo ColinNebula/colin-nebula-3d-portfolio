@@ -70,10 +70,22 @@ function Navigation(props) {
     const [appliedTheme, setAppliedTheme] = useState(() => {
       try {
         const saved = localStorage.getItem('nebula_theme');
-        const userPref = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        const systemPref = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        const userPref = saved || systemPref;
+        
+        // Ensure theme is applied immediately to prevent flash
         document.documentElement.setAttribute('data-theme', userPref);
+        
+        // Force a repaint to ensure styles are applied
+        document.documentElement.style.display = 'none';
+        document.documentElement.offsetHeight; // trigger reflow
+        document.documentElement.style.display = '';
+        
+        console.log('Theme initialized:', userPref);
         return userPref;
-      } catch {
+      } catch (error) {
+        console.warn('Theme initialization failed, defaulting to light:', error);
+        document.documentElement.setAttribute('data-theme', 'light');
         return 'light';
       }
     });
@@ -89,6 +101,15 @@ function Navigation(props) {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Effect to ensure theme consistency
+  useEffect(() => {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    if (currentTheme !== appliedTheme) {
+      console.log('Theme sync: updating DOM from', currentTheme, 'to', appliedTheme);
+      document.documentElement.setAttribute('data-theme', appliedTheme);
+    }
+  }, [appliedTheme]);
 
   // Effect to disable/enable scroll when modal is open
   useEffect(() => {
@@ -259,6 +280,7 @@ function Navigation(props) {
 
             setAuthUser(adminUser);
             setAuthToken('admin-token-' + Date.now());
+            setShowNotifications(false); // Reset notifications dropdown
             
             if (rememberMe) {
               localStorage.setItem('authToken', 'admin-token-' + Date.now());
@@ -298,6 +320,7 @@ function Navigation(props) {
           // Successful login
           setAuthToken('demo-token-' + Date.now());
           setAuthUser(user);
+          setShowNotifications(false); // Reset notifications dropdown
           
           if (rememberMe) {
             localStorage.setItem('nebula_auth_token', 'demo-token-' + Date.now());
@@ -354,6 +377,7 @@ function Navigation(props) {
     const handleLogout = () => {
       setAuthToken(null);
       setAuthUser(null);
+      setShowNotifications(false); // Close notifications dropdown
       localStorage.removeItem('nebula_auth_token');
       localStorage.removeItem('nebula_auth_user');
       
@@ -368,6 +392,10 @@ function Navigation(props) {
     // Theme toggle
     const toggleTheme = useCallback(() => {
       const newTheme = appliedTheme === 'light' ? 'dark' : 'light';
+      
+      // Add transition class for smooth theme switching
+      document.documentElement.classList.add('theme-transition');
+      
       setAppliedTheme(newTheme);
       document.documentElement.setAttribute('data-theme', newTheme);
       
@@ -377,6 +405,11 @@ function Navigation(props) {
         console.warn('Could not save theme preference:', error);
       }
       
+      // Remove transition class after animation completes
+      setTimeout(() => {
+        document.documentElement.classList.remove('theme-transition');
+      }, 300);
+      
       const announcement = `Theme switched to ${newTheme} mode`;
       setThemeAnnounce(announcement);
       setTimeout(() => setThemeAnnounce(''), 1000);
@@ -385,6 +418,10 @@ function Navigation(props) {
         category: 'system',
         icon: newTheme === 'dark' ? '🌙' : '☀️'
       });
+      
+      // Debug logging (remove in production)
+      console.log(`Theme switched from ${appliedTheme} to ${newTheme}`);
+      console.log('Current data-theme:', document.documentElement.getAttribute('data-theme'));
     }, [appliedTheme, showNotification]);
 
     // Close mobile nav when a link is clicked
@@ -420,19 +457,19 @@ function Navigation(props) {
             <Navbar.Toggle aria-controls="basic-navbar-nav" aria-label="Toggle navigation" />
             <Navbar.Collapse id="basic-navbar-nav" aria-label="Primary">
               <Nav className="ms-auto">
-                <Nav.Link as={NavLink} to="/" onClick={handleNavClick} style={{ color: appliedTheme === 'light' ? '#212529' : '#e9ecef', marginRight: '2px' }}>
+                <Nav.Link as={NavLink} to="/" onClick={handleNavClick} style={{ color: appliedTheme === 'light' ? '#212529' : '#e9ecef', marginRight: '6px' }}>
                   Home
                 </Nav.Link>
-                <Nav.Link as={NavLink} to="/portfolio" onClick={handleNavClick} style={{ color: appliedTheme === 'light' ? '#212529' : '#e9ecef', marginRight: '2px' }}>
+                <Nav.Link as={NavLink} to="/portfolio" onClick={handleNavClick} style={{ color: appliedTheme === 'light' ? '#212529' : '#e9ecef', marginRight: '6px' }}>
                   Portfolio
                 </Nav.Link>
-                <Nav.Link as={NavLink} to="/video-editing" onClick={handleNavClick} style={{ color: appliedTheme === 'light' ? '#212529' : '#e9ecef', marginRight: '2px' }}>
+                <Nav.Link as={NavLink} to="/video-editing" onClick={handleNavClick} style={{ color: appliedTheme === 'light' ? '#212529' : '#e9ecef', marginRight: '6px' }}>
                   Video
                 </Nav.Link>
-                <Nav.Link as={NavLink} to="/artwork" onClick={handleNavClick} style={{ color: appliedTheme === 'light' ? '#212529' : '#e9ecef', marginRight: '2px' }}>
+                <Nav.Link as={NavLink} to="/artwork" onClick={handleNavClick} style={{ color: appliedTheme === 'light' ? '#212529' : '#e9ecef', marginRight: '6px' }}>
                   Artwork
                 </Nav.Link>
-                <Nav.Link as={NavLink} to="/animation" onClick={handleNavClick} style={{ color: appliedTheme === 'light' ? '#212529' : '#e9ecef', marginRight: '2px' }}>
+                <Nav.Link as={NavLink} to="/animation" onClick={handleNavClick} style={{ color: appliedTheme === 'light' ? '#212529' : '#e9ecef', marginRight: '6px' }}>
                   Animation
                 </Nav.Link>
 
@@ -445,7 +482,7 @@ function Navigation(props) {
                   }
                   id="more-dropdown"
                   align="end"
-                  style={{ marginRight: '2px' }}
+                  style={{ marginRight: '6px' }}
                 >
                   <NavDropdown.Item 
                     onClick={() => {
@@ -473,175 +510,177 @@ function Navigation(props) {
                   </NavDropdown.Item>
                 </NavDropdown>
 
-                {/* Notifications/More Dropdown */}
-                <NavDropdown
-                  title={
-                    <span style={{ position: 'relative', color: appliedTheme === 'light' ? '#212529' : '#e9ecef' }}>
-                      🔔
-                      {unreadCount > 0 && (
-                        <Badge
-                          bg="danger"
-                          style={{
-                            position: 'absolute',
-                            top: '-8px',
-                            right: '-8px',
-                            fontSize: '0.75rem',
-                            minWidth: '18px',
-                            height: '18px',
-                            borderRadius: '50%',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                          }}
-                        >
-                          {unreadCount > 99 ? '99+' : unreadCount}
-                        </Badge>
-                      )}
-                    </span>
-                  }
-                  id="notifications-dropdown"
-                  show={showNotifications}
-                  onToggle={(isOpen) => {
-                    setShowNotifications(isOpen);
-                    if (isOpen) {
-                      setNotifAnnounce(`${activeNotifications.length} notifications available`);
-                      setTimeout(() => setNotifAnnounce(''), 3000);
+                {/* Notifications/More Dropdown - Only show when logged in */}
+                {authUser && (
+                  <NavDropdown
+                    title={
+                      <span style={{ position: 'relative', color: appliedTheme === 'light' ? '#212529' : '#e9ecef' }}>
+                        🔔
+                        {unreadCount > 0 && (
+                          <Badge
+                            bg="danger"
+                            style={{
+                              position: 'absolute',
+                              top: '-8px',
+                              right: '-8px',
+                              fontSize: '0.75rem',
+                              minWidth: '18px',
+                              height: '18px',
+                              borderRadius: '50%',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center'
+                            }}
+                          >
+                            {unreadCount > 99 ? '99+' : unreadCount}
+                          </Badge>
+                        )}
+                      </span>
                     }
-                  }}
-                  align="end"
-                  style={{ marginRight: '2px' }}
-                >
-                  <div style={{ padding: '12px 16px', borderBottom: '1px solid #eee', background: '#f8f9fa' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                      <strong>Notifications ({activeNotifications.length})</strong>
-                      {activeNotifications.length > 0 && (
-                        <Button
-                          variant="outline-secondary"
-                          size="sm"
-                          onClick={() => {
-                            dismissAllNotifications();
-                            setShowNotifications(false);
-                          }}
-                        >
-                          Clear All
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-
-                  {activeNotifications.length === 0 ? (
-                    <div style={{ padding: '20px', textAlign: 'center', color: '#6c757d' }}>
-                      <div style={{ fontSize: '2rem', marginBottom: '8px' }}>🔕</div>
-                      <div>No notifications</div>
-                      <div style={{ fontSize: '0.875rem' }}>You're all caught up!</div>
-                    </div>
-                  ) : (
-                    activeNotifications.slice(0, 5).map(notification => (
-                      <NavDropdown.Item key={notification.id} style={{ whiteSpace: 'normal' }}>
-                        <div style={{ fontSize: '0.9rem' }}>
-                          <span style={{ marginRight: '6px' }}>{notification.icon || '📋'}</span>
-                          {notification.message}
-                        </div>
-                        <small style={{ color: '#6c757d' }}>
-                          {new Date(notification.createdAt).toLocaleTimeString()}
-                        </small>
-                      </NavDropdown.Item>
-                    ))
-                  )}
-                  
-                  <NavDropdown.Divider />
-                  
-                  {/* Updates Section */}
-                  <div style={{ padding: '8px 16px', background: '#f8f9fa', borderBottom: '1px solid #eee' }}>
-                    <strong style={{ fontSize: '0.9rem', color: '#495057' }}>📈 Updates</strong>
-                  </div>
-                  <NavDropdown.Item>
-                    <div style={{ fontSize: '0.85rem' }}>
-                      <span style={{ marginRight: '6px' }}>🎨</span>
-                      Portfolio v2.5 - New animations added
-                    </div>
-                    <small style={{ color: '#6c757d' }}>2 hours ago</small>
-                  </NavDropdown.Item>
-                  <NavDropdown.Item>
-                    <div style={{ fontSize: '0.85rem' }}>
-                      <span style={{ marginRight: '6px' }}>🔒</span>
-                      Enhanced security features deployed
-                    </div>
-                    <small style={{ color: '#6c757d' }}>1 day ago</small>
-                  </NavDropdown.Item>
-                  <NavDropdown.Item>
-                    <div style={{ fontSize: '0.85rem' }}>
-                      <span style={{ marginRight: '6px' }}>🌙</span>
-                      Dark mode improvements released
-                    </div>
-                    <small style={{ color: '#6c757d' }}>3 days ago</small>
-                  </NavDropdown.Item>
-
-                  <NavDropdown.Divider />
-
-                  {/* Accounts Section */}
-                  <div style={{ padding: '8px 16px', background: '#f8f9fa', borderBottom: '1px solid #eee' }}>
-                    <strong style={{ fontSize: '0.9rem', color: '#495057' }}>👥 Accounts</strong>
-                  </div>
-                  <NavDropdown.Item>
-                    <div style={{ fontSize: '0.85rem' }}>
-                      <span style={{ marginRight: '6px' }}>✅</span>
-                      Email verification completed
-                    </div>
-                    <small style={{ color: '#6c757d' }}>Just now</small>
-                  </NavDropdown.Item>
-                  <NavDropdown.Item>
-                    <div style={{ fontSize: '0.85rem' }}>
-                      <span style={{ marginRight: '6px' }}>🔐</span>
-                      Password updated successfully
-                    </div>
-                    <small style={{ color: '#6c757d' }}>2 days ago</small>
-                  </NavDropdown.Item>
-                  <NavDropdown.Item>
-                    <div style={{ fontSize: '0.85rem' }}>
-                      <span style={{ marginRight: '6px' }}>🆙</span>
-                      Account validation level increased
-                    </div>
-                    <small style={{ color: '#6c757d' }}>1 week ago</small>
-                  </NavDropdown.Item>
-
-                  <NavDropdown.Divider />
-                  
-                  {/* Action Items */}
-                  <NavDropdown.Item 
-                    onClick={() => {
-                      showNotification('Test notification from nav!', 'info', 3000, {
-                        category: 'system',
-                        icon: '🧪'
-                      });
-                      setShowNotifications(false);
+                    id="notifications-dropdown"
+                    show={showNotifications}
+                    onToggle={(isOpen) => {
+                      setShowNotifications(isOpen);
+                      if (isOpen) {
+                        setNotifAnnounce(`${activeNotifications.length} notifications available`);
+                        setTimeout(() => setNotifAnnounce(''), 3000);
+                      }
                     }}
+                    align="end"
+                    style={{ marginRight: '6px' }}
                   >
-                    🧪 Test Notification
-                  </NavDropdown.Item>
-                  <NavDropdown.Item 
-                    onClick={() => {
-                      showNotification('Portfolio update available! New features added.', 'info', 5000, {
-                        category: 'updates',
-                        icon: '📈'
-                      });
-                      setShowNotifications(false);
-                    }}
-                  >
-                    📈 Check for Updates
-                  </NavDropdown.Item>
-                  <NavDropdown.Item 
-                    onClick={() => {
-                      showNotification('Account settings reviewed successfully.', 'success', 3000, {
-                        category: 'accounts',
-                        icon: '👥'
-                      });
-                      setShowNotifications(false);
-                    }}
-                  >
-                    👥 Account Settings
-                  </NavDropdown.Item>
-                </NavDropdown>
+                    <div style={{ padding: '12px 16px', borderBottom: '1px solid #eee', background: '#f8f9fa' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                        <strong>Notifications ({activeNotifications.length})</strong>
+                        {activeNotifications.length > 0 && (
+                          <Button
+                            variant="outline-secondary"
+                            size="sm"
+                            onClick={() => {
+                              dismissAllNotifications();
+                              setShowNotifications(false);
+                            }}
+                          >
+                            Clear All
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+
+                    {activeNotifications.length === 0 ? (
+                      <div style={{ padding: '20px', textAlign: 'center', color: '#6c757d' }}>
+                        <div style={{ fontSize: '2rem', marginBottom: '8px' }}>🔕</div>
+                        <div>No notifications</div>
+                        <div style={{ fontSize: '0.875rem' }}>You're all caught up!</div>
+                      </div>
+                    ) : (
+                      activeNotifications.slice(0, 5).map(notification => (
+                        <NavDropdown.Item key={notification.id} style={{ whiteSpace: 'normal' }}>
+                          <div style={{ fontSize: '0.9rem' }}>
+                            <span style={{ marginRight: '6px' }}>{notification.icon || '📋'}</span>
+                            {notification.message}
+                          </div>
+                          <small style={{ color: '#6c757d' }}>
+                            {new Date(notification.createdAt).toLocaleTimeString()}
+                          </small>
+                        </NavDropdown.Item>
+                      ))
+                    )}
+                    
+                    <NavDropdown.Divider />
+                    
+                    {/* Updates Section */}
+                    <div style={{ padding: '8px 16px', background: '#f8f9fa', borderBottom: '1px solid #eee' }}>
+                      <strong style={{ fontSize: '0.9rem', color: '#495057' }}>📈 Updates</strong>
+                    </div>
+                    <NavDropdown.Item>
+                      <div style={{ fontSize: '0.85rem' }}>
+                        <span style={{ marginRight: '6px' }}>🎨</span>
+                        Portfolio v2.5 - New animations added
+                      </div>
+                      <small style={{ color: '#6c757d' }}>2 hours ago</small>
+                    </NavDropdown.Item>
+                    <NavDropdown.Item>
+                      <div style={{ fontSize: '0.85rem' }}>
+                        <span style={{ marginRight: '6px' }}>🔒</span>
+                        Enhanced security features deployed
+                      </div>
+                      <small style={{ color: '#6c757d' }}>1 day ago</small>
+                    </NavDropdown.Item>
+                    <NavDropdown.Item>
+                      <div style={{ fontSize: '0.85rem' }}>
+                        <span style={{ marginRight: '6px' }}>🌙</span>
+                        Dark mode improvements released
+                      </div>
+                      <small style={{ color: '#6c757d' }}>3 days ago</small>
+                    </NavDropdown.Item>
+
+                    <NavDropdown.Divider />
+
+                    {/* Accounts Section */}
+                    <div style={{ padding: '8px 16px', background: '#f8f9fa', borderBottom: '1px solid #eee' }}>
+                      <strong style={{ fontSize: '0.9rem', color: '#495057' }}>👥 Accounts</strong>
+                    </div>
+                    <NavDropdown.Item>
+                      <div style={{ fontSize: '0.85rem' }}>
+                        <span style={{ marginRight: '6px' }}>✅</span>
+                        Email verification completed
+                      </div>
+                      <small style={{ color: '#6c757d' }}>Just now</small>
+                    </NavDropdown.Item>
+                    <NavDropdown.Item>
+                      <div style={{ fontSize: '0.85rem' }}>
+                        <span style={{ marginRight: '6px' }}>🔐</span>
+                        Password updated successfully
+                      </div>
+                      <small style={{ color: '#6c757d' }}>2 days ago</small>
+                    </NavDropdown.Item>
+                    <NavDropdown.Item>
+                      <div style={{ fontSize: '0.85rem' }}>
+                        <span style={{ marginRight: '6px' }}>🆙</span>
+                        Account validation level increased
+                      </div>
+                      <small style={{ color: '#6c757d' }}>1 week ago</small>
+                    </NavDropdown.Item>
+
+                    <NavDropdown.Divider />
+                    
+                    {/* Action Items */}
+                    <NavDropdown.Item 
+                      onClick={() => {
+                        showNotification('Test notification from nav!', 'info', 3000, {
+                          category: 'system',
+                          icon: '🧪'
+                        });
+                        setShowNotifications(false);
+                      }}
+                    >
+                      🧪 Test Notification
+                    </NavDropdown.Item>
+                    <NavDropdown.Item 
+                      onClick={() => {
+                        showNotification('Portfolio update available! New features added.', 'info', 5000, {
+                          category: 'updates',
+                          icon: '📈'
+                        });
+                        setShowNotifications(false);
+                      }}
+                    >
+                      📈 Check for Updates
+                    </NavDropdown.Item>
+                    <NavDropdown.Item 
+                      onClick={() => {
+                        showNotification('Account settings reviewed successfully.', 'success', 3000, {
+                          category: 'accounts',
+                          icon: '👥'
+                        });
+                        setShowNotifications(false);
+                      }}
+                    >
+                      👥 Account Settings
+                    </NavDropdown.Item>
+                  </NavDropdown>
+                )}
 
                 {/* Auth Section */}
                 {authUser ? (
@@ -649,7 +688,7 @@ function Navigation(props) {
                     title={`👤 ${authUser.name}`}
                     id="user-dropdown"
                     align="end"
-                    style={{ marginRight: '2px' }}
+                    style={{ marginRight: '6px' }}
                   >
                     <NavDropdown.Item>
                       <div style={{ padding: '8px 0' }}>
@@ -672,7 +711,7 @@ function Navigation(props) {
                       setShowLogin(true);
                       handleNavClick();
                     }}
-                    style={{ cursor: 'pointer', color: appliedTheme === 'light' ? '#212529' : '#e9ecef', marginRight: '2px' }}
+                    style={{ cursor: 'pointer', color: appliedTheme === 'light' ? '#212529' : '#e9ecef', marginRight: '6px' }}
                   >
                     👤 Login
                   </Nav.Link>
@@ -686,7 +725,14 @@ function Navigation(props) {
                     fontSize: '1.2rem',
                     padding: '0.5rem',
                     color: appliedTheme === 'light' ? '#212529' : '#e9ecef',
-                    marginRight: '2px'
+                    marginRight: '6px',
+                    transition: 'color 0.3s ease, transform 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.transform = 'scale(1.1)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.transform = 'scale(1)';
                   }}
                   aria-label={`Switch to ${appliedTheme === 'light' ? 'dark' : 'light'} theme`}
                   title={`Switch to ${appliedTheme === 'light' ? 'dark' : 'light'} theme`}
