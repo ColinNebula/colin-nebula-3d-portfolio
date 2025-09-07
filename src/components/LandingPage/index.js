@@ -9,7 +9,11 @@ const LandingPage = () => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [particles, setParticles] = useState([]);
+  const [isTouched, setIsTouched] = useState(false);
+  const [touchPosition, setTouchPosition] = useState({ x: 0, y: 0 });
+  const [lastTouchTime, setLastTouchTime] = useState(0);
   const containerRef = useRef(null);
+  const titleRef = useRef(null);
 
   // Create floating particles
   useEffect(() => {
@@ -46,6 +50,48 @@ const LandingPage = () => {
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
+
+  // Touch event handlers for mobile devices
+  useEffect(() => {
+    const handleTouchStart = (e) => {
+      const touch = e.touches[0];
+      setTouchPosition({
+        x: (touch.clientX / window.innerWidth) * 100,
+        y: (touch.clientY / window.innerHeight) * 100,
+      });
+      setIsTouched(true);
+      setLastTouchTime(Date.now());
+    };
+
+    const handleTouchMove = (e) => {
+      e.preventDefault(); // Prevent scrolling during touch interaction
+      const touch = e.touches[0];
+      setTouchPosition({
+        x: (touch.clientX / window.innerWidth) * 100,
+        y: (touch.clientY / window.innerHeight) * 100,
+      });
+    };
+
+    const handleTouchEnd = () => {
+      setTimeout(() => setIsTouched(false), 500); // Keep effect for a moment after touch ends
+    };
+
+    // Add touch event listeners specifically to the title element
+    const titleElement = titleRef.current;
+    if (titleElement) {
+      titleElement.addEventListener('touchstart', handleTouchStart, { passive: false });
+      titleElement.addEventListener('touchmove', handleTouchMove, { passive: false });
+      titleElement.addEventListener('touchend', handleTouchEnd);
+    }
+
+    return () => {
+      if (titleElement) {
+        titleElement.removeEventListener('touchstart', handleTouchStart);
+        titleElement.removeEventListener('touchmove', handleTouchMove);
+        titleElement.removeEventListener('touchend', handleTouchEnd);
+      }
+    };
+  }, [isLoaded]); // Re-run when component is loaded
 
   useEffect(() => {
     // Set page title
@@ -103,7 +149,23 @@ const LandingPage = () => {
         <Row className="landing-content text-center">
           <Col md={7} className="landing-text-col">
             <div className="landing-text-wrapper">
-              <h1 className={`display-1 fw-bold mb-4 text-white landing-title enhanced-title ${isLoaded ? 'animate' : ''}`}>
+              <h1 
+                ref={titleRef}
+                className={`display-1 fw-bold mb-4 text-white landing-title enhanced-title touch-interactive ${isLoaded ? 'animate' : ''} ${isTouched ? 'touched' : ''}`}
+                style={{
+                  '--touch-x': `${touchPosition.x}%`,
+                  '--touch-y': `${touchPosition.y}%`,
+                }}
+                onClick={() => {
+                  // Add haptic feedback for devices that support it
+                  if (navigator.vibrate) {
+                    navigator.vibrate(50);
+                  }
+                  // Trigger a touch-like effect on click for desktop users
+                  setIsTouched(true);
+                  setTimeout(() => setIsTouched(false), 500);
+                }}
+              >
                 <span className="welcome-accent enhanced-name">
                   <span className="letter-1">C</span>
                   <span className="letter-2">o</span>

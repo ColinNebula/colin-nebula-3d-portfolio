@@ -79,11 +79,164 @@
   transition: all 1.2s cubic-bezier(0.23, 1, 0.32, 1);
   text-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   position: relative;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 
 .landing-title.animate {
   opacity: 1;
   transform: translateY(0) scale(1);
+}
+
+/* Touch Interactive Styles */
+.touch-interactive {
+  touch-action: manipulation;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.touch-interactive.touched {
+  animation: touch-ripple 0.6s ease-out, touch-glow 0.8s ease-out;
+}
+
+@keyframes touch-ripple {
+  0% {
+    box-shadow: 0 0 0 0 rgba(90, 168, 255, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 20px rgba(90, 168, 255, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(90, 168, 255, 0);
+  }
+}
+
+@keyframes touch-glow {
+  0% {
+    filter: brightness(1) saturate(1);
+  }
+  50% {
+    filter: brightness(1.3) saturate(1.5);
+  }
+  100% {
+    filter: brightness(1) saturate(1);
+  }
+}
+
+/* Mobile Touch Effects */
+@media (max-width: 768px) {
+  .touch-interactive {
+    padding: 1rem;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+  }
+  
+  .touch-interactive:active,
+  .touch-interactive.touched {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(90, 168, 255, 0.3);
+    transform: scale(1.02);
+  }
+  
+  .touch-interactive.touched .enhanced-name {
+    animation: 
+      gradient-shift 0.5s ease-in-out,
+      touch-letter-dance 0.8s ease-out;
+  }
+  
+  .touch-interactive.touched .enhanced-3d {
+    animation: 
+      threed-rotate 1s ease-in-out,
+      touch-3d-bounce 0.6s ease-out;
+  }
+}
+
+@keyframes touch-letter-dance {
+  0% { transform: translateY(0) rotateZ(0deg); }
+  25% { transform: translateY(-8px) rotateZ(2deg); }
+  50% { transform: translateY(-15px) rotateZ(-1deg); }
+  75% { transform: translateY(-8px) rotateZ(1deg); }
+  100% { transform: translateY(0) rotateZ(0deg); }
+}
+
+@keyframes touch-3d-bounce {
+  0% { transform: perspective(1000px) scale(1) rotateY(0deg); }
+  50% { transform: perspective(1000px) scale(1.1) rotateY(10deg); }
+  100% { transform: perspective(1000px) scale(1) rotateY(0deg); }
+}
+
+/* Touch Particle Effects */
+.touch-interactive.touched .text-decoration::after {
+  content: '';
+  position: absolute;
+  top: var(--touch-y, 50%);
+  left: var(--touch-x, 50%);
+  width: 20px;
+  height: 20px;
+  background: radial-gradient(circle, rgba(90, 168, 255, 0.8) 0%, transparent 70%);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: touch-particle-burst 0.6s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes touch-particle-burst {
+  0% {
+    width: 10px;
+    height: 10px;
+    opacity: 1;
+  }
+  100% {
+    width: 100px;
+    height: 100px;
+    opacity: 0;
+  }
+}
+
+/* Enhanced sparkle effects on touch */
+.touch-interactive.touched .sparkle {
+  animation: sparkle-twinkle 0.3s ease-in-out, touch-sparkle-burst 0.6s ease-out;
+}
+
+@keyframes touch-sparkle-burst {
+  0% { 
+    transform: scale(1) rotate(0deg); 
+    opacity: 0.8;
+  }
+  50% { 
+    transform: scale(2) rotate(180deg); 
+    opacity: 1;
+  }
+  100% { 
+    transform: scale(1) rotate(360deg); 
+    opacity: 0.8;
+  }
+}
+
+/* Haptic feedback indication */
+.touch-interactive.touched .hologram-line {
+  animation: hologram-scan 0.5s ease-in-out, touch-line-pulse 0.6s ease-out;
+}
+
+@keyframes touch-line-pulse {
+  0% { 
+    height: 2px; 
+    box-shadow: 0 0 5px rgba(90, 168, 255, 0.5);
+  }
+  50% { 
+    height: 4px; 
+    box-shadow: 0 0 15px rgba(90, 168, 255, 0.8);
+  }
+  100% { 
+    height: 2px; 
+    box-shadow: 0 0 5px rgba(90, 168, 255, 0.5);
+  }
 }
 
 /* Enhanced Name Styling */
@@ -329,6 +482,39 @@
   .hologram-line {
     height: 1px;
   }
+  
+  /* Add touch instruction for mobile */
+  .touch-interactive::before {
+    content: '👆 Tap me!';
+    position: absolute;
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.6);
+    background: rgba(0, 0, 0, 0.3);
+    padding: 5px 10px;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    animation: touch-hint-pulse 2s ease-in-out infinite;
+    pointer-events: none;
+  }
+  
+  .touch-interactive.touched::before {
+    display: none;
+  }
+}
+
+@keyframes touch-hint-pulse {
+  0%, 100% { 
+    opacity: 0.6; 
+    transform: translateX(-50%) scale(1); 
+  }
+  50% { 
+    opacity: 1; 
+    transform: translateX(-50%) scale(1.05); 
+  }
 }
 
 @media (max-width: 576px) {
@@ -346,7 +532,13 @@
   }
   
   .text-decoration {
-    display: none; /* Hide decorative elements on very small screens */
+    display: block; /* Show decorative elements on small screens for touch interaction */
+  }
+  
+  .touch-interactive::before {
+    font-size: 0.8rem;
+    top: -35px;
+    padding: 4px 8px;
   }
 }
 
