@@ -36,6 +36,8 @@
     "api-install": "cd api-server && npm install",
     "api-start": "cd api-server && npm start",
     "api-dev": "cd api-server && npm run dev",
+    "api-setup": "cd api-server && npm run setup-db",
+    "setup-mysql": "cd api-server && node scripts/setup-mysql.js",
     "dev-with-api": "concurrently \"npm run api-dev\" \"npm start\"",
     "setup-api": "npm run api-install && echo 'API server dependencies installed. Run npm run dev-with-api to start both servers.'"
   },

@@ -265,6 +265,7 @@ const About = createLazyComponent(() => import('./components/About'), 'About');
 const Portfolio = createLazyComponent(() => import('./components/Portfolio'), 'Portfolio');
 const Animation = createLazyComponent(() => import('./components/Animation'), 'Animation');
 const Artwork = createLazyComponent(() => import('./components/Artwork'), 'Artwork');
+const Contact = createLazyComponent(() => import('./components/Contact'), 'Contact');
 const PrivacyPolicy = createLazyComponent(() => import('./components/Private-policy'), 'Privacy Policy');
 const VideoEditing = createLazyComponent(() => import('./components/VideoEditing'), 'Video Editing');
 const Resume = createLazyComponent(() => import('./components/Resume'), 'Resume');
@@ -276,7 +277,7 @@ function App() {
   const location = useLocation();
 
   // Check if we should show fullscreen landing (hide header/footer)
-  const knownRoutes = ['/home', '/about', '/portfolio', '/animation', '/artwork', '/video-editing', '/resume', '/updates', '/account', '/privacy-policy'];
+  const knownRoutes = ['/home', '/about', '/portfolio', '/animation', '/artwork', '/video-editing', '/resume', '/contact', '/updates', '/account', '/privacy-policy'];
   const isKnownRoute = knownRoutes.some(route => location.pathname.startsWith(route));
   const shouldShowLanding = !isKnownRoute; // Show landing page for root and unknown routes
 
@@ -387,6 +388,7 @@ function App() {
                   <Route path="/artwork" element={<Artwork />} />
                   <Route path="/video-editing" element={<VideoEditing />} />
                   <Route path="/resume" element={<Resume />} />
+                  <Route path="/contact" element={<Contact />} />
                   <Route path="/updates" element={<Updates />} />
                   <Route path="/account" element={<Account />} />
                   <Route path="/privacy-policy" element={<PrivacyPolicy />} />
