@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/colion-nebula-3d-portfolio/static/css/main.fa9f7bf6.css",
-    "main.js": "/colion-nebula-3d-portfolio/static/js/main.052d1451.js",
+    "main.js": "/colion-nebula-3d-portfolio/static/js/main.ab1c486c.js",
     "static/css/941.9cc3aa3f.chunk.css": "/colion-nebula-3d-portfolio/static/css/941.9cc3aa3f.chunk.css",
     "static/js/941.d22a0e56.chunk.js": "/colion-nebula-3d-portfolio/static/js/941.d22a0e56.chunk.js",
     "static/css/770.9ef85370.chunk.css": "/colion-nebula-3d-portfolio/static/css/770.9ef85370.chunk.css",
@@ -58,6 +58,6 @@
   },
   "entrypoints": [
     "static/css/main.fa9f7bf6.css",
-    "static/js/main.052d1451.js"
+    "static/js/main.ab1c486c.js"
   ]
 }
