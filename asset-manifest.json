@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/colin-nebula-3d-portfolio/static/css/main.3f14efd9.css",
-    "main.js": "/colin-nebula-3d-portfolio/static/js/main.05deebad.js",
+    "main.css": "/colin-nebula-3d-portfolio/static/css/main.49ce4905.css",
+    "main.js": "/colin-nebula-3d-portfolio/static/js/main.1091a187.js",
     "static/css/941.9cc3aa3f.chunk.css": "/colin-nebula-3d-portfolio/static/css/941.9cc3aa3f.chunk.css",
     "static/js/941.d22a0e56.chunk.js": "/colin-nebula-3d-portfolio/static/js/941.d22a0e56.chunk.js",
     "static/css/770.430e2401.chunk.css": "/colin-nebula-3d-portfolio/static/css/770.430e2401.chunk.css",
@@ -59,7 +59,7 @@
     "index.html": "/colin-nebula-3d-portfolio/index.html"
   },
   "entrypoints": [
-    "static/css/main.3f14efd9.css",
-    "static/js/main.05deebad.js"
+    "static/css/main.49ce4905.css",
+    "static/js/main.1091a187.js"
   ]
 }
