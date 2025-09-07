@@ -3,6 +3,8 @@ import React, { useState, useEffect, useRef } from "react";
 import shapeAnimation from '../../assets/images/shapeAnimation.png';
 import rundown from '../../assets/images/rundown.png';
 import rigging from '../../assets/images/rigging.png';
+import cover1 from '../../assets/images/cover1.png';
+import g1 from '../../assets/images/g1.png';
 import { Card, Container, Button, Col, Row, Badge, Modal, Breadcrumb } from 'react-bootstrap';
 import { useNotifications } from '../../App';
 import './Animation.css';
@@ -13,6 +15,8 @@ function Animation() {
   const [lgShow1, setLgShow1] = useState(false);
   const [lgShow2, setLgShow2] = useState(false);
   const [lgShow3, setLgShow3] = useState(false);
+  const [lgShow4, setLgShow4] = useState(false); // Glass video modal
+  const [lgShow5, setLgShow5] = useState(false); // Intro video modal
 
   // features / prefs
   const [autoplay, setAutoplay] = useState(false);
@@ -21,16 +25,15 @@ function Animation() {
     try { return localStorage.getItem('animation_showLegend') === '1'; } catch { return false; }
   });
   useEffect(() => { try { localStorage.setItem('animation_showLegend', showLegend ? '1' : '0'); } catch(e){} }, [showLegend]);
-  const [shareMsg, setShareMsg] = useState('');
 
   // refs
-  const lastActiveRef = useRef(null);
   const freeIframeRef = useRef(null);
   const riggingIframeRef = useRef(null);
   const shapeIframeRef = useRef(null);
+  const glassVideoRef = useRef(null);
+  const introVideoRef = useRef(null);
 
   const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const currentYear = new Date().getFullYear();
 
   // reel ids / urls
   const REEL_IDS = {
@@ -156,14 +159,14 @@ function Animation() {
 
   // focus the modal close on open (small delay)
   useEffect(() => {
-    if (!(lgShow || lgShow1 || lgShow2 || lgShow3)) return;
+    if (!(lgShow || lgShow1 || lgShow2 || lgShow3 || lgShow4 || lgShow5)) return;
     const delay = prefersReducedMotion ? 0 : 60;
     const t = setTimeout(() => {
       const el = document.querySelector('.modal.show .btn-close');
       if (el && typeof el.focus === 'function') el.focus();
     }, delay);
     return () => clearTimeout(t);
-  }, [lgShow, lgShow1, lgShow2, lgShow3, prefersReducedMotion]);
+  }, [lgShow, lgShow1, lgShow2, lgShow3, lgShow4, lgShow5, prefersReducedMotion]);
 
   // Enhanced animation data structure
   const animationProjects = [
@@ -183,7 +186,8 @@ function Animation() {
         views: '15.2K',
         likes: '98%',
         comments: '127'
-      }
+      },
+      type: 'youtube'
     },
     {
       id: 'rigging',
@@ -200,7 +204,8 @@ function Animation() {
         views: '8.7K',
         likes: '96%',
         comments: '85'
-      }
+      },
+      type: 'youtube'
     },
     {
       id: 'shape',
@@ -217,7 +222,44 @@ function Animation() {
         views: '12.1K',
         likes: '94%',
         comments: '63'
-      }
+      },
+      type: 'youtube'
+    },
+    {
+      id: 'glass',
+      title: 'Glass Animation',
+      subtitle: 'Material & Lighting Study',
+      description: 'Realistic glass material animation demonstrating advanced lighting techniques, caustics, and transparent material properties.',
+      thumbnail: cover1,
+      videoSrc: '/colin-nebula-3d-portfolio/videos/glass.mp4',
+      duration: '1:15',
+      year: '2024',
+      software: ['Blender', 'Cycles Render'],
+      techniques: ['Glass Materials', 'Caustics', 'HDR Lighting', 'Ray Tracing'],
+      metrics: {
+        views: '3.2K',
+        likes: '92%',
+        comments: '28'
+      },
+      type: 'local'
+    },
+    {
+      id: 'intro',
+      title: 'Nebula Media Intro',
+      subtitle: 'Brand Identity Animation',
+      description: 'Professional brand introduction animation featuring dynamic logo animation, particle effects, and cinematic presentation.',
+      thumbnail: g1,
+      videoSrc: '/colin-nebula-3d-portfolio/videos/Intro1.avi',
+      duration: '0:30',
+      year: '2024',
+      software: ['After Effects', 'Cinema 4D'],
+      techniques: ['Logo Animation', 'Particle Systems', 'Motion Graphics', 'Brand Design'],
+      metrics: {
+        views: '5.8K',
+        likes: '95%',
+        comments: '42'
+      },
+      type: 'local'
     }
   ];
 
@@ -232,6 +274,8 @@ function Animation() {
     if (project.id === 'freeRider') setLgShow(true);
     else if (project.id === 'rigging') setLgShow1(true);
     else if (project.id === 'shape') setLgShow2(true);
+    else if (project.id === 'glass') setLgShow4(true);
+    else if (project.id === 'intro') setLgShow5(true);
     
     console.info('analytics', 'open_modal', project.id);
   };
@@ -245,9 +289,21 @@ function Animation() {
     setLgShow1(false);
     setLgShow2(false);
     setLgShow3(false);
+    setLgShow4(false);
+    setLgShow5(false);
     
     // Pause all videos
     [freeIframeRef, riggingIframeRef, shapeIframeRef].forEach(ref => pauseYouTube(ref));
+    
+    // Pause local videos
+    if (glassVideoRef.current) {
+      glassVideoRef.current.pause();
+      glassVideoRef.current.currentTime = 0;
+    }
+    if (introVideoRef.current) {
+      introVideoRef.current.pause();
+      introVideoRef.current.currentTime = 0;
+    }
   };
 
   // Updated keyboard shortcuts to work with new modal system
@@ -266,6 +322,14 @@ function Animation() {
       }
       if (k === '3') {
         const project = animationProjects.find(p => p.id === 'shape');
+        if (project) openProjectModal(project);
+      }
+      if (k === '4') {
+        const project = animationProjects.find(p => p.id === 'glass');
+        if (project) openProjectModal(project);
+      }
+      if (k === '5') {
+        const project = animationProjects.find(p => p.id === 'intro');
         if (project) openProjectModal(project);
       }
       if (k === 'a') setAutoplay(s => !s);
@@ -300,25 +364,25 @@ function Animation() {
                 <Row className="stats-bar g-4 mb-5">
                   <Col md={3} sm={6}>
                     <div className="stat-item">
-                      <h3 className="stat-number">35+</h3>
+                      <h3 className="stat-number">44+</h3>
                       <p className="stat-label">Total Views (K)</p>
                     </div>
                   </Col>
                   <Col md={3} sm={6}>
                     <div className="stat-item">
-                      <h3 className="stat-number">96%</h3>
+                      <h3 className="stat-number">95%</h3>
                       <p className="stat-label">Average Rating</p>
                     </div>
                   </Col>
                   <Col md={3} sm={6}>
                     <div className="stat-item">
-                      <h3 className="stat-number">275</h3>
+                      <h3 className="stat-number">345</h3>
                       <p className="stat-label">Total Comments</p>
                     </div>
                   </Col>
                   <Col md={3} sm={6}>
                     <div className="stat-item">
-                      <h3 className="stat-number">3</h3>
+                      <h3 className="stat-number">5</h3>
                       <p className="stat-label">Featured Works</p>
                     </div>
                   </Col>
@@ -446,15 +510,31 @@ function Animation() {
                 <Col lg={8}>
                   <div className="video-container">
                     <div className="ratio ratio-16x9">
-                      <iframe
-                        ref={currentModal === 'freeRider' ? freeIframeRef : 
-                             currentModal === 'rigging' ? riggingIframeRef : shapeIframeRef}
-                        title={`${selectedProject.title} video`}
-                        src={getEmbedSrc(selectedProject.videoId)}
-                        frameBorder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
-                        allowFullScreen
-                      />
+                      {selectedProject.type === 'youtube' ? (
+                        <iframe
+                          ref={currentModal === 'freeRider' ? freeIframeRef : 
+                               currentModal === 'rigging' ? riggingIframeRef : shapeIframeRef}
+                          title={`${selectedProject.title} video`}
+                          src={getEmbedSrc(selectedProject.videoId)}
+                          frameBorder="0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+                          allowFullScreen
+                        />
+                      ) : (
+                        <video
+                          ref={currentModal === 'glass' ? glassVideoRef : introVideoRef}
+                          controls
+                          autoPlay={autoplay}
+                          muted={muted}
+                          loop
+                          className="w-100 h-100"
+                          style={{ objectFit: 'cover' }}
+                        >
+                          <source src={selectedProject.videoSrc} type="video/mp4" />
+                          <source src={selectedProject.videoSrc} type="video/x-msvideo" />
+                          Your browser does not support the video tag.
+                        </video>
+                      )}
                     </div>
                   </div>
                 </Col>
@@ -551,20 +631,47 @@ function Animation() {
                 <Button 
                   variant="outline-primary" 
                   className="rounded-pill me-2"
-                  onClick={() => copyToClipboard(REEL_URLS[selectedProject.id])}
+                  onClick={() => {
+                    if (selectedProject.type === 'youtube') {
+                      copyToClipboard(REEL_URLS[selectedProject.id]);
+                    } else {
+                      copyToClipboard(`${window.location.origin}${selectedProject.videoSrc}`);
+                    }
+                  }}
                 >
                   🔗 Copy Link
                 </Button>
-                <a 
-                  href={REEL_URLS[selectedProject.id]}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-primary rounded-pill"
-                  onMouseEnter={preconnectYouTube}
-                  onClick={() => noteOpen(REEL_URLS[selectedProject.id])}
-                >
-                  📺 Open on YouTube
-                </a>
+                {selectedProject.type === 'youtube' ? (
+                  <a 
+                    href={REEL_URLS[selectedProject.id]}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn-primary rounded-pill"
+                    onMouseEnter={preconnectYouTube}
+                    onClick={() => noteOpen(REEL_URLS[selectedProject.id])}
+                  >
+                    📺 Open on YouTube
+                  </a>
+                ) : (
+                  <Button
+                    variant="primary"
+                    className="rounded-pill"
+                    onClick={() => {
+                      const video = currentModal === 'glass' ? glassVideoRef.current : introVideoRef.current;
+                      if (video) {
+                        if (video.requestFullscreen) {
+                          video.requestFullscreen();
+                        } else if (video.webkitRequestFullscreen) {
+                          video.webkitRequestFullscreen();
+                        } else if (video.msRequestFullscreen) {
+                          video.msRequestFullscreen();
+                        }
+                      }
+                    }}
+                  >
+                    🔍 Full Screen
+                  </Button>
+                )}
               </div>
             </Modal.Footer>
           </>
@@ -585,7 +692,7 @@ function Animation() {
           </div>
           <div className="panel-content">
             <div className="shortcut-item">
-              <kbd>1-3</kbd>
+              <kbd>1-5</kbd>
               <span>Open project modals</span>
             </div>
             <div className="shortcut-item">

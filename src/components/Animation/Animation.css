@@ -73,15 +73,40 @@
   padding: 2rem 0 4rem;
 }
 
-/* Animation Grid Layout */
+/* Animation Grid Layout - Updated for 5 cards */
 .animation-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 2rem;
   margin-top: 2rem;
-  max-width: 1200px;
+  max-width: 1400px;
   margin-left: auto;
   margin-right: auto;
+}
+
+@media (min-width: 1600px) {
+  .animation-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+@media (min-width: 1200px) and (max-width: 1599px) {
+  .animation-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
+  .animation-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 767px) {
+  .animation-grid {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+  }
 }
 
 .project-card {
@@ -413,26 +438,6 @@
 }
 
 /* Responsive Design */
-@media (max-width: 1200px) {
-  .animation-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
-    max-width: 800px;
-  }
-}
-
-@media (max-width: 992px) {
-  .animation-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
-    max-width: 700px;
-  }
-  
-  .project-card {
-    min-height: 420px;
-  }
-}
-
 @media (max-width: 768px) {
   .animation-header {
     padding: 2rem 0;
@@ -445,12 +450,6 @@
   
   .stat-number {
     font-size: 2rem;
-  }
-  
-  .animation-grid {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-    max-width: 400px;
   }
   
   .project-card {

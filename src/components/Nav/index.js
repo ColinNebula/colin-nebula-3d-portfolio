@@ -953,6 +953,7 @@ function Navigation(props) {
                 style={({isActive}) => ({ 
                   color: isActive ? undefined : (appliedTheme === 'light' ? '#212529' : '#e9ecef') 
                 })}
+                onClick={() => setExpanded(false)}
                 end
               >
                 Home
@@ -964,6 +965,7 @@ function Navigation(props) {
                 style={({isActive}) => ({ 
                   color: isActive ? undefined : (appliedTheme === 'light' ? '#212529' : '#e9ecef') 
                 })}
+                onClick={() => setExpanded(false)}
               >
                 Portfolio
               </NavLink>
@@ -974,6 +976,7 @@ function Navigation(props) {
                 style={({isActive}) => ({ 
                   color: isActive ? undefined : (appliedTheme === 'light' ? '#212529' : '#e9ecef') 
                 })}
+                onClick={() => setExpanded(false)}
               >
                 Artwork
               </NavLink>
@@ -984,6 +987,7 @@ function Navigation(props) {
                 style={({isActive}) => ({ 
                   color: isActive ? undefined : (appliedTheme === 'light' ? '#212529' : '#e9ecef') 
                 })}
+                onClick={() => setExpanded(false)}
               >
                 Animation
               </NavLink>
@@ -994,6 +998,7 @@ function Navigation(props) {
                 style={({isActive}) => ({ 
                   color: isActive ? undefined : (appliedTheme === 'light' ? '#212529' : '#e9ecef') 
                 })}
+                onClick={() => setExpanded(false)}
               >
                 VFX
               </NavLink>
@@ -1005,11 +1010,38 @@ function Navigation(props) {
                 menuVariant={appliedTheme === 'light' ? 'light' : 'dark'} 
                 aria-label="More links"
               >
-                <NavDropdown.Item as={NavLink} to="/privacy-policy">Privacy Policy</NavDropdown.Item>
-                <NavDropdown.Item href="mailto:colinnebula@gmail.com" title="Email Colin">Contact</NavDropdown.Item>
-                <NavDropdown.Item as={NavLink} to="/resume" title="View Resume">Resume</NavDropdown.Item>
+                <NavDropdown.Item 
+                  as={NavLink} 
+                  to="/privacy-policy"
+                  onClick={() => setExpanded(false)}
+                >
+                  Privacy Policy
+                </NavDropdown.Item>
+                <NavDropdown.Item 
+                  href="mailto:colinnebula@gmail.com" 
+                  title="Email Colin"
+                  onClick={() => setExpanded(false)}
+                >
+                  Contact
+                </NavDropdown.Item>
+                <NavDropdown.Item 
+                  as={NavLink} 
+                  to="/resume" 
+                  title="View Resume"
+                  onClick={() => setExpanded(false)}
+                >
+                  Resume
+                </NavDropdown.Item>
                 <NavDropdown.Divider />
-                <NavDropdown.Item href="https://github.com/ColinNebula" target="_blank" rel="noopener noreferrer" title="Open GitHub">GitHub</NavDropdown.Item>
+                <NavDropdown.Item 
+                  href="https://github.com/ColinNebula" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  title="Open GitHub"
+                  onClick={() => setExpanded(false)}
+                >
+                  GitHub
+                </NavDropdown.Item>
               </NavDropdown>
  
               <div className="mx-2" style={{ display: 'flex', alignItems: 'center' }}>
@@ -1018,7 +1050,13 @@ function Navigation(props) {
                   <div className="notification-dropdown">
                     <button
                       className="notification-bell-btn"
-                      onClick={() => setShowNotifications(!showNotifications)}
+                      onClick={() => {
+                        setShowNotifications(!showNotifications);
+                        // Close navigation on small screens when opening notifications
+                        if (!showNotifications) {
+                          setExpanded(false);
+                        }
+                      }}
                       aria-label={`Notifications (${unreadCount} unread)`}
                       aria-expanded={showNotifications}
                       aria-controls="notification-panel"
@@ -1401,7 +1439,11 @@ function Navigation(props) {
                   <div className="notification-login-prompt" title="Log in to view notifications">
                     <button
                       className="notification-login-btn"
-                      onClick={() => setShowLogin(true)}
+                      onClick={() => {
+                        setShowLogin(true);
+                        // Close navigation on small screens
+                        setExpanded(false);
+                      }}
                       aria-label="Log in to view notifications"
                       style={{
                         background: 'transparent',
@@ -1480,6 +1522,9 @@ function Navigation(props) {
                       }, 100);
                     }, 100);
                     
+                    // Close navigation on small screens
+                    setExpanded(false);
+                    
                     // Call the toggle function
                     toggleTheme();
                   }}
@@ -1507,7 +1552,12 @@ function Navigation(props) {
                 <button
                    type="button"
                    className={`btn btn-sm ms-2 rounded-pill login-logout-btn`}
-                   onClick={() => { authToken ? logout() : setShowLogin(true); }}
+                   onClick={() => { 
+                     // Close navigation on small screens
+                     setExpanded(false);
+                     // Handle auth action
+                     authToken ? logout() : setShowLogin(true); 
+                   }}
                    aria-label={authToken ? 'Logout' : 'Login'}
                    style={{
                      padding: '6px 12px',

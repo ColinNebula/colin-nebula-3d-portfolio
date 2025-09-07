@@ -31,3 +31,7 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Large video files
+public/videos/*.avi
+public/videos/Intro1.avi
