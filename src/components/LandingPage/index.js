@@ -12,8 +12,16 @@ const LandingPage = () => {
   const [isTouched, setIsTouched] = useState(false);
   const [touchPosition, setTouchPosition] = useState({ x: 0, y: 0 });
   const [lastTouchTime, setLastTouchTime] = useState(0);
+  const [touchCount, setTouchCount] = useState(0);
+  const [isDoubleTap, setIsDoubleTap] = useState(false);
+  const [touchIntensity, setTouchIntensity] = useState(0);
+  const [touchTrail, setTouchTrail] = useState([]);
+  const [isLongPress, setIsLongPress] = useState(false);
+  const [touchStartTime, setTouchStartTime] = useState(0);
+  const [gestureType, setGestureType] = useState(null);
   const containerRef = useRef(null);
   const titleRef = useRef(null);
+  const longPressTimer = useRef(null);
 
   // Create floating particles
   useEffect(() => {
@@ -51,29 +59,133 @@ const LandingPage = () => {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
-  // Touch event handlers for mobile devices
+  // Enhanced touch event handlers for mobile devices
   useEffect(() => {
     const handleTouchStart = (e) => {
+      e.preventDefault();
       const touch = e.touches[0];
-      setTouchPosition({
-        x: (touch.clientX / window.innerWidth) * 100,
-        y: (touch.clientY / window.innerHeight) * 100,
-      });
+      const currentTime = Date.now();
+      const touchX = (touch.clientX / window.innerWidth) * 100;
+      const touchY = (touch.clientY / window.innerHeight) * 100;
+      
+      setTouchPosition({ x: touchX, y: touchY });
+      setTouchStartTime(currentTime);
       setIsTouched(true);
-      setLastTouchTime(Date.now());
+      setGestureType('tap');
+      
+      // Multi-tap detection
+      if (currentTime - lastTouchTime < 300) {
+        setTouchCount(prev => prev + 1);
+        if (touchCount >= 1) {
+          setIsDoubleTap(true);
+          setGestureType('double-tap');
+          // Triple haptic feedback for double tap
+          if (navigator.vibrate) {
+            navigator.vibrate([30, 50, 30]);
+          }
+          setTimeout(() => setIsDoubleTap(false), 800);
+        }
+      } else {
+        setTouchCount(1);
+      }
+      
+      setLastTouchTime(currentTime);
+      
+      // Long press detection
+      longPressTimer.current = setTimeout(() => {
+        setIsLongPress(true);
+        setGestureType('long-press');
+        // Long haptic feedback for long press
+        if (navigator.vibrate) {
+          navigator.vibrate(100);
+        }
+      }, 500);
+      
+      // Create touch trail
+      setTouchTrail(prev => [
+        ...prev.slice(-8), // Keep last 8 points
+        { 
+          x: touchX, 
+          y: touchY, 
+          time: currentTime,
+          id: Math.random()
+        }
+      ]);
+      
+      // Single tap haptic
+      if (navigator.vibrate && touchCount <= 1) {
+        navigator.vibrate(30);
+      }
     };
 
     const handleTouchMove = (e) => {
-      e.preventDefault(); // Prevent scrolling during touch interaction
+      e.preventDefault();
       const touch = e.touches[0];
-      setTouchPosition({
-        x: (touch.clientX / window.innerWidth) * 100,
-        y: (touch.clientY / window.innerHeight) * 100,
-      });
+      const touchX = (touch.clientX / window.innerWidth) * 100;
+      const touchY = (touch.clientY / window.innerHeight) * 100;
+      
+      setTouchPosition({ x: touchX, y: touchY });
+      setGestureType('swipe');
+      
+      // Calculate touch intensity based on movement speed
+      const lastTrail = touchTrail[touchTrail.length - 1];
+      if (lastTrail) {
+        const deltaX = Math.abs(touchX - lastTrail.x);
+        const deltaY = Math.abs(touchY - lastTrail.y);
+        const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        setTouchIntensity(Math.min(distance * 2, 100));
+      }
+      
+      // Add to touch trail
+      setTouchTrail(prev => [
+        ...prev.slice(-8),
+        { 
+          x: touchX, 
+          y: touchY, 
+          time: Date.now(),
+          id: Math.random()
+        }
+      ]);
+      
+      // Cancel long press if moving
+      if (longPressTimer.current) {
+        clearTimeout(longPressTimer.current);
+        setIsLongPress(false);
+      }
     };
 
-    const handleTouchEnd = () => {
-      setTimeout(() => setIsTouched(false), 500); // Keep effect for a moment after touch ends
+    const handleTouchEnd = (e) => {
+      e.preventDefault();
+      const touchDuration = Date.now() - touchStartTime;
+      
+      // Clear long press timer
+      if (longPressTimer.current) {
+        clearTimeout(longPressTimer.current);
+      }
+      
+      // Determine final gesture type
+      if (touchDuration > 500) {
+        setGestureType('long-press');
+      } else if (isDoubleTap) {
+        setGestureType('double-tap');
+      } else if (touchTrail.length > 3) {
+        setGestureType('swipe');
+      } else {
+        setGestureType('tap');
+      }
+      
+      // Gradually fade effects
+      setTimeout(() => {
+        setIsTouched(false);
+        setIsLongPress(false);
+        setTouchIntensity(0);
+      }, 600);
+      
+      // Clear touch trail after delay
+      setTimeout(() => {
+        setTouchTrail([]);
+        setGestureType(null);
+      }, 1000);
     };
 
     // Add touch event listeners specifically to the title element
@@ -81,7 +193,7 @@ const LandingPage = () => {
     if (titleElement) {
       titleElement.addEventListener('touchstart', handleTouchStart, { passive: false });
       titleElement.addEventListener('touchmove', handleTouchMove, { passive: false });
-      titleElement.addEventListener('touchend', handleTouchEnd);
+      titleElement.addEventListener('touchend', handleTouchEnd, { passive: false });
     }
 
     return () => {
@@ -90,8 +202,11 @@ const LandingPage = () => {
         titleElement.removeEventListener('touchmove', handleTouchMove);
         titleElement.removeEventListener('touchend', handleTouchEnd);
       }
+      if (longPressTimer.current) {
+        clearTimeout(longPressTimer.current);
+      }
     };
-  }, [isLoaded]); // Re-run when component is loaded
+  }, [isLoaded, touchCount, lastTouchTime, touchTrail, touchStartTime, isDoubleTap]); // Dependencies for touch logic
 
   useEffect(() => {
     // Set page title
@@ -151,19 +266,25 @@ const LandingPage = () => {
             <div className="landing-text-wrapper">
               <h1 
                 ref={titleRef}
-                className={`display-1 fw-bold mb-4 text-white landing-title enhanced-title touch-interactive ${isLoaded ? 'animate' : ''} ${isTouched ? 'touched' : ''}`}
+                className={`display-1 fw-bold mb-4 text-white landing-title enhanced-title touch-interactive ${isLoaded ? 'animate' : ''} ${isTouched ? 'touched' : ''} ${isDoubleTap ? 'double-tapped' : ''} ${isLongPress ? 'long-pressed' : ''} ${gestureType ? `gesture-${gestureType}` : ''}`}
                 style={{
                   '--touch-x': `${touchPosition.x}%`,
                   '--touch-y': `${touchPosition.y}%`,
+                  '--touch-intensity': touchIntensity,
+                  '--touch-count': touchCount,
                 }}
                 onClick={() => {
-                  // Add haptic feedback for devices that support it
+                  // Enhanced haptic feedback for devices that support it
                   if (navigator.vibrate) {
-                    navigator.vibrate(50);
+                    navigator.vibrate([50, 30, 50]);
                   }
                   // Trigger a touch-like effect on click for desktop users
                   setIsTouched(true);
-                  setTimeout(() => setIsTouched(false), 500);
+                  setGestureType('click');
+                  setTimeout(() => {
+                    setIsTouched(false);
+                    setGestureType(null);
+                  }, 800);
                 }}
               >
                 <span className="welcome-accent enhanced-name">
@@ -186,6 +307,35 @@ const LandingPage = () => {
                   <div className="sparkle sparkle-2">✦</div>
                   <div className="sparkle sparkle-3">✨</div>
                   <div className="hologram-line"></div>
+                  
+                  {/* Enhanced Touch Trail for Mobile */}
+                  {touchTrail.length > 0 && (
+                    <div className="touch-trail-container">
+                      {touchTrail.map((point, index) => (
+                        <div
+                          key={point.id}
+                          className={`touch-trail-point ${gestureType ? `trail-${gestureType}` : ''}`}
+                          style={{
+                            left: `${point.x}%`,
+                            top: `${point.y}%`,
+                            animationDelay: `${index * 0.1}s`,
+                            opacity: (index + 1) / touchTrail.length,
+                            transform: `scale(${(index + 1) / touchTrail.length})`,
+                          }}
+                        />
+                      ))}
+                    </div>
+                  )}
+                  
+                  {/* Gesture Type Indicator */}
+                  {gestureType && (
+                    <div className={`gesture-indicator gesture-${gestureType}`}>
+                      {gestureType === 'double-tap' && '🎆'}
+                      {gestureType === 'long-press' && '⭐'}
+                      {gestureType === 'swipe' && '✨'}
+                      {gestureType === 'tap' && '💫'}
+                    </div>
+                  )}
                 </div>
               </h1>
               <p className={`lead mb-5 text-white-50 landing-description typewriter ${isLoaded ? 'animate' : ''}`}>

@@ -96,22 +96,260 @@
   touch-action: manipulation;
   -webkit-touch-callout: none;
   -webkit-tap-highlight-color: transparent;
+  position: relative;
+  overflow: visible;
 }
 
 .touch-interactive.touched {
   animation: touch-ripple 0.6s ease-out, touch-glow 0.8s ease-out;
 }
 
+/* Enhanced Multi-Touch States */
+.touch-interactive.double-tapped {
+  animation: 
+    double-tap-burst 0.8s ease-out,
+    touch-rainbow-shift 1s ease-in-out,
+    double-tap-scale 0.6s ease-out;
+}
+
+.touch-interactive.long-pressed {
+  animation: 
+    long-press-pulse 2s ease-in-out infinite,
+    long-press-glow 1.5s ease-in-out,
+    long-press-rotate 3s ease-in-out infinite;
+}
+
+.touch-interactive.gesture-swipe {
+  animation: swipe-trail 0.8s ease-out;
+}
+
+/* Advanced Touch Animations */
 @keyframes touch-ripple {
   0% {
-    box-shadow: 0 0 0 0 rgba(90, 168, 255, 0.7);
+    box-shadow: 0 0 0 0 rgba(90, 168, 255, 0.8);
   }
   70% {
-    box-shadow: 0 0 0 20px rgba(90, 168, 255, 0);
+    box-shadow: 0 0 0 30px rgba(90, 168, 255, 0);
   }
   100% {
     box-shadow: 0 0 0 0 rgba(90, 168, 255, 0);
   }
+}
+
+@keyframes double-tap-burst {
+  0% {
+    box-shadow: 
+      0 0 0 0 rgba(255, 107, 53, 0.8),
+      0 0 0 0 rgba(90, 168, 255, 0.8);
+  }
+  50% {
+    box-shadow: 
+      0 0 0 20px rgba(255, 107, 53, 0.4),
+      0 0 0 40px rgba(90, 168, 255, 0.2);
+  }
+  100% {
+    box-shadow: 
+      0 0 0 60px rgba(255, 107, 53, 0),
+      0 0 0 80px rgba(90, 168, 255, 0);
+  }
+}
+
+@keyframes touch-rainbow-shift {
+  0% { filter: hue-rotate(0deg) saturate(1); }
+  25% { filter: hue-rotate(90deg) saturate(1.5); }
+  50% { filter: hue-rotate(180deg) saturate(2); }
+  75% { filter: hue-rotate(270deg) saturate(1.5); }
+  100% { filter: hue-rotate(360deg) saturate(1); }
+}
+
+@keyframes double-tap-scale {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+@keyframes long-press-pulse {
+  0%, 100% { 
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.6);
+    filter: brightness(1);
+  }
+  50% { 
+    box-shadow: 0 0 40px rgba(168, 85, 247, 0.9);
+    filter: brightness(1.4);
+  }
+}
+
+@keyframes long-press-glow {
+  0% { filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.5)); }
+  100% { filter: drop-shadow(0 0 25px rgba(168, 85, 247, 0.8)); }
+}
+
+@keyframes long-press-rotate {
+  0% { transform: perspective(1000px) rotateY(0deg) rotateX(0deg); }
+  25% { transform: perspective(1000px) rotateY(5deg) rotateX(2deg); }
+  50% { transform: perspective(1000px) rotateY(0deg) rotateX(-2deg); }
+  75% { transform: perspective(1000px) rotateY(-5deg) rotateX(2deg); }
+  100% { transform: perspective(1000px) rotateY(0deg) rotateX(0deg); }
+}
+
+@keyframes swipe-trail {
+  0% { 
+    filter: blur(0px) brightness(1); 
+    transform: skewX(0deg);
+  }
+  50% { 
+    filter: blur(2px) brightness(1.3); 
+    transform: skewX(calc(var(--touch-intensity, 0) * 0.1deg));
+  }
+  100% { 
+    filter: blur(0px) brightness(1); 
+    transform: skewX(0deg);
+  }
+}
+
+/* Touch Trail Effects */
+.touch-trail-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.touch-trail-point {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: radial-gradient(circle, rgba(90, 168, 255, 0.8) 0%, transparent 70%);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: trail-fade 1s ease-out forwards;
+  pointer-events: none;
+}
+
+.trail-double-tap {
+  background: radial-gradient(circle, rgba(255, 107, 53, 0.9) 0%, rgba(90, 168, 255, 0.6) 50%, transparent 70%);
+  animation: trail-burst 0.8s ease-out forwards;
+}
+
+.trail-long-press {
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.9) 0%, transparent 70%);
+  animation: trail-pulse 2s ease-in-out infinite;
+}
+
+.trail-swipe {
+  background: linear-gradient(45deg, rgba(90, 168, 255, 0.8), rgba(255, 107, 53, 0.6));
+  border-radius: 20%;
+  animation: trail-streak 0.6s ease-out forwards;
+}
+
+@keyframes trail-fade {
+  0% { opacity: 1; transform: translate(-50%, -50%) scale(0.5); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.5); }
+}
+
+@keyframes trail-burst {
+  0% { 
+    opacity: 1; 
+    transform: translate(-50%, -50%) scale(0.3); 
+    filter: blur(0px);
+  }
+  50% { 
+    opacity: 0.8; 
+    transform: translate(-50%, -50%) scale(2); 
+    filter: blur(1px);
+  }
+  100% { 
+    opacity: 0; 
+    transform: translate(-50%, -50%) scale(3); 
+    filter: blur(3px);
+  }
+}
+
+@keyframes trail-pulse {
+  0%, 100% { 
+    opacity: 0.6; 
+    transform: translate(-50%, -50%) scale(0.8); 
+  }
+  50% { 
+    opacity: 1; 
+    transform: translate(-50%, -50%) scale(1.2); 
+  }
+}
+
+@keyframes trail-streak {
+  0% { 
+    opacity: 1; 
+    transform: translate(-50%, -50%) scale(0.4) rotate(0deg); 
+  }
+  100% { 
+    opacity: 0; 
+    transform: translate(-50%, -50%) scale(1.8) rotate(180deg); 
+  }
+}
+
+/* Gesture Indicators */
+.gesture-indicator {
+  position: absolute;
+  top: -50px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 2rem;
+  animation: gesture-popup 0.8s ease-out forwards;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.gesture-double-tap {
+  animation: gesture-popup 0.8s ease-out forwards, gesture-celebration 1s ease-in-out;
+}
+
+.gesture-long-press {
+  animation: gesture-popup 1.5s ease-out forwards, gesture-mystical 2s ease-in-out infinite;
+}
+
+.gesture-swipe {
+  animation: gesture-popup 0.6s ease-out forwards, gesture-whoosh 0.8s ease-out;
+}
+
+@keyframes gesture-popup {
+  0% { 
+    opacity: 0; 
+    transform: translateX(-50%) translateY(20px) scale(0.5); 
+  }
+  50% { 
+    opacity: 1; 
+    transform: translateX(-50%) translateY(-10px) scale(1.2); 
+  }
+  100% { 
+    opacity: 0.8; 
+    transform: translateX(-50%) translateY(-20px) scale(1); 
+  }
+}
+
+@keyframes gesture-celebration {
+  0%, 100% { transform: translateX(-50%) rotate(0deg) scale(1); }
+  25% { transform: translateX(-50%) rotate(-10deg) scale(1.1); }
+  75% { transform: translateX(-50%) rotate(10deg) scale(1.1); }
+}
+
+@keyframes gesture-mystical {
+  0%, 100% { 
+    filter: drop-shadow(0 0 5px rgba(168, 85, 247, 0.6));
+    transform: translateX(-50%) scale(1);
+  }
+  50% { 
+    filter: drop-shadow(0 0 15px rgba(168, 85, 247, 0.9));
+    transform: translateX(-50%) scale(1.1);
+  }
+}
+
+@keyframes gesture-whoosh {
+  0% { transform: translateX(-50%) skew(0deg); }
+  50% { transform: translateX(-50%) skew(15deg); }
+  100% { transform: translateX(-50%) skew(0deg); }
 }
 
 @keyframes touch-glow {
@@ -126,49 +364,125 @@
   }
 }
 
-/* Mobile Touch Effects */
+/* Enhanced Mobile Touch Effects */
 @media (max-width: 768px) {
   .touch-interactive {
-    padding: 1rem;
-    border-radius: 15px;
-    background: rgba(255, 255, 255, 0.02);
-    backdrop-filter: blur(5px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.3s ease;
+    padding: 1.5rem;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
   }
   
   .touch-interactive:active,
   .touch-interactive.touched {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(90, 168, 255, 0.3);
-    transform: scale(1.02);
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(90, 168, 255, 0.4);
+    transform: scale(1.03);
+    box-shadow: 0 12px 40px rgba(90, 168, 255, 0.3);
+  }
+  
+  .touch-interactive.double-tapped {
+    background: rgba(255, 107, 53, 0.1);
+    border-color: rgba(255, 107, 53, 0.5);
+    transform: scale(1.08);
+    box-shadow: 
+      0 15px 50px rgba(255, 107, 53, 0.4),
+      0 0 60px rgba(90, 168, 255, 0.3);
+  }
+  
+  .touch-interactive.long-pressed {
+    background: rgba(168, 85, 247, 0.1);
+    border-color: rgba(168, 85, 247, 0.5);
+    transform: scale(1.05);
+    box-shadow: 
+      0 20px 60px rgba(168, 85, 247, 0.5),
+      inset 0 0 30px rgba(168, 85, 247, 0.2);
   }
   
   .touch-interactive.touched .enhanced-name {
     animation: 
       gradient-shift 0.5s ease-in-out,
-      touch-letter-dance 0.8s ease-out;
+      enhanced-touch-letter-dance 1s ease-out;
+  }
+  
+  .touch-interactive.double-tapped .enhanced-name {
+    animation: 
+      gradient-shift 0.3s ease-in-out,
+      double-tap-letter-explosion 1.2s ease-out;
+  }
+  
+  .touch-interactive.long-pressed .enhanced-name {
+    animation: 
+      gradient-shift 0.8s ease-in-out infinite,
+      long-press-letter-levitate 3s ease-in-out infinite;
   }
   
   .touch-interactive.touched .enhanced-3d {
     animation: 
       threed-rotate 1s ease-in-out,
-      touch-3d-bounce 0.6s ease-out;
+      enhanced-touch-3d-bounce 0.8s ease-out;
+  }
+  
+  .touch-interactive.double-tapped .enhanced-3d {
+    animation: 
+      threed-rotate 0.6s ease-in-out,
+      double-tap-3d-spin 1s ease-out;
+  }
+  
+  .touch-interactive.long-pressed .enhanced-3d {
+    animation: 
+      threed-rotate 2s ease-in-out infinite,
+      long-press-3d-float 4s ease-in-out infinite;
   }
 }
 
-@keyframes touch-letter-dance {
-  0% { transform: translateY(0) rotateZ(0deg); }
-  25% { transform: translateY(-8px) rotateZ(2deg); }
-  50% { transform: translateY(-15px) rotateZ(-1deg); }
-  75% { transform: translateY(-8px) rotateZ(1deg); }
-  100% { transform: translateY(0) rotateZ(0deg); }
+/* Enhanced Letter Animations */
+@keyframes enhanced-touch-letter-dance {
+  0% { transform: translateY(0) rotateZ(0deg) scale(1); }
+  20% { transform: translateY(-12px) rotateZ(3deg) scale(1.05); }
+  40% { transform: translateY(-20px) rotateZ(-2deg) scale(1.1); }
+  60% { transform: translateY(-12px) rotateZ(2deg) scale(1.05); }
+  80% { transform: translateY(-6px) rotateZ(-1deg) scale(1.02); }
+  100% { transform: translateY(0) rotateZ(0deg) scale(1); }
 }
 
-@keyframes touch-3d-bounce {
-  0% { transform: perspective(1000px) scale(1) rotateY(0deg); }
-  50% { transform: perspective(1000px) scale(1.1) rotateY(10deg); }
-  100% { transform: perspective(1000px) scale(1) rotateY(0deg); }
+@keyframes double-tap-letter-explosion {
+  0% { transform: translateY(0) rotateZ(0deg) scale(1); }
+  25% { transform: translateY(-25px) rotateZ(10deg) scale(1.2); }
+  50% { transform: translateY(-35px) rotateZ(-5deg) scale(1.3); }
+  75% { transform: translateY(-20px) rotateZ(8deg) scale(1.15); }
+  100% { transform: translateY(0) rotateZ(0deg) scale(1); }
+}
+
+@keyframes long-press-letter-levitate {
+  0%, 100% { transform: translateY(0) rotateZ(0deg) scale(1); }
+  25% { transform: translateY(-8px) rotateZ(2deg) scale(1.02); }
+  50% { transform: translateY(-15px) rotateZ(0deg) scale(1.05); }
+  75% { transform: translateY(-8px) rotateZ(-2deg) scale(1.02); }
+}
+
+/* Enhanced 3D Animations */
+@keyframes enhanced-touch-3d-bounce {
+  0% { transform: perspective(1000px) scale(1) rotateY(0deg) rotateX(0deg); }
+  40% { transform: perspective(1000px) scale(1.15) rotateY(15deg) rotateX(5deg); }
+  70% { transform: perspective(1000px) scale(1.08) rotateY(-8deg) rotateX(-3deg); }
+  100% { transform: perspective(1000px) scale(1) rotateY(0deg) rotateX(0deg); }
+}
+
+@keyframes double-tap-3d-spin {
+  0% { transform: perspective(1000px) scale(1) rotateY(0deg) rotateX(0deg) rotateZ(0deg); }
+  50% { transform: perspective(1000px) scale(1.25) rotateY(180deg) rotateX(20deg) rotateZ(10deg); }
+  100% { transform: perspective(1000px) scale(1) rotateY(360deg) rotateX(0deg) rotateZ(0deg); }
+}
+
+@keyframes long-press-3d-float {
+  0%, 100% { transform: perspective(1000px) scale(1) rotateY(0deg) rotateX(0deg) translateZ(0px); }
+  25% { transform: perspective(1000px) scale(1.08) rotateY(10deg) rotateX(5deg) translateZ(20px); }
+  50% { transform: perspective(1000px) scale(1.12) rotateY(0deg) rotateX(-5deg) translateZ(30px); }
+  75% { transform: perspective(1000px) scale(1.08) rotateY(-10deg) rotateX(5deg) translateZ(20px); }
 }
 
 /* Touch Particle Effects */
@@ -483,37 +797,56 @@
     height: 1px;
   }
   
-  /* Add touch instruction for mobile */
+  /* Enhanced touch instruction for mobile */
   .touch-interactive::before {
-    content: '👆 Tap me!';
+    content: '👆 Tap, Double-tap, or Hold!';
     position: absolute;
-    top: -40px;
+    top: -45px;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.6);
-    background: rgba(0, 0, 0, 0.3);
-    padding: 5px 10px;
-    border-radius: 15px;
-    backdrop-filter: blur(10px);
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
+    background: rgba(0, 0, 0, 0.4);
+    padding: 6px 12px;
+    border-radius: 20px;
+    backdrop-filter: blur(15px);
     border: 1px solid rgba(255, 255, 255, 0.2);
-    animation: touch-hint-pulse 2s ease-in-out infinite;
+    animation: enhanced-touch-hint-pulse 3s ease-in-out infinite;
     pointer-events: none;
+    white-space: nowrap;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   }
   
-  .touch-interactive.touched::before {
+  .touch-interactive.touched::before,
+  .touch-interactive.double-tapped::before,
+  .touch-interactive.long-pressed::before {
     display: none;
   }
-}
 
-@keyframes touch-hint-pulse {
+@keyframes enhanced-touch-hint-pulse {
   0%, 100% { 
-    opacity: 0.6; 
+    opacity: 0.7; 
     transform: translateX(-50%) scale(1); 
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   }
   50% { 
     opacity: 1; 
-    transform: translateX(-50%) scale(1.05); 
+    transform: translateX(-50%) scale(1.02); 
+    box-shadow: 0 6px 20px rgba(90, 168, 255, 0.4);
+  }
+}
+}
+
+@keyframes enhanced-touch-hint-pulse {
+  0%, 100% { 
+    opacity: 0.7; 
+    transform: translateX(-50%) scale(1); 
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  }
+  50% { 
+    opacity: 1; 
+    transform: translateX(-50%) scale(1.02); 
+    box-shadow: 0 6px 20px rgba(90, 168, 255, 0.4);
   }
 }
 
