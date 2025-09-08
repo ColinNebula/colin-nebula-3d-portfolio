@@ -10,6 +10,22 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  
+  /* Disable default touch behaviors that might cause dark rectangles */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+.landing-page * {
+  /* Apply to all child elements */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
 }
 
 .landing-page.loaded {

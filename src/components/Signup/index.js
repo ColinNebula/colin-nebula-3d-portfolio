@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Card, Form, Button, Container, Alert } from 'react-bootstrap';
-import { useMutation } from '@apollo/client';
 import Auth from '../../utils/auth';
-import { ADD_USER } from '../../utils/mutations';
 import './Signup.css';
 
 function Signup() {
@@ -16,7 +14,6 @@ function Signup() {
   });
   const [alert, setAlert] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [addUser] = useMutation(ADD_USER);
   const navigate = useNavigate();
 
   // Add body class for modal styling
@@ -52,17 +49,34 @@ function Signup() {
     }
 
     try {
-      const mutationResponse = await addUser({
-        variables: {
+      const response = await fetch('/api/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
           email: formState.email,
           password: formState.password,
           firstName: formState.firstName,
           lastName: formState.lastName,
-        },
+        })
       });
-      const token = mutationResponse.data.addUser.token;
-      Auth.login(token);
-      navigate('/');
+
+      const data = await response.json();
+      
+      if (!response.ok) {
+        setAlert({ type: 'danger', message: data.message || 'Signup failed. Please try again.' });
+        setLoading(false);
+        return;
+      }
+
+      const token = data.token;
+      if (token) {
+        Auth.login(token);
+        navigate('/');
+      } else {
+        setAlert({ type: 'danger', message: 'Registration successful but authentication failed' });
+      }
     } catch (error) {
       setAlert({ type: 'danger', message: error.message || 'Signup failed. Please try again.' });
     }
