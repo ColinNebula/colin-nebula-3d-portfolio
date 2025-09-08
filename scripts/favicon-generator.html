@@ -1,0 +1,98 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Favicon Border Generator</title>
+    <style>
+        body { margin: 0; padding: 20px; background: #f0f0f0; }
+        canvas { border: 1px solid #ccc; margin: 10px; }
+        .container { display: flex; flex-wrap: wrap; gap: 20px; }
+        .size-info { font-family: Arial, sans-serif; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>Bordered Favicon Generator</h1>
+    <div class="container">
+        <div>
+            <div class="size-info">16x16 Favicon</div>
+            <canvas id="canvas16" width="16" height="16"></canvas>
+        </div>
+        <div>
+            <div class="size-info">32x32 Favicon</div>
+            <canvas id="canvas32" width="32" height="32"></canvas>
+        </div>
+        <div>
+            <div class="size-info">64x64 Favicon</div>
+            <canvas id="canvas64" width="64" height="64"></canvas>
+        </div>
+    </div>
+
+    <script>
+        function createBorderedFavicon(canvasId, size) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, size, size);
+            
+            // Draw border background
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#667eea');
+            gradient.addColorStop(1, '#764ba2');
+            
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, size, size);
+            
+            // Draw border
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = Math.max(1, size / 16);
+            ctx.strokeRect(ctx.lineWidth/2, ctx.lineWidth/2, size - ctx.lineWidth, size - ctx.lineWidth);
+            
+            // Draw inner area (placeholder for logo)
+            const innerMargin = Math.max(2, size / 8);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+            ctx.fillRect(innerMargin, innerMargin, size - innerMargin * 2, size - innerMargin * 2);
+            
+            // Add "CN" text or logo placeholder
+            ctx.fillStyle = '#ffffff';
+            ctx.font = `bold ${Math.max(8, size/3)}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('CN', size/2, size/2);
+            
+            // Add download link
+            const link = document.createElement('a');
+            link.download = `favicon-bordered-${size}x${size}.png`;
+            link.href = canvas.toDataURL();
+            link.textContent = `Download ${size}x${size} PNG`;
+            link.style.display = 'block';
+            link.style.marginTop = '5px';
+            canvas.parentElement.appendChild(link);
+        }
+
+        // Generate all sizes
+        createBorderedFavicon('canvas16', 16);
+        createBorderedFavicon('canvas32', 32);
+        createBorderedFavicon('canvas64', 64);
+
+        // Instructions
+        const instructions = document.createElement('div');
+        instructions.innerHTML = `
+            <h2>Instructions:</h2>
+            <ol>
+                <li>Right-click on each canvas and "Save image as..." or use download links</li>
+                <li>Save as favicon-16x16.png, favicon-32x32.png, etc.</li>
+                <li>Replace the files in your public/ folder</li>
+                <li>Generate .ico file using an online converter</li>
+            </ol>
+            <p><strong>Note:</strong> This creates basic bordered favicons. For best results, edit with your actual logo using image editing software.</p>
+        `;
+        instructions.style.fontFamily = 'Arial, sans-serif';
+        instructions.style.marginTop = '20px';
+        instructions.style.padding = '20px';
+        instructions.style.backgroundColor = '#fff';
+        instructions.style.borderRadius = '8px';
+        document.body.appendChild(instructions);
+    </script>
+</body>
+</html>

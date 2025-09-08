@@ -33,6 +33,7 @@
     "dev-clean": "node scripts/kill-ports.js 3000 && npm start",
     "dev": "npm start",
     "serve": "serve -s build -l 3000",
+    "favicon-generator": "node scripts/create-bordered-favicon.js",
     "api-install": "cd api-server && npm install",
     "api-start": "cd api-server && npm start",
     "api-dev": "cd api-server && npm run dev",

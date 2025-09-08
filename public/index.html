@@ -8,18 +8,17 @@
     <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico" />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <link rel="mask-icon" href="%PUBLIC_URL%/favicon.ico" color="#0d6efd" />
+    <meta name="theme-color" content="#667eea" />
     <style>
-      /* Enhanced favicon appearance with border effect and wider appearance */
-      link[rel="icon"], link[rel="shortcut icon"] {
-        border-radius: 6px;
-        box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.4);
-        transform: scale(1.1);
+      /* Enhanced favicon with visual border effect */
+      /* Note: CSS doesn't affect browser tab favicons directly, 
+         but this provides styling for any favicon displays within the page */
+      .favicon-enhanced {
+        border: 2px solid #667eea;
+        border-radius: 4px;
         padding: 2px;
-      }
-      /* Additional favicon enhancement for better visibility */
-      link[rel="icon"]:hover, link[rel="shortcut icon"]:hover {
-        transform: scale(1.15);
-        box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.6);
+        background: rgba(255, 255, 255, 0.1);
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
       }
     </style>
     <!-- Single Page Apps for GitHub Pages -->
