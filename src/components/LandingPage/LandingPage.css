@@ -2182,3 +2182,295 @@ html {
     background: transparent;
   }
 }
+
+/* ===== ENHANCED TOUCH FEATURES FOR LATEST MOBILE DEVICES ===== */
+
+/* Multi-finger gesture indicators */
+.gesture-indicator {
+  position: absolute;
+  pointer-events: none;
+  font-size: 2rem;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.gesture-indicator.active {
+  opacity: 1;
+  animation: gestureIndicatorPulse 0.6s ease;
+}
+
+@keyframes gestureIndicatorPulse {
+  0% { transform: scale(0.8); opacity: 0; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Pressure-sensitive touch effects */
+.touch-pressure-indicator {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, 
+    rgba(255, 255, 255, 0.05) 0%, 
+    rgba(255, 255, 255, 0.02) 50%, 
+    transparent 100%);
+  pointer-events: none;
+  z-index: 5;
+  transition: all 0.1s ease;
+  will-change: transform, opacity;
+  opacity: 0.3;
+}
+
+.touch-pressure-light {
+  box-shadow: 0 0 3px rgba(255, 255, 255, 0.1);
+}
+
+.touch-pressure-medium {
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.15);
+  background: radial-gradient(circle, 
+    rgba(255, 255, 255, 0.08) 0%, 
+    rgba(255, 255, 255, 0.03) 50%, 
+    transparent 100%);
+}
+
+.touch-pressure-strong {
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
+  background: radial-gradient(circle, 
+    rgba(255, 255, 255, 0.12) 0%, 
+    rgba(255, 255, 255, 0.05) 50%, 
+    transparent 100%);
+}
+
+/* Enhanced touch trails with velocity and pressure */
+.touch-trail-point {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 4;
+  background: radial-gradient(circle, 
+    rgba(255, 255, 255, 0.2) 0%, 
+    rgba(255, 255, 255, 0.08) 50%, 
+    transparent 100%);
+  transition: all 0.3s ease;
+  will-change: transform, opacity;
+  opacity: 0.4;
+}
+
+.touch-trail-point.high-velocity {
+  background: radial-gradient(circle, 
+    rgba(255, 100, 100, 0.25) 0%, 
+    rgba(255, 150, 150, 0.1) 50%, 
+    transparent 100%);
+  box-shadow: 0 0 5px rgba(255, 100, 100, 0.2);
+}
+
+.touch-trail-point.high-pressure {
+  background: radial-gradient(circle, 
+    rgba(100, 255, 100, 0.25) 0%, 
+    rgba(150, 255, 150, 0.1) 50%, 
+    transparent 100%);
+  box-shadow: 0 0 6px rgba(100, 255, 100, 0.2);
+}
+
+/* Multi-touch gesture visual feedback */
+.pinch-gesture-indicator {
+  position: absolute;
+  pointer-events: none;
+  z-index: 8;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.5rem;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  transition: all 0.2s ease;
+}
+
+.zoom-in-indicator::before {
+  content: "🔍➕";
+}
+
+.zoom-out-indicator::before {
+  content: "🔍➖";
+}
+
+.rotate-gesture-indicator::before {
+  content: "🔄";
+  animation: rotateIndicator 2s infinite linear;
+}
+
+@keyframes rotateIndicator {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Enhanced title interactions for modern devices */
+.landing-title.touch-active {
+  transform: scale(1.05) translateY(-5px);
+  text-shadow: 
+    0 15px 40px rgba(0, 0, 0, 0.6),
+    0 0 30px rgba(255, 255, 255, 0.3);
+  transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.landing-title.double-tap-active {
+  animation: doubleTapEffect 0.6s ease;
+  background: linear-gradient(45deg, 
+    #ff6b6b, #ffd93d, #6bcf7f, #4ecdc4, #45b7d1, #96ceb4, #feca57);
+  background-size: 400% 400%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: doubleTapEffect 0.6s ease, rainbowShift 2s ease infinite;
+}
+
+@keyframes doubleTapEffect {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.1) rotate(2deg); }
+  60% { transform: scale(0.95) rotate(-1deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+@keyframes rainbowShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.landing-title.long-press-active {
+  animation: longPressEffect 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.8));
+}
+
+@keyframes longPressEffect {
+  0%, 100% { 
+    transform: scale(1); 
+    filter: brightness(1) saturate(1);
+  }
+  50% { 
+    transform: scale(1.02); 
+    filter: brightness(1.2) saturate(1.3);
+  }
+}
+
+/* Swipe gesture effects */
+.landing-title.swipe-horizontal {
+  animation: swipeHorizontal 0.8s ease;
+}
+
+.landing-title.swipe-vertical {
+  animation: swipeVertical 0.8s ease;
+}
+
+@keyframes swipeHorizontal {
+  0% { transform: translateX(0); }
+  30% { transform: translateX(20px) scale(1.05); }
+  70% { transform: translateX(-10px) scale(0.98); }
+  100% { transform: translateX(0) scale(1); }
+}
+
+@keyframes swipeVertical {
+  0% { transform: translateY(0); }
+  30% { transform: translateY(-20px) scale(1.05); }
+  70% { transform: translateY(10px) scale(0.98); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+/* Device orientation responsive effects */
+.orientation-tilt {
+  transition: transform 0.3s ease;
+  will-change: transform;
+}
+
+/* Stylus/Pen input specific styles */
+.pen-input-active {
+  cursor: crosshair;
+  filter: contrast(1.1) brightness(1.1);
+}
+
+.pen-trail-point {
+  background: radial-gradient(circle, 
+    rgba(100, 150, 255, 0.9) 0%, 
+    rgba(150, 200, 255, 0.5) 50%, 
+    transparent 100%);
+  box-shadow: 0 0 10px rgba(100, 150, 255, 0.6);
+}
+
+/* High refresh rate display optimizations */
+@media (min-resolution: 120dpi) {
+  .touch-trail-point,
+  .touch-pressure-indicator,
+  .gesture-indicator {
+    transition-duration: 0.05s; /* Faster transitions for high refresh displays */
+  }
+  
+  .landing-title.touch-active {
+    transition-duration: 0.1s;
+  }
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .gesture-indicator,
+  .touch-trail-point,
+  .landing-title.touch-active,
+  .landing-title.double-tap-active,
+  .landing-title.long-press-active {
+    animation: none;
+    transition: none;
+  }
+  
+  .touch-pressure-indicator {
+    transition: opacity 0.3s ease; /* Keep only essential transitions */
+  }
+}
+
+/* Force GPU acceleration for smooth animations */
+.landing-title,
+.touch-trail-point,
+.touch-pressure-indicator,
+.gesture-indicator {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Multi-touch point styling - subtle and elegant */
+.multi-touch-point {
+  position: absolute;
+  background: radial-gradient(circle, 
+    rgba(255, 255, 255, 0.08) 0%, 
+    rgba(100, 200, 255, 0.03) 50%, 
+    transparent 70%);
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  pointer-events: none;
+  z-index: 6;
+  animation: multiTouchPulse 0.6s ease-out;
+  opacity: 0.4;
+  backdrop-filter: blur(2px);
+}
+
+@keyframes multiTouchPulse {
+  0% { 
+    transform: translate(-50%, -50%) scale(0.3); 
+    opacity: 0; 
+  }
+  50% { 
+    transform: translate(-50%, -50%) scale(1.1); 
+    opacity: 0.2; 
+  }
+  100% { 
+    transform: translate(-50%, -50%) scale(1); 
+    opacity: 0.08; 
+  }
+}
+
+/* Multi-touch indicators container */
+.multi-touch-indicators {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 5;
+}
