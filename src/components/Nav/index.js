@@ -4,13 +4,17 @@ import Nav from 'react-bootstrap/Nav';
 import logoM from '../../assets/images/logoM.png';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
-import { Button, Modal, Badge } from 'react-bootstrap';
+import { Button, Modal, Badge, Form, Alert } from 'react-bootstrap';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Navigation.css'; 
 import { useNotifications } from '../../App';
 import EmailVerification from '../EmailVerification';
+import AdminDashboard from '../Admin/AdminDashboard';
 import { UserManager, validateEmail as validateEmailUtil, checkPasswordStrength, canUserLogin, markEmailVerified } from '../../utils/userValidation';
+import { FaBell, FaCheck } from 'react-icons/fa';
+import emailjs from '@emailjs/browser';
+import { emailjsConfig, createEmailTemplate } from '../../utils/emailConfig';
 
 function Navigation(props) {
     const navigate = useNavigate();
@@ -56,6 +60,18 @@ function Navigation(props) {
     // Email verification modal
     const [showEmailVerification, setShowEmailVerification] = useState(false);
     const [pendingUser, setPendingUser] = useState(null);
+    
+    // Admin dashboard state
+    const [showAdminDashboard, setShowAdminDashboard] = useState(false);
+    
+    // Subscription modal state
+    const [showSubscribeModal, setShowSubscribeModal] = useState(false);
+    const [subscribeForm, setSubscribeForm] = useState({
+      name: '',
+      email: ''
+    });
+    const [subscribeStatus, setSubscribeStatus] = useState('');
+    const [isSubscribing, setIsSubscribing] = useState(false);
     
     // Authentication form data
     const [authData, setAuthData] = useState({
@@ -113,7 +129,7 @@ function Navigation(props) {
 
   // Effect to disable/enable scroll when modal is open
   useEffect(() => {
-    if (showLogin || showEmailVerification) {
+    if (showLogin || showEmailVerification || showSubscribeModal) {
       // Get current scroll position
       const scrollY = window.scrollY;
       
@@ -154,7 +170,7 @@ function Navigation(props) {
       }
       document.body.removeAttribute('data-scroll-y');
     };
-  }, [showLogin, showEmailVerification]);    // Handle auth form changes
+  }, [showLogin, showEmailVerification, showSubscribeModal]);    // Handle auth form changes
     const handleAuthChange = (field, value) => {
       setAuthData(prev => ({ ...prev, [field]: value }));
       setLoginMsg('');
@@ -371,6 +387,80 @@ function Navigation(props) {
       }
       
       setShowEmailVerification(false);
+    };
+
+    // Handle subscription
+    const handleSubscribe = async (e) => {
+      e.preventDefault();
+      
+      if (!subscribeForm.name.trim() || !subscribeForm.email.trim()) {
+        setSubscribeStatus('Please fill in all fields.');
+        return;
+      }
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(subscribeForm.email)) {
+        setSubscribeStatus('Please enter a valid email address.');
+        return;
+      }
+
+      setIsSubscribing(true);
+      setSubscribeStatus('');
+
+      try {
+        // Check if already subscribed
+        const subscribers = JSON.parse(localStorage.getItem('portfolio_subscribers') || '[]');
+        if (subscribers.includes(subscribeForm.email)) {
+          setSubscribeStatus('You are already subscribed to updates!');
+          setIsSubscribing(false);
+          return;
+        }
+
+        // Create email template
+        const templateParams = createEmailTemplate(subscribeForm.name, subscribeForm.email);
+
+        // Send email via EmailJS
+        await emailjs.send(
+          emailjsConfig.serviceId,
+          emailjsConfig.templateId,
+          templateParams,
+          emailjsConfig.publicKey
+        );
+
+        // Save to localStorage
+        subscribers.push(subscribeForm.email);
+        localStorage.setItem('portfolio_subscribers', JSON.stringify(subscribers));
+        
+        // Success
+        setSubscribeStatus('🎉 Thank you for subscribing! Check your email for a welcome message.');
+        setSubscribeForm({ name: '', email: '' });
+        
+        showNotification('Successfully subscribed to updates! 📧', 'success', 5000, {
+          category: 'subscription',
+          icon: '📧'
+        });
+        
+        // Close modal after 3 seconds
+        setTimeout(() => {
+          setShowSubscribeModal(false);
+          setSubscribeStatus('');
+        }, 3000);
+        
+      } catch (error) {
+        console.error('Subscription error:', error);
+        setSubscribeStatus('There was an error processing your subscription. Please try again.');
+      } finally {
+        setIsSubscribing(false);
+      }
+    };
+
+    // Handle subscription input changes
+    const handleSubscribeInputChange = (e) => {
+      const { name, value } = e.target;
+      setSubscribeForm(prev => ({
+        ...prev,
+        [name]: value
+      }));
     };
 
     // Logout handler
@@ -682,7 +772,28 @@ function Navigation(props) {
                   </NavDropdown>
                 )}
 
-                {/* Auth Section */}
+                {/* Subscribe and Auth Section */}
+                <Nav.Link
+                  onClick={() => {
+                    setShowSubscribeModal(true);
+                    handleNavClick();
+                  }}
+                  style={{ 
+                    cursor: 'pointer', 
+                    color: appliedTheme === 'light' ? '#212529' : '#e9ecef', 
+                    marginRight: '6px',
+                    position: 'relative',
+                    transition: 'all 0.3s ease'
+                  }}
+                  className="nav-icon-hover"
+                  title="Subscribe to Updates"
+                >
+                  <span className="nav-icon-wrapper">
+                    📧
+                    <span className="nav-text-hover">Subscribe</span>
+                  </span>
+                </Nav.Link>
+
                 {authUser ? (
                   <NavDropdown
                     title={`👤 ${authUser.name}`}
@@ -703,6 +814,14 @@ function Navigation(props) {
                     <NavDropdown.Item onClick={handleLogout}>
                       🚪 Logout
                     </NavDropdown.Item>
+                    {(authUser.isAdmin || authUser.role === 'administrator') && (
+                      <>
+                        <NavDropdown.Divider />
+                        <NavDropdown.Item onClick={() => setShowAdminDashboard(true)}>
+                          👑 Admin Dashboard
+                        </NavDropdown.Item>
+                      </>
+                    )}
                   </NavDropdown>
                 ) : (
                   <Nav.Link
@@ -711,9 +830,31 @@ function Navigation(props) {
                       setShowLogin(true);
                       handleNavClick();
                     }}
-                    style={{ cursor: 'pointer', color: appliedTheme === 'light' ? '#212529' : '#e9ecef', marginRight: '6px' }}
+                    style={{ 
+                      cursor: 'pointer', 
+                      color: appliedTheme === 'light' ? '#212529' : '#e9ecef', 
+                      marginRight: '6px',
+                      position: 'relative',
+                      transition: 'all 0.3s ease'
+                    }}
+                    className="nav-icon-hover"
+                    title="Login"
                   >
-                    👤 Login
+                    <span className="nav-icon-wrapper">
+                      👤
+                      <span className="nav-text-hover">Login</span>
+                    </span>
+                  </Nav.Link>
+                )}
+
+                {/* Admin Dashboard Button for Admins (alternative placement) */}
+                {authUser && (authUser.isAdmin || authUser.role === 'administrator') && (
+                  <Nav.Link
+                    onClick={() => setShowAdminDashboard(true)}
+                    style={{ cursor: 'pointer', color: appliedTheme === 'light' ? '#212529' : '#e9ecef', marginRight: '6px' }}
+                    title="Admin Dashboard"
+                  >
+                    👑
                   </Nav.Link>
                 )}
 
@@ -901,16 +1042,16 @@ function Navigation(props) {
             <div className="w-100 text-center">
               {authMode === 'login' ? (
                 <span>
-                  Don't have an account?{' '}
+                  Want to stay updated?{' '}
                   <Button
                     variant="link"
                     className="p-0"
                     onClick={() => {
-                      setAuthMode('signup');
-                      resetAuthForm();
+                      setShowLogin(false);
+                      setShowSubscribeModal(true);
                     }}
                   >
-                    Sign up here
+                    Subscribe here
                   </Button>
                 </span>
               ) : (
@@ -955,6 +1096,117 @@ function Navigation(props) {
               onVerificationComplete={handleVerificationComplete}
             />
           </div>
+        )}
+
+        {/* Subscription Modal */}
+        <Modal 
+          show={showSubscribeModal} 
+          onHide={() => setShowSubscribeModal(false)}
+          centered
+          className="subscribe-modal"
+          backdrop="static"
+          style={{
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            backdropFilter: 'blur(5px)'
+          }}
+        >
+          <div style={{
+            background: 'rgba(0, 0, 0, 0.6)',
+            backdropFilter: 'blur(8px)',
+            borderRadius: '0.375rem'
+          }}>
+            <Modal.Header 
+              closeButton 
+              style={{ 
+                backgroundColor: appliedTheme === 'light' ? '#ffffff' : '#343a40',
+                color: appliedTheme === 'light' ? '#212529' : '#ffffff',
+                borderBottom: `1px solid ${appliedTheme === 'light' ? '#dee2e6' : '#495057'}`
+              }}
+            >
+              <Modal.Title>
+                <FaBell className="me-2" />
+                Subscribe to Updates
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body style={{ 
+              backgroundColor: appliedTheme === 'light' ? '#ffffff' : '#343a40',
+              color: appliedTheme === 'light' ? '#212529' : '#ffffff'
+            }}>
+              <div className="subscribe-intro mb-3">
+                <p>Stay updated with my latest 3D projects, tutorials, and creative insights!</p>
+                <ul className="list-unstyled">
+                  <li><FaCheck className="me-2 text-success" />Latest project updates</li>
+                  <li><FaCheck className="me-2 text-success" />Behind-the-scenes content</li>
+                  <li><FaCheck className="me-2 text-success" />Exclusive tutorials</li>
+                  <li><FaCheck className="me-2 text-success" />Creative process insights</li>
+                </ul>
+              </div>
+              
+              {subscribeStatus && (
+                <Alert 
+                  variant={subscribeStatus.includes('🎉') ? 'success' : 'danger'}
+                  className="mb-3"
+                >
+                  {subscribeStatus}
+                </Alert>
+              )}
+              
+              <Form onSubmit={handleSubscribe}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Name</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="name"
+                    value={subscribeForm.name}
+                    onChange={handleSubscribeInputChange}
+                    placeholder="Your full name"
+                    disabled={isSubscribing}
+                  />
+                </Form.Group>
+                
+                <Form.Group className="mb-4">
+                  <Form.Label>Email</Form.Label>
+                  <Form.Control
+                    type="email"
+                    name="email"
+                    value={subscribeForm.email}
+                    onChange={handleSubscribeInputChange}
+                    placeholder="your.email@example.com"
+                    disabled={isSubscribing}
+                  />
+                </Form.Group>
+                
+                <div className="d-grid">
+                  <Button 
+                    type="submit" 
+                    variant="primary" 
+                    size="lg"
+                    disabled={isSubscribing}
+                  >
+                    {isSubscribing ? (
+                      <>
+                        <span className="spinner-border spinner-border-sm me-2" />
+                        Subscribing...
+                      </>
+                    ) : (
+                      <>
+                        <FaBell className="me-2" />
+                        Subscribe Now
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </Form>
+            </Modal.Body>
+          </div>
+        </Modal>
+
+        {/* Admin Dashboard */}
+        {showAdminDashboard && authUser && (authUser.isAdmin || authUser.role === 'administrator') && (
+          <AdminDashboard
+            user={authUser}
+            onClose={() => setShowAdminDashboard(false)}
+          />
         )}
       </>
     );
