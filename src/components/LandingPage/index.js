@@ -20,6 +20,11 @@ const LandingPage = () => {
   const [touchStartTime, setTouchStartTime] = useState(0);
   const [gestureType, setGestureType] = useState(null);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [backgroundColors, setBackgroundColors] = useState({
+    current: '#667eea',
+    next: '#764ba2',
+    progress: 0
+  });
   const containerRef = useRef(null);
   const titleRef = useRef(null);
   const longPressTimer = useRef(null);
@@ -40,6 +45,75 @@ const LandingPage = () => {
     if (windowWidth <= 480) return shortText;
     return defaultText;
   };
+
+  // Generate random vibrant colors
+  const generateRandomColor = () => {
+    const colors = [
+      '#667eea', '#764ba2', '#f093fb', '#f5576c',
+      '#4facfe', '#00f2fe', '#43e97b', '#38f9d7',
+      '#ffecd2', '#fcb69f', '#a8edea', '#fed6e3',
+      '#ff9a9e', '#fecfef', '#ffeaa7', '#fab1a0',
+      '#fd79a8', '#fdcb6e', '#6c5ce7', '#a29bfe',
+      '#ff7675', '#fd79a8', '#00b894', '#00cec9',
+      '#0984e3', '#6c5ce7', '#e84393', '#e17055',
+      '#74b9ff', '#81ecec', '#55a3ff', '#ff6b6b',
+      '#4ecdc4', '#45b7d1', '#96ceb4', '#ffeaa7',
+      '#ff6b95', '#c44569', '#f8b500', '#e55039',
+      '#3742fa', '#2f3542', '#ff3838', '#ff9ff3',
+      '#54a0ff', '#5f27cd', '#00d2d3', '#ff9f43',
+      '#10ac84', '#ee5a24', '#0abde3', '#feca57',
+      '#ff9ff3', '#54a0ff', '#5f27cd', '#c44569'
+    ];
+    return colors[Math.floor(Math.random() * colors.length)];
+  };
+
+  // Convert hex to RGB
+  const hexToRgb = (hex) => {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16)
+    } : null;
+  };
+
+  // Interpolate between two colors
+  const interpolateColor = (color1, color2, factor) => {
+    const rgb1 = hexToRgb(color1);
+    const rgb2 = hexToRgb(color2);
+    
+    if (!rgb1 || !rgb2) return color1;
+    
+    const r = Math.round(rgb1.r + (rgb2.r - rgb1.r) * factor);
+    const g = Math.round(rgb1.g + (rgb2.g - rgb1.g) * factor);
+    const b = Math.round(rgb1.b + (rgb2.b - rgb1.b) * factor);
+    
+    return `rgb(${r}, ${g}, ${b})`;
+  };
+
+  // Background color animation effect
+  useEffect(() => {
+    const colorInterval = setInterval(() => {
+      setBackgroundColors(prev => {
+        if (prev.progress >= 1) {
+          // Start new transition
+          return {
+            current: prev.next,
+            next: generateRandomColor(),
+            progress: 0
+          };
+        } else {
+          // Continue current transition
+          return {
+            ...prev,
+            progress: prev.progress + 0.02 // Smooth transition over ~2.5 seconds
+          };
+        }
+      });
+    }, 50); // Update every 50ms for smooth animation
+
+    return () => clearInterval(colorInterval);
+  }, []);
 
   // Create floating particles
   useEffect(() => {
@@ -276,6 +350,8 @@ const LandingPage = () => {
       style={{
         '--mouse-x': `${mousePosition.x}%`,
         '--mouse-y': `${mousePosition.y}%`,
+        background: `linear-gradient(135deg, ${interpolateColor(backgroundColors.current, backgroundColors.next, backgroundColors.progress)} 0%, ${interpolateColor(backgroundColors.next, backgroundColors.current, 1 - backgroundColors.progress)} 100%)`,
+        transition: 'background 0.05s ease-out'
       }}
     >
       <Container fluid className="landing-container">

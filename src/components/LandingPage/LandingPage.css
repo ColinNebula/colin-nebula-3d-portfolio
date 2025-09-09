@@ -1,9 +1,9 @@
-/* Landing Page Styles - Enhanced with Advanced Animations */
+/* Landing Page Styles - Enhanced with Advanced Animations and Dynamic Background */
 .landing-page {
   min-height: 100vh;
   height: 100vh;
   width: 100vw;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  /* Background now controlled by JavaScript for dynamic color shifting */
   color: white;
   position: relative;
   overflow: hidden;
@@ -22,10 +22,82 @@
   touch-action: manipulation;
 }
 
+/* Mobile-specific landing page adjustments */
+@media (max-width: 768px) {
+  .landing-page {
+    padding: 1rem 0;
+  }
+  
+  .landing-content {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .landing-page {
+    padding: 0.5rem 0;
+  }
+}
+
+@media (max-width: 360px) {
+  .landing-page {
+    padding: 0.25rem 0;
+  }
+}
+
 .landing-page * {
   /* Apply to all child elements */
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
+}
+
+/* Dynamic background enhancements */
+.landing-page::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 30% 70%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+              radial-gradient(circle at 70% 30%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 1;
+  animation: shimmer 8s ease-in-out infinite alternate;
+}
+
+@keyframes shimmer {
+  0% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0.7;
+    transform: scale(1.05);
+  }
+}
+
+.landing-page::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, rgba(255, 255, 255, 0.02) 0%, transparent 100%);
+  pointer-events: none;
+  z-index: 1;
+  animation: pulse 6s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.4;
+  }
 }
 
 /* Enhanced Logo Border Effects */
@@ -138,6 +210,9 @@ img[src*="mask"] {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
 }
 
 .landing-title.animate {
@@ -835,20 +910,30 @@ img[src*="mask"] {
 /* Mobile responsiveness for enhanced title */
 @media (max-width: 768px) {
   .enhanced-title {
-    font-size: 2.5rem;
+    font-size: 2.2rem;
     letter-spacing: 1px;
+    line-height: 1.2;
   }
   
   .enhanced-3d {
-    font-size: 3rem;
+    font-size: 2.5rem;
   }
   
   .sparkle {
-    font-size: 1rem;
+    font-size: 0.9rem;
   }
   
   .hologram-line {
     height: 1px;
+  }
+  
+  .landing-container {
+    padding: 1rem;
+  }
+  
+  .landing-description {
+    font-size: 0.9rem;
+    line-height: 1.5;
   }
   
   /* Enhanced touch instruction for mobile */
@@ -960,6 +1045,10 @@ img[src*="mask"] {
   opacity: 0;
   transform: translateY(30px);
   transition: all 1s ease 0.3s;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
+  padding: 0 0.5rem;
 }
 
 .landing-description.animate {
@@ -1229,26 +1318,43 @@ img[src*="mask"] {
 }
 
 @media (max-width: 360px) {
-  .landing-text-wrapper h1 {
-    font-size: 1.75rem;
+  .landing-text-wrapper h1,
+  .landing-title {
+    font-size: 1.5rem !important;
+    line-height: 1.3;
+    margin-bottom: 1rem;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
   }
   
   .landing-container {
-    padding: 0.5rem;
+    padding: 0.75rem;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+  
+  .landing-text-wrapper {
+    padding: 0 0.5rem;
+  }
+  
+  .landing-description {
+    font-size: 0.85rem;
+    line-height: 1.4;
+    margin-bottom: 1rem;
   }
   
   .landing-logo {
-    max-width: 150px;
+    max-width: 140px;
   }
   
   .logo-glow {
-    width: 180px;
-    height: 180px;
+    width: 170px;
+    height: 170px;
   }
   
   .logo-particles {
-    width: 180px;
-    height: 180px;
+    width: 170px;
+    height: 170px;
   }
 }
 
@@ -1503,6 +1609,29 @@ html {
   gap: 1rem;
   opacity: 0.8;
   animation: bounce 2s infinite;
+}
+
+/* Mobile adjustments for scroll indicator */
+@media (max-width: 768px) {
+  .scroll-indicator {
+    bottom: 4.5rem; /* Raised to avoid floating buttons */
+    opacity: 0.6;
+    scale: 0.9;
+  }
+}
+
+@media (max-width: 480px) {
+  .scroll-indicator {
+    bottom: 4rem;
+    scale: 0.8;
+    opacity: 0.5;
+  }
+}
+
+@media (max-width: 360px) {
+  .scroll-indicator {
+    display: none; /* Hide on very small screens to save space */
+  }
 }
 
 .scroll-indicator.enhanced {
@@ -2194,6 +2323,26 @@ html {
 }
 
 @media (max-width: 480px) {
+  .landing-title,
+  .enhanced-title {
+    font-size: 1.8rem !important;
+    line-height: 1.3;
+    margin-bottom: 1.25rem;
+  }
+  
+  .enhanced-3d {
+    font-size: 2rem;
+  }
+  
+  .landing-description {
+    font-size: 0.8rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .landing-container {
+    padding: 0.75rem;
+  }
+  
   .floating-portfolio-btn,
   .floating-work-btn {
     bottom: 1rem;
