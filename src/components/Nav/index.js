@@ -24,17 +24,38 @@ function Navigation(props) {
     // Notifications state
     const [showNotifications, setShowNotifications] = useState(false);
     const [notifAnnounce, setNotifAnnounce] = useState('');
+    const [notificationFilter, setNotificationFilter] = useState('all'); // all, updates, accounts, system
+    const [expandedNotifications, setExpandedNotifications] = useState(new Set());
+    const [notificationSort, setNotificationSort] = useState('newest'); // newest, oldest, priority
     const { showNotification, notifications: globalNotifications, dismissNotification, dismissAllNotifications } = useNotifications();
     
-    // Filter notifications
-    const activeNotifications = globalNotifications.filter(n => {
+    // Filter and sort notifications
+    const filteredNotifications = (globalNotifications || []).filter(n => {
       const oneHour = 60 * 60 * 1000;
-      return (Date.now() - n.createdAt) < oneHour;
+      const isRecent = (Date.now() - n.createdAt) < oneHour;
+      
+      if (!isRecent) return false;
+      
+      if (notificationFilter === 'all') return true;
+      return n.category === notificationFilter;
+    });
+    
+    const sortedNotifications = [...filteredNotifications].sort((a, b) => {
+      switch (notificationSort) {
+        case 'oldest':
+          return a.createdAt - b.createdAt;
+        case 'priority':
+          const priorityOrder = { error: 4, warning: 3, success: 2, info: 1 };
+          return (priorityOrder[b.type] || 1) - (priorityOrder[a.type] || 1);
+        case 'newest':
+        default:
+          return b.createdAt - a.createdAt;
+      }
     });
     
     // Count unread notifications
     const tenMinutes = 10 * 60 * 1000;
-    const unreadCount = activeNotifications.filter(n => 
+    const unreadCount = filteredNotifications.filter(n => 
       (Date.now() - n.createdAt) < tenMinutes
     ).length;
 
@@ -61,18 +82,6 @@ function Navigation(props) {
     const [showEmailVerification, setShowEmailVerification] = useState(false);
     const [pendingUser, setPendingUser] = useState(null);
     
-    // Admin dashboard state
-    const [showAdminDashboard, setShowAdminDashboard] = useState(false);
-    
-    // Subscription modal state
-    const [showSubscribeModal, setShowSubscribeModal] = useState(false);
-    const [subscribeForm, setSubscribeForm] = useState({
-      name: '',
-      email: ''
-    });
-    const [subscribeStatus, setSubscribeStatus] = useState('');
-    const [isSubscribing, setIsSubscribing] = useState(false);
-    
     // Authentication form data
     const [authData, setAuthData] = useState({
       email: '',
@@ -82,29 +91,8 @@ function Navigation(props) {
       acceptTerms: false
     });
 
-    // Theme management
-    const [appliedTheme, setAppliedTheme] = useState(() => {
-      try {
-        const saved = localStorage.getItem('nebula_theme');
-        const systemPref = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        const userPref = saved || systemPref;
-        
-        // Ensure theme is applied immediately to prevent flash
-        document.documentElement.setAttribute('data-theme', userPref);
-        
-        // Force a repaint to ensure styles are applied
-        document.documentElement.style.display = 'none';
-        document.documentElement.offsetHeight; // trigger reflow
-        document.documentElement.style.display = '';
-        
-        console.log('Theme initialized:', userPref);
-        return userPref;
-      } catch (error) {
-        console.warn('Theme initialization failed, defaulting to light:', error);
-        document.documentElement.setAttribute('data-theme', 'light');
-        return 'light';
-      }
-    });
+    // Theme management - use props from App.js
+    const currentTheme = props.darkMode ? 'dark' : 'light';
 
     const [isSticky, setIsSticky] = useState(false);
 
@@ -118,14 +106,31 @@ function Navigation(props) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Effect to ensure theme consistency
+  // Keyboard shortcut for login button toggle
   useEffect(() => {
-    const currentTheme = document.documentElement.getAttribute('data-theme');
-    if (currentTheme !== appliedTheme) {
-      console.log('Theme sync: updating DOM from', currentTheme, 'to', appliedTheme);
-      document.documentElement.setAttribute('data-theme', appliedTheme);
-    }
-  }, [appliedTheme]);
+    const handleKeyDown = (event) => {
+      // Ctrl + Shift + L to toggle login button
+      if (event.ctrlKey && event.shiftKey && event.key === 'L') {
+        event.preventDefault();
+        setShowLoginButton(prev => {
+          const newState = !prev;
+          showNotification(
+            newState ? 'Login button revealed! 🔓' : 'Login button hidden! 🔒', 
+            'info', 
+            3000, 
+            {
+              category: 'system',
+              icon: newState ? '🔓' : '🔒'
+            }
+          );
+          return newState;
+        });
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showNotification]);
 
   // Effect to disable/enable scroll when modal is open
   useEffect(() => {
@@ -170,7 +175,7 @@ function Navigation(props) {
       }
       document.body.removeAttribute('data-scroll-y');
     };
-  }, [showLogin, showEmailVerification, showSubscribeModal]);    // Handle auth form changes
+  }, [showLogin, showEmailVerification]);    // Handle auth form changes
     const handleAuthChange = (field, value) => {
       setAuthData(prev => ({ ...prev, [field]: value }));
       setLoginMsg('');
@@ -479,53 +484,200 @@ function Navigation(props) {
       navigate('/');
     };
 
-    // Theme toggle
+    // Theme toggle - use App.js function
     const toggleTheme = useCallback(() => {
-      const newTheme = appliedTheme === 'light' ? 'dark' : 'light';
-      
-      // Add transition class for smooth theme switching
-      document.documentElement.classList.add('theme-transition');
-      
-      setAppliedTheme(newTheme);
-      document.documentElement.setAttribute('data-theme', newTheme);
-      
       try {
-        localStorage.setItem('nebula_theme', newTheme);
+        console.log('Theme toggle clicked');
+        console.log('Current theme:', currentTheme);
+        console.log('Props received:', { darkMode: props.darkMode, toggleDarkMode: props.toggleDarkMode });
+        
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        
+        // Add transition class for smooth theme switching
+        document.documentElement.classList.add('theme-transition');
+        
+        // Call the App.js toggle function
+        if (props.toggleDarkMode && typeof props.toggleDarkMode === 'function') {
+          props.toggleDarkMode();
+          console.log('toggleDarkMode function called successfully');
+        } else {
+          console.error('toggleDarkMode function not available or not a function');
+        }
+        
+        // Remove transition class after animation completes
+        setTimeout(() => {
+          document.documentElement.classList.remove('theme-transition');
+        }, 300);
+        
+        const announcement = `Theme switched to ${newTheme} mode`;
+        setThemeAnnounce(announcement);
+        setTimeout(() => setThemeAnnounce(''), 1000);
+        
+        showNotification(announcement, 'info', 2000, {
+          category: 'system',
+          icon: newTheme === 'dark' ? '🌙' : '☀️'
+        });
+        
+        // Debug logging (remove in production)
+        console.log(`Theme switched from ${currentTheme} to ${newTheme}`);
+        console.log('Current data-theme:', document.documentElement.getAttribute('data-theme'));
       } catch (error) {
-        console.warn('Could not save theme preference:', error);
+        console.error('Error in theme toggle:', error);
+        showNotification('Error switching theme', 'error', 3000, {
+          category: 'system',
+          icon: '❌'
+        });
       }
-      
-      // Remove transition class after animation completes
-      setTimeout(() => {
-        document.documentElement.classList.remove('theme-transition');
-      }, 300);
-      
-      const announcement = `Theme switched to ${newTheme} mode`;
-      setThemeAnnounce(announcement);
-      setTimeout(() => setThemeAnnounce(''), 1000);
-      
-      showNotification(announcement, 'info', 2000, {
-        category: 'system',
-        icon: newTheme === 'dark' ? '🌙' : '☀️'
-      });
-      
-      // Debug logging (remove in production)
-      console.log(`Theme switched from ${appliedTheme} to ${newTheme}`);
-      console.log('Current data-theme:', document.documentElement.getAttribute('data-theme'));
-    }, [appliedTheme, showNotification]);
+    }, [currentTheme, props.toggleDarkMode, props.darkMode, showNotification]);
 
     // Close mobile nav when a link is clicked
     const handleNavClick = () => {
       setExpanded(false);
     };
+
+    // Enhanced notification management functions
+    const toggleNotificationExpansion = (notificationId) => {
+      setExpandedNotifications(prev => {
+        const newSet = new Set(prev);
+        if (newSet.has(notificationId)) {
+          newSet.delete(notificationId);
+        } else {
+          newSet.add(notificationId);
+        }
+        return newSet;
+      });
+    };
+
+    const markNotificationAsRead = (notificationId) => {
+      // This would integrate with your notification system
+      showNotification('Notification marked as read', 'success', 2000, {
+        category: 'system',
+        icon: '✅'
+      });
+    };
+
+    const getNotificationsByCategory = (category) => {
+      return sortedNotifications.filter(n => n.category === category);
+    };
+
+    const getNotificationIcon = (type) => {
+      const icons = {
+        error: '❌',
+        warning: '⚠️',
+        success: '✅',
+        info: 'ℹ️'
+      };
+      return icons[type] || 'ℹ️';
+    };
+
+    const getNotificationPriority = (type) => {
+      const priorities = {
+        error: 'High',
+        warning: 'Medium',
+        success: 'Low',
+        info: 'Low'
+      };
+      return priorities[type] || 'Low';
+    };
+
+    const markAllAsRead = () => {
+      // This would integrate with your notification system to mark all as read
+      showNotification('All notifications marked as read', 'success', 2000, {
+        category: 'system',
+        icon: '✅'
+      });
+      console.log('All notifications marked as read');
+    };
+
+    const clearAllNotifications = () => {
+      // This would integrate with your notification system to clear all
+      if (dismissAllNotifications) {
+        dismissAllNotifications();
+      }
+      showNotification('All notifications cleared', 'info', 2000, {
+        category: 'system',
+        icon: '🗑️'
+      });
+      console.log('All notifications cleared');
+    };
+
+    const handleSingleNotificationDismiss = (notificationId) => {
+      // This would integrate with your notification system to dismiss a specific notification
+      if (dismissNotification) {
+        dismissNotification(notificationId);
+      }
+      showNotification('Notification dismissed', 'info', 1500, {
+        category: 'system',
+        icon: '❌'
+      });
+      console.log('Notification dismissed:', notificationId);
+    };
+
+    // Mobile login access handlers
+    const handleLogoTouchStart = (e) => {
+      e.preventDefault();
+      const touch = e.touches[0];
+      setLogoTouchStart({ x: touch.clientX, y: touch.clientY, time: Date.now() });
+      
+      // Start long press timer (1.5 seconds)
+      const timer = setTimeout(() => {
+        setShowLoginButton(true);
+        setShowMobileLoginHint(true);
+        
+        // Vibrate if supported
+        if (navigator.vibrate) {
+          navigator.vibrate(200);
+        }
+        
+        showNotification('Login access enabled! 🔓', 'success', 3000, {
+          category: 'system',
+          icon: '🔓',
+          public: true
+        });
+        
+        // Auto-hide hint after 5 seconds
+        setTimeout(() => setShowMobileLoginHint(false), 5000);
+      }, 1500);
+      
+      setLogoLongPressTimer(timer);
+    };
+
+    const handleLogoTouchEnd = (e) => {
+      if (logoLongPressTimer) {
+        clearTimeout(logoLongPressTimer);
+        setLogoLongPressTimer(null);
+      }
+      setLogoTouchStart(null);
+    };
+
+    const handleLogoTouchMove = (e) => {
+      if (!logoTouchStart) return;
+      
+      const touch = e.touches[0];
+      const deltaX = Math.abs(touch.clientX - logoTouchStart.x);
+      const deltaY = Math.abs(touch.clientY - logoTouchStart.y);
+      
+      // If user moves finger too much, cancel long press
+      if (deltaX > 10 || deltaY > 10) {
+        if (logoLongPressTimer) {
+          clearTimeout(logoLongPressTimer);
+          setLogoLongPressTimer(null);
+        }
+      }
+    };
+
+    // Check if device is mobile
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+                     window.innerWidth <= 768;
+
     return (
       <>
         <Navbar
           expanded={expanded}
           onToggle={setExpanded}
-          bg={appliedTheme === 'light' ? 'light' : 'dark'}
+          bg={currentTheme === 'light' ? 'light' : 'dark'}
           expand="md"
-          variant={appliedTheme === 'light' ? 'light' : 'dark'}
+          variant={currentTheme === 'light' ? 'light' : 'dark'}
           sticky="top"
           collapseOnSelect
           role="navigation"
@@ -535,38 +687,67 @@ function Navigation(props) {
             boxShadow: isSticky ? '0 8px 24px rgba(0,0,0,0.20)' : 'none',
             paddingTop: isSticky ? 6 : undefined,
             paddingBottom: isSticky ? 6 : undefined,
-            backgroundColor: appliedTheme === 'light' ? '#f8f9fa' : '#212529',
-            borderBottom: appliedTheme === 'light' ? '1px solid #dee2e6' : '1px solid #495057'
+            backgroundColor: currentTheme === 'light' ? '#f8f9fa' : '#212529',
+            borderBottom: currentTheme === 'light' ? '1px solid #dee2e6' : '1px solid #495057'
           }}
         >
           <Container>
-            <Navbar.Brand as={Link} to="/" style={{ color: appliedTheme === 'light' ? '#212529' : '#e9ecef' }}>
+            <Navbar.Brand 
+              as={Link} 
+              to="/" 
+              style={{ 
+                color: currentTheme === 'light' ? '#212529' : '#e9ecef',
+                position: 'relative',
+                userSelect: 'none'
+              }}
+              onTouchStart={isMobile ? handleLogoTouchStart : undefined}
+              onTouchEnd={isMobile ? handleLogoTouchEnd : undefined}
+              onTouchMove={isMobile ? handleLogoTouchMove : undefined}
+              title={isMobile ? "Long press for login access" : undefined}
+            >
               <img src={logoM} width="90px" height="40px" alt="logo" className="nav-logo" />
               Colin Nebula 3D 
+              {isMobile && showMobileLoginHint && (
+                <div style={{
+                  position: 'absolute',
+                  bottom: '-25px',
+                  left: '0',
+                  fontSize: '0.7rem',
+                  color: '#28a745',
+                  fontWeight: '600',
+                  background: 'rgba(40, 167, 69, 0.1)',
+                  padding: '2px 6px',
+                  borderRadius: '4px',
+                  whiteSpace: 'nowrap',
+                  animation: 'fadeInOut 5s ease-in-out'
+                }}>
+                  🔓 Login enabled
+                </div>
+              )}
             </Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" aria-label="Toggle navigation" />
             <Navbar.Collapse id="basic-navbar-nav" aria-label="Primary">
               <Nav className="ms-auto">
-                <Nav.Link as={NavLink} to="/" onClick={handleNavClick} style={{ color: appliedTheme === 'light' ? '#212529' : '#e9ecef', marginRight: '6px' }}>
+                <Nav.Link as={NavLink} to="/" onClick={handleNavClick} style={{ color: currentTheme === 'light' ? '#212529' : '#e9ecef', marginRight: '6px' }}>
                   Home
                 </Nav.Link>
-                <Nav.Link as={NavLink} to="/portfolio" onClick={handleNavClick} style={{ color: appliedTheme === 'light' ? '#212529' : '#e9ecef', marginRight: '6px' }}>
+                <Nav.Link as={NavLink} to="/portfolio" onClick={handleNavClick} style={{ color: currentTheme === 'light' ? '#212529' : '#e9ecef', marginRight: '6px' }}>
                   Portfolio
                 </Nav.Link>
-                <Nav.Link as={NavLink} to="/video-editing" onClick={handleNavClick} style={{ color: appliedTheme === 'light' ? '#212529' : '#e9ecef', marginRight: '6px' }}>
+                <Nav.Link as={NavLink} to="/video-editing" onClick={handleNavClick} style={{ color: currentTheme === 'light' ? '#212529' : '#e9ecef', marginRight: '6px' }}>
                   Video
                 </Nav.Link>
-                <Nav.Link as={NavLink} to="/artwork" onClick={handleNavClick} style={{ color: appliedTheme === 'light' ? '#212529' : '#e9ecef', marginRight: '6px' }}>
+                <Nav.Link as={NavLink} to="/artwork" onClick={handleNavClick} style={{ color: currentTheme === 'light' ? '#212529' : '#e9ecef', marginRight: '6px' }}>
                   Artwork
                 </Nav.Link>
-                <Nav.Link as={NavLink} to="/animation" onClick={handleNavClick} style={{ color: appliedTheme === 'light' ? '#212529' : '#e9ecef', marginRight: '6px' }}>
+                <Nav.Link as={NavLink} to="/animation" onClick={handleNavClick} style={{ color: currentTheme === 'light' ? '#212529' : '#e9ecef', marginRight: '6px' }}>
                   Animation
                 </Nav.Link>
 
                 {/* More Dropdown */}
                 <NavDropdown
                   title={
-                    <span style={{ color: appliedTheme === 'light' ? '#212529' : '#e9ecef' }}>
+                    <span style={{ color: currentTheme === 'light' ? '#212529' : '#e9ecef' }}>
                       📋 More
                     </span>
                   }
@@ -604,22 +785,34 @@ function Navigation(props) {
                 {authUser && (
                   <NavDropdown
                     title={
-                      <span style={{ position: 'relative', color: appliedTheme === 'light' ? '#212529' : '#e9ecef' }}>
+                      <span style={{ 
+                        position: 'relative', 
+                        color: currentTheme === 'light' ? '#212529' : '#e9ecef',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: 'clamp(1rem, 2.5vw, 1.2rem)',
+                        lineHeight: 1,
+                        minWidth: '24px',
+                        minHeight: '24px'
+                      }}>
                         🔔
                         {unreadCount > 0 && (
                           <Badge
                             bg="danger"
                             style={{
                               position: 'absolute',
-                              top: '-8px',
-                              right: '-8px',
-                              fontSize: '0.75rem',
-                              minWidth: '18px',
-                              height: '18px',
+                              top: 'clamp(-6px, -1.5vw, -8px)',
+                              right: 'clamp(-6px, -1.5vw, -8px)',
+                              fontSize: 'clamp(0.6rem, 1.8vw, 0.75rem)',
+                              minWidth: 'clamp(14px, 4vw, 18px)',
+                              height: 'clamp(14px, 4vw, 18px)',
                               borderRadius: '50%',
                               display: 'flex',
                               alignItems: 'center',
-                              justifyContent: 'center'
+                              justifyContent: 'center',
+                              padding: '0',
+                              lineHeight: 1
                             }}
                           >
                             {unreadCount > 99 ? '99+' : unreadCount}
@@ -632,63 +825,489 @@ function Navigation(props) {
                     onToggle={(isOpen) => {
                       setShowNotifications(isOpen);
                       if (isOpen) {
-                        setNotifAnnounce(`${activeNotifications.length} notifications available`);
+                        setNotifAnnounce(`${sortedNotifications.length} notifications available`);
                         setTimeout(() => setNotifAnnounce(''), 3000);
                       }
                     }}
                     align="end"
-                    style={{ marginRight: '6px' }}
+                    style={{ 
+                      marginRight: '6px',
+                      '--bs-dropdown-min-width': 'min(320px, 95vw)',
+                      '--bs-dropdown-max-height': 'min(600px, 80vh)',
+                      '--bs-dropdown-max-width': '95vw'
+                    }}
+                    className="notification-dropdown-responsive"
+                    menuVariant={currentTheme === 'dark' ? 'dark' : 'light'}
                   >
-                    <div style={{ padding: '12px 16px', borderBottom: '1px solid #eee', background: '#f8f9fa' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                        <strong>Notifications ({activeNotifications.length})</strong>
-                        {activeNotifications.length > 0 && (
-                          <Button
-                            variant="outline-secondary"
-                            size="sm"
-                            onClick={() => {
-                              dismissAllNotifications();
-                              setShowNotifications(false);
+                    <div style={{ 
+                      padding: 'clamp(8px, 2vw, 12px) clamp(10px, 3vw, 16px)', 
+                      borderBottom: '1px solid #eee', 
+                      background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
+                      position: 'sticky',
+                      top: 0,
+                      zIndex: 10
+                    }}>
+                      <div style={{ 
+                        display: 'flex', 
+                        justifyContent: 'space-between', 
+                        alignItems: 'center', 
+                        marginBottom: '8px',
+                        flexWrap: 'wrap',
+                        gap: '8px'
+                      }}>
+                        <strong style={{ fontSize: 'clamp(0.85rem, 2.5vw, 1rem)' }}>
+                          🔔 Notifications ({sortedNotifications.length})
+                        </strong>
+                        <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+                          {sortedNotifications.length > 0 && (
+                            <Button
+                              variant="outline-secondary"
+                              size="sm"
+                              onClick={() => {
+                                dismissAllNotifications();
+                                setShowNotifications(false);
+                              }}
+                              style={{ fontSize: 'clamp(0.65rem, 2vw, 0.75rem)' }}
+                            >
+                              Clear All
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                      
+                      {/* Filter Controls */}
+                      <div style={{ 
+                        display: 'flex', 
+                        gap: '6px', 
+                        marginBottom: '8px',
+                        flexWrap: 'wrap',
+                        alignItems: 'center'
+                      }}>
+                        <span style={{ fontSize: 'clamp(0.7rem, 2vw, 0.8rem)', color: '#6c757d' }}>
+                          Filter:
+                        </span>
+                        {['all', 'system', 'updates', 'accounts'].map(filter => (
+                          <button
+                            key={filter}
+                            onClick={() => setNotificationFilter(filter)}
+                            style={{
+                              background: notificationFilter === filter ? 
+                                'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 
+                                'transparent',
+                              color: notificationFilter === filter ? 'white' : '#6c757d',
+                              border: `1px solid ${notificationFilter === filter ? '#667eea' : '#dee2e6'}`,
+                              borderRadius: '12px',
+                              padding: '2px 8px',
+                              fontSize: 'clamp(0.65rem, 1.8vw, 0.7rem)',
+                              cursor: 'pointer',
+                              transition: 'all 0.2s ease',
+                              textTransform: 'capitalize'
                             }}
                           >
-                            Clear All
-                          </Button>
-                        )}
+                            {filter === 'all' ? `All (${sortedNotifications.length})` : 
+                             `${filter} (${getNotificationsByCategory(filter).length})`}
+                          </button>
+                        ))}
+                      </div>
+                      
+                      {/* Sort Controls */}
+                      <div style={{ 
+                        display: 'flex', 
+                        gap: '6px',
+                        alignItems: 'center',
+                        flexWrap: 'wrap'
+                      }}>
+                        <span style={{ fontSize: 'clamp(0.7rem, 2vw, 0.8rem)', color: '#6c757d' }}>
+                          Sort:
+                        </span>
+                        {[
+                          { key: 'newest', label: '🕐 Newest' },
+                          { key: 'oldest', label: '🕑 Oldest' },
+                          { key: 'priority', label: '⚡ Priority' }
+                        ].map(sort => (
+                          <button
+                            key={sort.key}
+                            onClick={() => setNotificationSort(sort.key)}
+                            style={{
+                              background: notificationSort === sort.key ? 
+                                'linear-gradient(135deg, #28a745 0%, #20c997 100%)' : 
+                                'transparent',
+                              color: notificationSort === sort.key ? 'white' : '#6c757d',
+                              border: `1px solid ${notificationSort === sort.key ? '#28a745' : '#dee2e6'}`,
+                              borderRadius: '12px',
+                              padding: '2px 8px',
+                              fontSize: 'clamp(0.65rem, 1.8vw, 0.7rem)',
+                              cursor: 'pointer',
+                              transition: 'all 0.2s ease'
+                            }}
+                          >
+                            {sort.label}
+                          </button>
+                        ))}
                       </div>
                     </div>
 
-                    {activeNotifications.length === 0 ? (
-                      <div style={{ padding: '20px', textAlign: 'center', color: '#6c757d' }}>
-                        <div style={{ fontSize: '2rem', marginBottom: '8px' }}>🔕</div>
-                        <div>No notifications</div>
-                        <div style={{ fontSize: '0.875rem' }}>You're all caught up!</div>
+                    {sortedNotifications.length === 0 ? (
+                      <div style={{ 
+                        padding: 'clamp(20px, 5vw, 30px)', 
+                        textAlign: 'center', 
+                        color: '#6c757d',
+                        background: 'linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%)'
+                      }}>
+                        <div style={{ 
+                          fontSize: 'clamp(2rem, 6vw, 3rem)', 
+                          marginBottom: 'clamp(8px, 2vw, 12px)',
+                          filter: 'grayscale(0.3)'
+                        }}>
+                          {notificationFilter === 'all' ? '🔕' : 
+                           notificationFilter === 'system' ? '⚙️' :
+                           notificationFilter === 'updates' ? '📈' : '👥'}
+                        </div>
+                        <div style={{ 
+                          fontSize: 'clamp(0.9rem, 2.5vw, 1.1rem)',
+                          fontWeight: '600',
+                          marginBottom: '4px'
+                        }}>
+                          {notificationFilter === 'all' ? 'No notifications' : `No ${notificationFilter} notifications`}
+                        </div>
+                        <div style={{ fontSize: 'clamp(0.75rem, 2vw, 0.875rem)' }}>
+                          {notificationFilter === 'all' ? "You're all caught up!" : 
+                           `No ${notificationFilter} activity right now`}
+                        </div>
+                        {notificationFilter !== 'all' && (
+                          <button
+                            onClick={() => setNotificationFilter('all')}
+                            style={{
+                              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                              color: 'white',
+                              border: 'none',
+                              borderRadius: '20px',
+                              padding: '6px 12px',
+                              fontSize: 'clamp(0.7rem, 2vw, 0.8rem)',
+                              cursor: 'pointer',
+                              marginTop: '8px',
+                              transition: 'all 0.2s ease'
+                            }}
+                          >
+                            View All Notifications
+                          </button>
+                        )}
                       </div>
                     ) : (
-                      activeNotifications.slice(0, 5).map(notification => (
-                        <NavDropdown.Item key={notification.id} style={{ whiteSpace: 'normal' }}>
-                          <div style={{ fontSize: '0.9rem' }}>
-                            <span style={{ marginRight: '6px' }}>{notification.icon || '📋'}</span>
-                            {notification.message}
-                          </div>
-                          <small style={{ color: '#6c757d' }}>
-                            {new Date(notification.createdAt).toLocaleTimeString()}
-                          </small>
-                        </NavDropdown.Item>
-                      ))
+                      sortedNotifications.slice(0, 8).map(notification => {
+                        const isExpanded = expandedNotifications.has(notification.id);
+                        const isRecent = (Date.now() - notification.createdAt) < (5 * 60 * 1000); // 5 minutes
+                        
+                        return (
+                          <NavDropdown.Item 
+                            key={notification.id} 
+                            style={{ 
+                              whiteSpace: 'normal',
+                              padding: 'clamp(8px, 2vw, 10px) clamp(12px, 3vw, 14px)',
+                              wordBreak: 'break-word',
+                              overflowWrap: 'break-word',
+                              background: isRecent ? 
+                                'linear-gradient(135deg, rgba(13, 110, 253, 0.05) 0%, rgba(13, 110, 253, 0.02) 100%)' : 
+                                'transparent',
+                              borderLeft: isRecent ? '3px solid #0d6efd' : '3px solid transparent',
+                              position: 'relative',
+                              cursor: 'pointer',
+                              transition: 'all 0.2s ease'
+                            }}
+                            onClick={() => toggleNotificationExpansion(notification.id)}
+                          >
+                            {/* Priority indicator */}
+                            {notification.type === 'error' && (
+                              <div style={{
+                                position: 'absolute',
+                                top: '6px',
+                                right: '6px',
+                                width: '8px',
+                                height: '8px',
+                                borderRadius: '50%',
+                                background: 'linear-gradient(135deg, #dc3545 0%, #c82333 100%)',
+                                animation: 'pulse 2s infinite'
+                              }} />
+                            )}
+                            
+                            <div style={{ 
+                              display: 'flex',
+                              alignItems: 'flex-start',
+                              gap: 'clamp(6px, 1.5vw, 8px)',
+                              marginBottom: '6px'
+                            }}>
+                              <div style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                flexShrink: 0
+                              }}>
+                                <span style={{ 
+                                  fontSize: 'clamp(0.9rem, 2.2vw, 1rem)',
+                                  lineHeight: 1,
+                                  filter: notification.type === 'error' ? 'brightness(1.2)' : 'none'
+                                }}>
+                                  {notification.icon || getNotificationIcon(notification.type)}
+                                </span>
+                                {isRecent && (
+                                  <div style={{
+                                    width: '4px',
+                                    height: '4px',
+                                    borderRadius: '50%',
+                                    background: '#0d6efd',
+                                    marginTop: '2px',
+                                    animation: 'pulse 1s infinite'
+                                  }} />
+                                )}
+                              </div>
+                              
+                              <div style={{
+                                flex: 1,
+                                minWidth: 0
+                              }}>
+                                <div style={{
+                                  fontSize: 'clamp(0.8rem, 2.2vw, 0.9rem)',
+                                  lineHeight: '1.4',
+                                  fontWeight: isRecent ? '600' : '500',
+                                  color: notification.type === 'error' ? '#dc3545' : 'inherit',
+                                  marginBottom: '4px'
+                                }}>
+                                  {notification.message}
+                                  {notification.type && (
+                                    <span style={{
+                                      marginLeft: '6px',
+                                      fontSize: '0.65rem',
+                                      padding: '1px 4px',
+                                      borderRadius: '8px',
+                                      background: notification.type === 'error' ? '#dc3545' :
+                                                 notification.type === 'warning' ? '#ffc107' :
+                                                 notification.type === 'success' ? '#28a745' : '#6c757d',
+                                      color: notification.type === 'warning' ? '#000' : '#fff',
+                                      fontWeight: '600',
+                                      textTransform: 'uppercase'
+                                    }}>
+                                      {getNotificationPriority(notification.type)}
+                                    </span>
+                                  )}
+                                </div>
+                                
+                                {isExpanded && notification.details && (
+                                  <div style={{
+                                    fontSize: 'clamp(0.75rem, 2vw, 0.8rem)',
+                                    color: '#6c757d',
+                                    padding: '6px 8px',
+                                    background: 'rgba(108, 117, 125, 0.1)',
+                                    borderRadius: '6px',
+                                    marginBottom: '4px',
+                                    borderLeft: '2px solid #6c757d'
+                                  }}>
+                                    {notification.details}
+                                  </div>
+                                )}
+                                
+                                <div style={{
+                                  display: 'flex',
+                                  justifyContent: 'space-between',
+                                  alignItems: 'center',
+                                  marginTop: '4px'
+                                }}>
+                                  <small style={{ 
+                                    color: '#6c757d',
+                                    fontSize: 'clamp(0.65rem, 1.8vw, 0.75rem)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '4px'
+                                  }}>
+                                    🕐 {new Date(notification.createdAt).toLocaleTimeString()}
+                                    {notification.category && (
+                                      <>
+                                        <span>•</span>
+                                        <span style={{ textTransform: 'capitalize' }}>
+                                          {notification.category}
+                                        </span>
+                                      </>
+                                    )}
+                                  </small>
+                                  
+                                  <div style={{ display: 'flex', gap: '4px' }}>
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        markNotificationAsRead(notification.id);
+                                      }}
+                                      style={{
+                                        background: 'none',
+                                        border: 'none',
+                                        cursor: 'pointer',
+                                        fontSize: '0.7rem',
+                                        opacity: 0.7,
+                                        transition: 'opacity 0.2s ease'
+                                      }}
+                                      title="Mark as read"
+                                    >
+                                      ✅
+                                    </button>
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleSingleNotificationDismiss(notification.id);
+                                      }}
+                                      style={{
+                                        background: 'none',
+                                        border: 'none',
+                                        cursor: 'pointer',
+                                        fontSize: '0.7rem',
+                                        opacity: 0.7,
+                                        transition: 'opacity 0.2s ease'
+                                      }}
+                                      title="Dismiss"
+                                    >
+                                      ❌
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                              
+                              <div style={{
+                                fontSize: '0.7rem',
+                                color: '#6c757d',
+                                flexShrink: 0,
+                                transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                                transition: 'transform 0.2s ease'
+                              }}>
+                                ▼
+                              </div>
+                            </div>
+                          </NavDropdown.Item>
+                        );
+                      })
+                    )}
+                    
+                    {/* Enhanced notification footer */}
+                    {sortedNotifications.length > 0 && (
+                      <div style={{
+                        padding: '8px 12px',
+                        borderTop: '1px solid rgba(108, 117, 125, 0.2)',
+                        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%)',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        gap: '8px'
+                      }}>
+                        <div style={{ display: 'flex', gap: '6px' }}>
+                          <button
+                            onClick={markAllAsRead}
+                            style={{
+                              background: 'linear-gradient(135deg, #28a745 0%, #20a739 100%)',
+                              border: 'none',
+                              borderRadius: '12px',
+                              padding: '4px 8px',
+                              fontSize: '0.65rem',
+                              color: 'white',
+                              cursor: 'pointer',
+                              fontWeight: '600',
+                              transition: 'all 0.2s ease'
+                            }}
+                            title="Mark all as read"
+                          >
+                            ✅ Read All
+                          </button>
+                          <button
+                            onClick={clearAllNotifications}
+                            style={{
+                              background: 'linear-gradient(135deg, #dc3545 0%, #c82333 100%)',
+                              border: 'none',
+                              borderRadius: '12px',
+                              padding: '4px 8px',
+                              fontSize: '0.65rem',
+                              color: 'white',
+                              cursor: 'pointer',
+                              fontWeight: '600',
+                              transition: 'all 0.2s ease'
+                            }}
+                            title="Clear all notifications"
+                          >
+                            🗑️ Clear
+                          </button>
+                        </div>
+                        
+                        <div style={{
+                          fontSize: '0.65rem',
+                          color: '#6c757d',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px'
+                        }}>
+                          <span>📊</span>
+                          <span>
+                            {filteredNotifications.length} of {notifications.length}
+                          </span>
+                        </div>
+                      </div>
+                    )}
+
+                    {sortedNotifications.length > 8 && (
+                      <NavDropdown.Item 
+                        style={{ 
+                          textAlign: 'center',
+                          fontWeight: '600',
+                          color: '#0d6efd',
+                          background: 'linear-gradient(135deg, rgba(13, 110, 253, 0.1) 0%, rgba(13, 110, 253, 0.05) 100%)',
+                          borderTop: '1px solid rgba(13, 110, 253, 0.2)'
+                        }}
+                        onClick={() => {
+                          // Could implement a full notifications page here
+                          setNotificationFilter('all');
+                          console.log('Show all notifications');
+                        }}
+                      >
+                        📋 View All {notifications.length} Notifications
+                      </NavDropdown.Item>
                     )}
                     
                     <NavDropdown.Divider />
                     
                     {/* Updates Section */}
-                    <div style={{ padding: '8px 16px', background: '#f8f9fa', borderBottom: '1px solid #eee' }}>
-                      <strong style={{ fontSize: '0.9rem', color: '#495057' }}>📈 Updates</strong>
+                    <div style={{ 
+                      padding: 'clamp(6px, 2vw, 8px) clamp(10px, 3vw, 16px)', 
+                      background: '#f8f9fa', 
+                      borderBottom: '1px solid #eee' 
+                    }}>
+                      <strong style={{ 
+                        fontSize: 'clamp(0.8rem, 2.2vw, 0.9rem)', 
+                        color: '#495057' 
+                      }}>📈 Updates</strong>
                     </div>
-                    <NavDropdown.Item>
-                      <div style={{ fontSize: '0.85rem' }}>
-                        <span style={{ marginRight: '6px' }}>🎨</span>
-                        Portfolio v2.5 - New animations added
+                    <NavDropdown.Item style={{ 
+                      padding: 'clamp(6px, 2vw, 8px) clamp(10px, 3vw, 12px)',
+                      wordBreak: 'break-word',
+                      overflowWrap: 'break-word'
+                    }}>
+                      <div style={{ 
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        gap: 'clamp(4px, 1.5vw, 6px)',
+                        marginBottom: '4px'
+                      }}>
+                        <span style={{ 
+                          flexShrink: 0,
+                          lineHeight: 1
+                        }}>🎨</span>
+                        <div style={{
+                          fontSize: 'clamp(0.75rem, 2vw, 0.85rem)',
+                          lineHeight: '1.3',
+                          flex: 1,
+                          minWidth: 0
+                        }}>
+                          Portfolio v2.5 - New animations added
+                        </div>
                       </div>
-                      <small style={{ color: '#6c757d' }}>2 hours ago</small>
+                      <small style={{ 
+                        color: '#6c757d',
+                        fontSize: 'clamp(0.65rem, 1.8vw, 0.75rem)',
+                        display: 'block',
+                        marginLeft: 'clamp(14px, 3.5vw, 18px)'
+                      }}>2 hours ago</small>
                     </NavDropdown.Item>
                     <NavDropdown.Item>
                       <div style={{ fontSize: '0.85rem' }}>
@@ -708,8 +1327,15 @@ function Navigation(props) {
                     <NavDropdown.Divider />
 
                     {/* Accounts Section */}
-                    <div style={{ padding: '8px 16px', background: '#f8f9fa', borderBottom: '1px solid #eee' }}>
-                      <strong style={{ fontSize: '0.9rem', color: '#495057' }}>👥 Accounts</strong>
+                    <div style={{ 
+                      padding: 'clamp(6px, 2vw, 8px) clamp(10px, 3vw, 16px)', 
+                      background: '#f8f9fa', 
+                      borderBottom: '1px solid #eee' 
+                    }}>
+                      <strong style={{ 
+                        fontSize: 'clamp(0.8rem, 2.2vw, 0.9rem)', 
+                        color: '#495057' 
+                      }}>👥 Accounts</strong>
                     </div>
                     <NavDropdown.Item>
                       <div style={{ fontSize: '0.85rem' }}>
@@ -830,42 +1456,27 @@ function Navigation(props) {
                       setShowLogin(true);
                       handleNavClick();
                     }}
-                    style={{ 
-                      cursor: 'pointer', 
-                      color: appliedTheme === 'light' ? '#212529' : '#e9ecef', 
-                      marginRight: '6px',
-                      position: 'relative',
-                      transition: 'all 0.3s ease'
-                    }}
-                    className="nav-icon-hover"
-                    title="Login"
-                  >
-                    <span className="nav-icon-wrapper">
-                      👤
-                      <span className="nav-text-hover">Login</span>
-                    </span>
-                  </Nav.Link>
-                )}
-
-                {/* Admin Dashboard Button for Admins (alternative placement) */}
-                {authUser && (authUser.isAdmin || authUser.role === 'administrator') && (
-                  <Nav.Link
-                    onClick={() => setShowAdminDashboard(true)}
                     style={{ cursor: 'pointer', color: appliedTheme === 'light' ? '#212529' : '#e9ecef', marginRight: '6px' }}
-                    title="Admin Dashboard"
                   >
-                    👑
+                    👤 Login
                   </Nav.Link>
                 )}
 
                 {/* Theme Toggle */}
                 <Nav.Link
-                  onClick={toggleTheme}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    try {
+                      toggleTheme();
+                    } catch (error) {
+                      console.error('Theme toggle error:', error);
+                    }
+                  }}
                   style={{
                     cursor: 'pointer',
                     fontSize: '1.2rem',
                     padding: '0.5rem',
-                    color: appliedTheme === 'light' ? '#212529' : '#e9ecef',
+                    color: currentTheme === 'light' ? '#212529' : '#e9ecef',
                     marginRight: '6px',
                     transition: 'color 0.3s ease, transform 0.2s ease'
                   }}
@@ -875,10 +1486,10 @@ function Navigation(props) {
                   onMouseLeave={(e) => {
                     e.target.style.transform = 'scale(1)';
                   }}
-                  aria-label={`Switch to ${appliedTheme === 'light' ? 'dark' : 'light'} theme`}
-                  title={`Switch to ${appliedTheme === 'light' ? 'dark' : 'light'} theme`}
+                  aria-label={`Switch to ${currentTheme === 'light' ? 'dark' : 'light'} theme`}
+                  title={`Switch to ${currentTheme === 'light' ? 'dark' : 'light'} theme`}
                 >
-                  {appliedTheme === 'light' ? '🌙' : '☀️'}
+                  {currentTheme === 'light' ? '🌙' : '☀️'}
                 </Nav.Link>
               </Nav>
             </Navbar.Collapse>
@@ -908,15 +1519,15 @@ function Navigation(props) {
             borderRadius: '0.375rem'
           }}>
             <Modal.Header closeButton style={{ 
-              backgroundColor: appliedTheme === 'light' ? '#ffffff' : '#343a40',
-              color: appliedTheme === 'light' ? '#212529' : '#ffffff',
-              borderBottom: `1px solid ${appliedTheme === 'light' ? '#dee2e6' : '#495057'}`
+              backgroundColor: currentTheme === 'light' ? '#ffffff' : '#343a40',
+              color: currentTheme === 'light' ? '#212529' : '#ffffff',
+              borderBottom: `1px solid ${currentTheme === 'light' ? '#dee2e6' : '#495057'}`
             }}>
               <Modal.Title>{authMode === 'login' ? 'Login' : 'Sign Up'}</Modal.Title>
             </Modal.Header>
             <Modal.Body style={{ 
-              backgroundColor: appliedTheme === 'light' ? '#ffffff' : '#343a40',
-              color: appliedTheme === 'light' ? '#212529' : '#ffffff'
+              backgroundColor: currentTheme === 'light' ? '#ffffff' : '#343a40',
+              color: currentTheme === 'light' ? '#212529' : '#ffffff'
             }}>
             <form onSubmit={(e) => { e.preventDefault(); handleAuth(); }}>
               {authMode === 'signup' && (
@@ -1035,9 +1646,9 @@ function Navigation(props) {
             </form>
           </Modal.Body>
           <Modal.Footer style={{ 
-            backgroundColor: appliedTheme === 'light' ? '#ffffff' : '#343a40',
-            color: appliedTheme === 'light' ? '#212529' : '#ffffff',
-            borderTop: `1px solid ${appliedTheme === 'light' ? '#dee2e6' : '#495057'}`
+            backgroundColor: currentTheme === 'light' ? '#ffffff' : '#343a40',
+            color: currentTheme === 'light' ? '#212529' : '#ffffff',
+            borderTop: `1px solid ${currentTheme === 'light' ? '#dee2e6' : '#495057'}`
           }}>
             <div className="w-100 text-center">
               {authMode === 'login' ? (
