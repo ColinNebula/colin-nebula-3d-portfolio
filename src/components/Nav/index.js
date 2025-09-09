@@ -1257,7 +1257,7 @@ function Navigation(props) {
                         }}>
                           <span>📊</span>
                           <span>
-                            {filteredNotifications.length} of {notifications.length}
+                            {filteredNotifications.length} of {globalNotifications.length}
                           </span>
                         </div>
                       </div>
@@ -1278,7 +1278,7 @@ function Navigation(props) {
                           console.log('Show all notifications');
                         }}
                       >
-                        📋 View All {notifications.length} Notifications
+                        📋 View All {globalNotifications.length} Notifications
                       </NavDropdown.Item>
                     )}
                     
