@@ -19,9 +19,27 @@ const LandingPage = () => {
   const [isLongPress, setIsLongPress] = useState(false);
   const [touchStartTime, setTouchStartTime] = useState(0);
   const [gestureType, setGestureType] = useState(null);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const containerRef = useRef(null);
   const titleRef = useRef(null);
   const longPressTimer = useRef(null);
+
+  // Track window width for responsive button text
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Get responsive button text based on screen size
+  const getButtonText = (defaultText, shortText, iconOnly) => {
+    if (windowWidth <= 360) return iconOnly;
+    if (windowWidth <= 480) return shortText;
+    return defaultText;
+  };
 
   // Create floating particles
   useEffect(() => {
@@ -438,7 +456,9 @@ const LandingPage = () => {
         variant="light" 
         className={`floating-portfolio-btn rounded-pill px-3 py-2 fw-semibold ${isLoaded ? 'show' : ''}`}
       >
-        <span className="button-text">🚀 Enter Portfolio</span>
+        <span className="button-text">
+          {getButtonText('🚀 Enter Portfolio', '🚀 Enter', '🚀')}
+        </span>
         <span className="button-overlay"></span>
       </Button>
 
@@ -449,7 +469,9 @@ const LandingPage = () => {
         variant="outline-light" 
         className={`floating-work-btn rounded-pill px-3 py-2 fw-semibold ${isLoaded ? 'show' : ''}`}
       >
-        <span className="button-text">👁️ View Work</span>
+        <span className="button-text">
+          {getButtonText('👁️ View Work', '👁️ View', '👁️')}
+        </span>
         <span className="button-overlay"></span>
       </Button>
     </div>

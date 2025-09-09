@@ -96,6 +96,23 @@ function Navigation(props) {
 
     const [isSticky, setIsSticky] = useState(false);
 
+    // Mobile login access state
+    const [logoTouchStart, setLogoTouchStart] = useState(null);
+    const [logoLongPressTimer, setLogoLongPressTimer] = useState(null);
+    const [showMobileLoginHint, setShowMobileLoginHint] = useState(false);
+    
+    // Subscription modal state
+    const [showSubscribeModal, setShowSubscribeModal] = useState(false);
+    const [subscribeForm, setSubscribeForm] = useState({ name: '', email: '' });
+    const [subscribeStatus, setSubscribeStatus] = useState('');
+    const [isSubscribing, setIsSubscribing] = useState(false);
+    
+    // Login button visibility state
+    const [showLoginButton, setShowLoginButton] = useState(false);
+    
+    // Admin dashboard state
+    const [showAdminDashboard, setShowAdminDashboard] = useState(false);
+
   // Effect for scroll detection
   useEffect(() => {
     const handleScroll = () => {
@@ -1406,7 +1423,7 @@ function Navigation(props) {
                   }}
                   style={{ 
                     cursor: 'pointer', 
-                    color: appliedTheme === 'light' ? '#212529' : '#e9ecef', 
+                    color: currentTheme === 'light' ? '#212529' : '#e9ecef', 
                     marginRight: '6px',
                     position: 'relative',
                     transition: 'all 0.3s ease'
@@ -1437,30 +1454,32 @@ function Navigation(props) {
                       </div>
                     </NavDropdown.Item>
                     <NavDropdown.Divider />
-                    <NavDropdown.Item onClick={handleLogout}>
-                      🚪 Logout
+                    <NavDropdown.Item onClick={handleLogout} title="Logout">
+                      🚪
                     </NavDropdown.Item>
                     {(authUser.isAdmin || authUser.role === 'administrator') && (
                       <>
                         <NavDropdown.Divider />
-                        <NavDropdown.Item onClick={() => setShowAdminDashboard(true)}>
-                          👑 Admin Dashboard
+                        <NavDropdown.Item onClick={() => setShowAdminDashboard(true)} title="Admin Dashboard">
+                          👑
                         </NavDropdown.Item>
                       </>
                     )}
                   </NavDropdown>
-                ) : (
+                ) : showLoginButton ? (
                   <Nav.Link
                     onClick={() => {
                       setAuthMode('login');
                       setShowLogin(true);
                       handleNavClick();
                     }}
-                    style={{ cursor: 'pointer', color: appliedTheme === 'light' ? '#212529' : '#e9ecef', marginRight: '6px' }}
+                    style={{ cursor: 'pointer', color: currentTheme === 'light' ? '#212529' : '#e9ecef', marginRight: '6px' }}
+                    title="Login"
                   >
-                    👤 Login
+                    👤
                   </Nav.Link>
-                )}
+                ) : null
+                }
 
                 {/* Theme Toggle */}
                 <Nav.Link
@@ -1728,10 +1747,10 @@ function Navigation(props) {
           }}>
             <Modal.Header 
               closeButton 
-              style={{ 
-                backgroundColor: appliedTheme === 'light' ? '#ffffff' : '#343a40',
-                color: appliedTheme === 'light' ? '#212529' : '#ffffff',
-                borderBottom: `1px solid ${appliedTheme === 'light' ? '#dee2e6' : '#495057'}`
+              style={{
+                backgroundColor: currentTheme === 'light' ? '#ffffff' : '#343a40',
+                color: currentTheme === 'light' ? '#212529' : '#ffffff',
+                borderBottom: `1px solid ${currentTheme === 'light' ? '#dee2e6' : '#495057'}`
               }}
             >
               <Modal.Title>
@@ -1740,8 +1759,8 @@ function Navigation(props) {
               </Modal.Title>
             </Modal.Header>
             <Modal.Body style={{ 
-              backgroundColor: appliedTheme === 'light' ? '#ffffff' : '#343a40',
-              color: appliedTheme === 'light' ? '#212529' : '#ffffff'
+              backgroundColor: currentTheme === 'light' ? '#ffffff' : '#343a40',
+              color: currentTheme === 'light' ? '#212529' : '#ffffff'
             }}>
               <div className="subscribe-intro mb-3">
                 <p>Stay updated with my latest 3D projects, tutorials, and creative insights!</p>

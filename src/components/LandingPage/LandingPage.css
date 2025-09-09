@@ -2061,6 +2061,9 @@ html {
   opacity: 0;
   transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   overflow: hidden;
+  max-width: calc(100vw - 4rem);
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .floating-portfolio-btn.show {
@@ -2121,6 +2124,9 @@ html {
   opacity: 0;
   transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   overflow: hidden;
+  max-width: calc(100vw - 4rem);
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .floating-work-btn.show {
@@ -2172,6 +2178,10 @@ html {
     bottom: 1.5rem;
     padding: 10px 16px !important;
     font-size: 0.8rem;
+    max-width: calc(50vw - 2rem);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   
   .floating-portfolio-btn {
@@ -2187,8 +2197,12 @@ html {
   .floating-portfolio-btn,
   .floating-work-btn {
     bottom: 1rem;
-    padding: 8px 14px !important;
+    padding: 8px 12px !important;
     font-size: 0.75rem;
+    max-width: calc(45vw - 1rem);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   
   .floating-portfolio-btn {
@@ -2197,6 +2211,23 @@ html {
   
   .floating-work-btn {
     right: 1rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .floating-portfolio-btn,
+  .floating-work-btn {
+    padding: 6px 10px !important;
+    font-size: 0.7rem;
+    max-width: calc(40vw - 0.5rem);
+  }
+  
+  .floating-portfolio-btn {
+    left: 0.5rem;
+  }
+  
+  .floating-work-btn {
+    right: 0.5rem;
   }
 }
 
