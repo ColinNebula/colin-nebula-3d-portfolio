@@ -8,7 +8,15 @@ import reportWebVitals from './reportWebVitals';
 // Initialize theme before React renders to prevent flash
 const initializeTheme = () => {
   try {
-    const savedTheme = localStorage.getItem('nebula_theme');
+    // Clean up old theme storage key if it exists
+    const oldTheme = localStorage.getItem('nebula_theme');
+    if (oldTheme && !localStorage.getItem('theme')) {
+      localStorage.setItem('theme', oldTheme);
+      localStorage.removeItem('nebula_theme');
+      console.log('Migrated theme preference from old storage key');
+    }
+    
+    const savedTheme = localStorage.getItem('theme'); // Use same key as App.js
     const systemPreference = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     const theme = savedTheme || systemPreference;
     
