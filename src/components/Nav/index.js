@@ -81,6 +81,11 @@ function Navigation(props) {
     // Login visibility state
     const [showLoginButton, setShowLoginButton] = useState(false);
     
+    // Mobile login access states
+    const [logoTouchStart, setLogoTouchStart] = useState(null);
+    const [logoLongPressTimer, setLogoLongPressTimer] = useState(null);
+    const [showMobileLoginHint, setShowMobileLoginHint] = useState(false);
+    
     // Authentication form data
     const [authData, setAuthData] = useState({
       email: '',
@@ -174,7 +179,39 @@ function Navigation(props) {
       }
       document.body.removeAttribute('data-scroll-y');
     };
-  }, [showLogin, showEmailVerification]);    // Handle auth form changes
+  }, [showLogin, showEmailVerification]);
+
+  // Mobile login access hint
+  useEffect(() => {
+    const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+                          window.innerWidth <= 768;
+    
+    if (isMobileDevice && !authToken) {
+      const hasSeenHint = localStorage.getItem('mobile_login_hint_seen');
+      
+      if (!hasSeenHint) {
+        setTimeout(() => {
+          showNotification('💡 Tip: Long press the logo to access login', 'info', 6000, {
+            category: 'system',
+            icon: '💡',
+            public: true
+          });
+          localStorage.setItem('mobile_login_hint_seen', 'true');
+        }, 3000); // Show hint after 3 seconds
+      }
+    }
+  }, [authToken, showNotification]);
+
+  // Cleanup mobile touch timers on unmount
+  useEffect(() => {
+    return () => {
+      if (logoLongPressTimer) {
+        clearTimeout(logoLongPressTimer);
+      }
+    };
+  }, [logoLongPressTimer]);
+
+  // Handle auth form changes
     const handleAuthChange = (field, value) => {
       setAuthData(prev => ({ ...prev, [field]: value }));
       setLoginMsg('');
@@ -538,6 +575,63 @@ function Navigation(props) {
       console.log('Notification dismissed:', notificationId);
     };
 
+    // Mobile login access handlers
+    const handleLogoTouchStart = (e) => {
+      e.preventDefault();
+      const touch = e.touches[0];
+      setLogoTouchStart({ x: touch.clientX, y: touch.clientY, time: Date.now() });
+      
+      // Start long press timer (1.5 seconds)
+      const timer = setTimeout(() => {
+        setShowLoginButton(true);
+        setShowMobileLoginHint(true);
+        
+        // Vibrate if supported
+        if (navigator.vibrate) {
+          navigator.vibrate(200);
+        }
+        
+        showNotification('Login access enabled! 🔓', 'success', 3000, {
+          category: 'system',
+          icon: '🔓',
+          public: true
+        });
+        
+        // Auto-hide hint after 5 seconds
+        setTimeout(() => setShowMobileLoginHint(false), 5000);
+      }, 1500);
+      
+      setLogoLongPressTimer(timer);
+    };
+
+    const handleLogoTouchEnd = (e) => {
+      if (logoLongPressTimer) {
+        clearTimeout(logoLongPressTimer);
+        setLogoLongPressTimer(null);
+      }
+      setLogoTouchStart(null);
+    };
+
+    const handleLogoTouchMove = (e) => {
+      if (!logoTouchStart) return;
+      
+      const touch = e.touches[0];
+      const deltaX = Math.abs(touch.clientX - logoTouchStart.x);
+      const deltaY = Math.abs(touch.clientY - logoTouchStart.y);
+      
+      // If user moves finger too much, cancel long press
+      if (deltaX > 10 || deltaY > 10) {
+        if (logoLongPressTimer) {
+          clearTimeout(logoLongPressTimer);
+          setLogoLongPressTimer(null);
+        }
+      }
+    };
+
+    // Check if device is mobile
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+                     window.innerWidth <= 768;
+
     return (
       <>
         <Navbar
@@ -560,9 +654,38 @@ function Navigation(props) {
           }}
         >
           <Container>
-            <Navbar.Brand as={Link} to="/" style={{ color: currentTheme === 'light' ? '#212529' : '#e9ecef' }}>
+            <Navbar.Brand 
+              as={Link} 
+              to="/" 
+              style={{ 
+                color: currentTheme === 'light' ? '#212529' : '#e9ecef',
+                position: 'relative',
+                userSelect: 'none'
+              }}
+              onTouchStart={isMobile ? handleLogoTouchStart : undefined}
+              onTouchEnd={isMobile ? handleLogoTouchEnd : undefined}
+              onTouchMove={isMobile ? handleLogoTouchMove : undefined}
+              title={isMobile ? "Long press for login access" : undefined}
+            >
               <img src={logoM} width="90px" height="40px" alt="logo" className="nav-logo" />
               Colin Nebula 3D 
+              {isMobile && showMobileLoginHint && (
+                <div style={{
+                  position: 'absolute',
+                  bottom: '-25px',
+                  left: '0',
+                  fontSize: '0.7rem',
+                  color: '#28a745',
+                  fontWeight: '600',
+                  background: 'rgba(40, 167, 69, 0.1)',
+                  padding: '2px 6px',
+                  borderRadius: '4px',
+                  whiteSpace: 'nowrap',
+                  animation: 'fadeInOut 5s ease-in-out'
+                }}>
+                  🔓 Login enabled
+                </div>
+              )}
             </Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" aria-label="Toggle navigation" />
             <Navbar.Collapse id="basic-navbar-nav" aria-label="Primary">
