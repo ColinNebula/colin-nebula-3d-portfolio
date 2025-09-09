@@ -1,27 +1,27 @@
 {
   "files": {
-    "main.css": "/colin-nebula-3d-portfolio/static/css/main.085fa613.css",
-    "main.js": "/colin-nebula-3d-portfolio/static/js/main.e0fd9ee4.js",
+    "main.css": "/colin-nebula-3d-portfolio/static/css/main.b6f7b74b.css",
+    "main.js": "/colin-nebula-3d-portfolio/static/js/main.746b8c8f.js",
     "static/css/941.9cc3aa3f.chunk.css": "/colin-nebula-3d-portfolio/static/css/941.9cc3aa3f.chunk.css",
     "static/js/941.b651f74f.chunk.js": "/colin-nebula-3d-portfolio/static/js/941.b651f74f.chunk.js",
-    "static/css/135.430e2401.chunk.css": "/colin-nebula-3d-portfolio/static/css/135.430e2401.chunk.css",
-    "static/js/135.e9130f66.chunk.js": "/colin-nebula-3d-portfolio/static/js/135.e9130f66.chunk.js",
+    "static/css/422.430e2401.chunk.css": "/colin-nebula-3d-portfolio/static/css/422.430e2401.chunk.css",
+    "static/js/422.d4a26958.chunk.js": "/colin-nebula-3d-portfolio/static/js/422.d4a26958.chunk.js",
     "static/css/500.0226178c.chunk.css": "/colin-nebula-3d-portfolio/static/css/500.0226178c.chunk.css",
-    "static/js/500.2984ad46.chunk.js": "/colin-nebula-3d-portfolio/static/js/500.2984ad46.chunk.js",
+    "static/js/500.efb57913.chunk.js": "/colin-nebula-3d-portfolio/static/js/500.efb57913.chunk.js",
     "static/css/396.e98cafa0.chunk.css": "/colin-nebula-3d-portfolio/static/css/396.e98cafa0.chunk.css",
     "static/js/396.d66880ba.chunk.js": "/colin-nebula-3d-portfolio/static/js/396.d66880ba.chunk.js",
     "static/css/831.c0afeb7f.chunk.css": "/colin-nebula-3d-portfolio/static/css/831.c0afeb7f.chunk.css",
     "static/js/831.4f57831b.chunk.js": "/colin-nebula-3d-portfolio/static/js/831.4f57831b.chunk.js",
     "static/css/955.89104864.chunk.css": "/colin-nebula-3d-portfolio/static/css/955.89104864.chunk.css",
     "static/js/955.f423c292.chunk.js": "/colin-nebula-3d-portfolio/static/js/955.f423c292.chunk.js",
-    "static/css/516.b9e13dc8.chunk.css": "/colin-nebula-3d-portfolio/static/css/516.b9e13dc8.chunk.css",
-    "static/js/516.aa6425e3.chunk.js": "/colin-nebula-3d-portfolio/static/js/516.aa6425e3.chunk.js",
+    "static/css/513.02d84b0a.chunk.css": "/colin-nebula-3d-portfolio/static/css/513.02d84b0a.chunk.css",
+    "static/js/513.5adb1386.chunk.js": "/colin-nebula-3d-portfolio/static/js/513.5adb1386.chunk.js",
     "static/css/347.faa7f2a4.chunk.css": "/colin-nebula-3d-portfolio/static/css/347.faa7f2a4.chunk.css",
     "static/js/347.377f7ec4.chunk.js": "/colin-nebula-3d-portfolio/static/js/347.377f7ec4.chunk.js",
     "static/css/127.3a0298d3.chunk.css": "/colin-nebula-3d-portfolio/static/css/127.3a0298d3.chunk.css",
-    "static/js/127.2c5daaf2.chunk.js": "/colin-nebula-3d-portfolio/static/js/127.2c5daaf2.chunk.js",
+    "static/js/127.57bc3998.chunk.js": "/colin-nebula-3d-portfolio/static/js/127.57bc3998.chunk.js",
     "static/css/675.98c539fa.chunk.css": "/colin-nebula-3d-portfolio/static/css/675.98c539fa.chunk.css",
-    "static/js/675.ca506ecb.chunk.js": "/colin-nebula-3d-portfolio/static/js/675.ca506ecb.chunk.js",
+    "static/js/675.be90cbf6.chunk.js": "/colin-nebula-3d-portfolio/static/js/675.be90cbf6.chunk.js",
     "static/css/229.cc828d29.chunk.css": "/colin-nebula-3d-portfolio/static/css/229.cc828d29.chunk.css",
     "static/js/229.4979e697.chunk.js": "/colin-nebula-3d-portfolio/static/js/229.4979e697.chunk.js",
     "static/css/551.4559f2bb.chunk.css": "/colin-nebula-3d-portfolio/static/css/551.4559f2bb.chunk.css",
@@ -34,7 +34,7 @@
     "static/js/354.807c84b9.chunk.js": "/colin-nebula-3d-portfolio/static/js/354.807c84b9.chunk.js",
     "static/js/82.2dc65764.chunk.js": "/colin-nebula-3d-portfolio/static/js/82.2dc65764.chunk.js",
     "static/js/239.28ff76e1.chunk.js": "/colin-nebula-3d-portfolio/static/js/239.28ff76e1.chunk.js",
-    "static/js/378.d9664fab.chunk.js": "/colin-nebula-3d-portfolio/static/js/378.d9664fab.chunk.js",
+    "static/js/378.6d49bbbb.chunk.js": "/colin-nebula-3d-portfolio/static/js/378.6d49bbbb.chunk.js",
     "static/media/mech3.png": "/colin-nebula-3d-portfolio/static/media/mech3.30680e3fea301afb9a8c.png",
     "static/media/mech1.png": "/colin-nebula-3d-portfolio/static/media/mech1.62ee12bede6d8833a0fe.png",
     "static/media/g1.png": "/colin-nebula-3d-portfolio/static/media/g1.f784b9bb87fb6b7b1e3f.png",
@@ -63,7 +63,7 @@
     "index.html": "/colin-nebula-3d-portfolio/index.html"
   },
   "entrypoints": [
-    "static/css/main.085fa613.css",
-    "static/js/main.e0fd9ee4.js"
+    "static/css/main.b6f7b74b.css",
+    "static/js/main.746b8c8f.js"
   ]
 }
