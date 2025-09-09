@@ -4,7 +4,7 @@ import Nav from 'react-bootstrap/Nav';
 import logoM from '../../assets/images/logoM.png';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
-import { Button, Modal, Badge, Form, Alert } from 'react-bootstrap';
+import { Button, Modal, Badge, Form, Alert, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Navigation.css'; 
@@ -113,14 +113,34 @@ function Navigation(props) {
     // Admin dashboard state
     const [showAdminDashboard, setShowAdminDashboard] = useState(false);
 
-  // Effect for scroll detection
+  // Effect for scroll detection with throttling for better performance
   useEffect(() => {
+    let ticking = false;
+    
     const handleScroll = () => {
-      setIsSticky(window.scrollY > 100);
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const shouldBeSticky = window.scrollY > 100;
+          setIsSticky(shouldBeSticky);
+          
+          // Add/remove body class for fixed navbar compensation
+          if (shouldBeSticky) {
+            document.body.classList.add('navbar-fixed');
+          } else {
+            document.body.classList.remove('navbar-fixed');
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      // Clean up body class on unmount
+      document.body.classList.remove('navbar-fixed');
+    };
   }, []);
 
   // Keyboard shortcut for login button toggle
@@ -1438,12 +1458,24 @@ function Navigation(props) {
                 </Nav.Link>
 
                 {authUser ? (
-                  <NavDropdown
-                    title={`👤 ${authUser.name}`}
-                    id="user-dropdown"
-                    align="end"
-                    style={{ marginRight: '6px' }}
+                  <OverlayTrigger
+                    placement="bottom"
+                    delay={{ show: 250, hide: 400 }}
+                    overlay={
+                      <Tooltip id="user-tooltip">
+                        {authUser.name}
+                      </Tooltip>
+                    }
                   >
+                    <div>
+                      <NavDropdown
+                        title="👤"
+                        id="user-dropdown"
+                        align="end"
+                        style={{ marginRight: '6px' }}
+                        className="user-dropdown"
+                        menuVariant={currentTheme === 'dark' ? 'dark' : 'light'}
+                      >
                     <NavDropdown.Item>
                       <div style={{ padding: '8px 0' }}>
                         <div><strong>{authUser.name}</strong></div>
@@ -1465,7 +1497,9 @@ function Navigation(props) {
                         </NavDropdown.Item>
                       </>
                     )}
-                  </NavDropdown>
+                      </NavDropdown>
+                    </div>
+                  </OverlayTrigger>
                 ) : showLoginButton ? (
                   <Nav.Link
                     onClick={() => {
