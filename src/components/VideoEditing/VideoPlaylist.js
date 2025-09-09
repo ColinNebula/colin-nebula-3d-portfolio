@@ -6,14 +6,17 @@ const VideoPlaylist = ({
   videos = [], 
   autoAdvance = false, 
   shuffle = false,
+  repeat = false,
   onVideoChange,
   onAutoAdvanceChange,
   onShuffleChange,
+  onRepeatChange,
   className = ""
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [playlistOrder, setPlaylistOrder] = useState([]);
+  const [hasPlayedAll, setHasPlayedAll] = useState(false);
 
   useEffect(() => {
     if (videos.length > 0) {
@@ -28,26 +31,65 @@ const VideoPlaylist = ({
   const currentVideo = videos[playlistOrder[currentIndex]] || videos[0];
 
   const handleVideoEnd = () => {
-    if (autoAdvance && currentIndex < videos.length - 1) {
-      goToNext();
+    if (autoAdvance) {
+      if (currentIndex < videos.length - 1) {
+        goToNext();
+      } else if (repeat) {
+        // Restart playlist from beginning when repeat is on
+        setCurrentIndex(0);
+        setHasPlayedAll(true);
+        if (onVideoChange) onVideoChange(videos[playlistOrder[0]]);
+      } else {
+        setIsPlaying(false);
+        setHasPlayedAll(true);
+      }
     } else {
       setIsPlaying(false);
     }
   };
 
   const goToNext = () => {
+    let nextIndex;
     if (currentIndex < videos.length - 1) {
-      const nextIndex = currentIndex + 1;
-      setCurrentIndex(nextIndex);
-      if (onVideoChange) onVideoChange(videos[playlistOrder[nextIndex]]);
+      nextIndex = currentIndex + 1;
+    } else if (repeat) {
+      // Loop back to beginning when repeat is on
+      nextIndex = 0;
+      setHasPlayedAll(true);
+    } else {
+      return; // No next video available
     }
+    
+    setCurrentIndex(nextIndex);
+    setIsPlaying(false); // Reset playing state for user control
+    if (onVideoChange) onVideoChange(videos[playlistOrder[nextIndex]]);
   };
 
   const goToPrevious = () => {
+    let prevIndex;
     if (currentIndex > 0) {
-      const prevIndex = currentIndex - 1;
-      setCurrentIndex(prevIndex);
-      if (onVideoChange) onVideoChange(videos[playlistOrder[prevIndex]]);
+      prevIndex = currentIndex - 1;
+    } else if (repeat) {
+      // Loop to end when repeat is on
+      prevIndex = videos.length - 1;
+    } else {
+      return; // No previous video available
+    }
+    
+    setCurrentIndex(prevIndex);
+    setIsPlaying(false); // Reset playing state for user control
+    if (onVideoChange) onVideoChange(videos[playlistOrder[prevIndex]]);
+  };
+
+  const shufflePlaylist = () => {
+    if (onShuffleChange) {
+      onShuffleChange(!shuffle);
+    }
+  };
+
+  const toggleRepeat = () => {
+    if (onRepeatChange) {
+      onRepeatChange(!repeat);
     }
   };
 
@@ -94,52 +136,100 @@ const VideoPlaylist = ({
         {/* Video Info and Controls */}
         <Card className="bg-dark text-white border-0 mt-3">
           <Card.Body className="py-3">
-            <div className="d-flex justify-content-between align-items-center mb-2">
+            <div className="d-flex justify-content-between align-items-center mb-3">
               <div>
                 <h6 className="mb-1 fw-bold">{currentVideo?.title || 'Untitled Video'}</h6>
                 <small className="text-white-50">
                   Video {currentIndex + 1} of {videos.length}
                   {currentVideo?.duration && ` • ${currentVideo.duration}`}
+                  {shuffle && <span className="ms-2"><i className="bi bi-shuffle text-warning"></i> Shuffled</span>}
+                  {repeat && <span className="ms-2"><i className="bi bi-repeat text-success"></i> Repeat</span>}
+                  {hasPlayedAll && !repeat && <span className="ms-2"><i className="bi bi-check-circle text-info"></i> Completed</span>}
                 </small>
-              </div>
-              <div className="d-flex gap-2">
-                <Button 
-                  variant="outline-light" 
-                  size="sm" 
-                  onClick={goToPrevious}
-                  disabled={currentIndex === 0}
-                  title="Previous video"
-                >
-                  <i className="bi bi-skip-backward-fill"></i>
-                </Button>
-                <Button 
-                  variant="outline-light" 
-                  size="sm" 
-                  onClick={goToNext}
-                  disabled={currentIndex === videos.length - 1}
-                  title="Next video"
-                >
-                  <i className="bi bi-skip-forward-fill"></i>
-                </Button>
               </div>
             </div>
             
+            {/* Enhanced Media Controls */}
+            <div className="d-flex justify-content-center align-items-center mb-3 gap-2">
+              <Button 
+                variant={shuffle ? "warning" : "outline-light"} 
+                size="sm" 
+                onClick={shufflePlaylist}
+                title={shuffle ? "Disable shuffle" : "Enable shuffle"}
+                className="px-3"
+              >
+                <i className="bi bi-shuffle me-1"></i>
+                {shuffle ? 'On' : 'Off'}
+              </Button>
+              
+              <Button 
+                variant="outline-light" 
+                size="sm" 
+                onClick={goToPrevious}
+                disabled={!repeat && currentIndex === 0}
+                title="Previous video"
+                className="px-3"
+              >
+                <i className="bi bi-skip-backward-fill"></i>
+              </Button>
+              
+              <Button 
+                variant={isPlaying ? "success" : "outline-light"} 
+                size="sm" 
+                onClick={() => setIsPlaying(!isPlaying)}
+                title={isPlaying ? "Pause" : "Play"}
+                className="px-4"
+              >
+                <i className={`bi bi-${isPlaying ? 'pause' : 'play'}-fill`}></i>
+              </Button>
+              
+              <Button 
+                variant="outline-light" 
+                size="sm" 
+                onClick={goToNext}
+                disabled={!repeat && currentIndex === videos.length - 1}
+                title="Next video"
+                className="px-3"
+              >
+                <i className="bi bi-skip-forward-fill"></i>
+              </Button>
+              
+              <Button 
+                variant={repeat ? "success" : "outline-light"} 
+                size="sm" 
+                onClick={toggleRepeat}
+                title={repeat ? "Disable repeat" : "Enable repeat"}
+                className="px-3"
+              >
+                <i className="bi bi-repeat me-1"></i>
+                {repeat ? 'On' : 'Off'}
+              </Button>
+            </div>
+            
             {/* Playlist Options */}
-            <div className="d-flex gap-3 align-items-center">
+            <div className="d-flex flex-wrap gap-3 align-items-center justify-content-center">
               <Form.Check
                 type="switch"
                 id="auto-advance"
-                label="Auto-advance"
+                label={<span><i className="bi bi-fast-forward me-1"></i>Auto-advance</span>}
                 checked={autoAdvance}
                 onChange={(e) => onAutoAdvanceChange && onAutoAdvanceChange(e.target.checked)}
                 className="text-white-50"
               />
               <Form.Check
                 type="switch"
-                id="shuffle"
-                label="Shuffle"
+                id="shuffle-switch"
+                label={<span><i className="bi bi-shuffle me-1"></i>Shuffle</span>}
                 checked={shuffle}
                 onChange={(e) => onShuffleChange && onShuffleChange(e.target.checked)}
+                className="text-white-50"
+              />
+              <Form.Check
+                type="switch"
+                id="repeat-switch"
+                label={<span><i className="bi bi-repeat me-1"></i>Repeat</span>}
+                checked={repeat}
+                onChange={(e) => onRepeatChange && onRepeatChange(e.target.checked)}
                 className="text-white-50"
               />
             </div>

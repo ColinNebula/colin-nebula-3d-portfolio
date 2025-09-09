@@ -6,7 +6,6 @@ import { Card, Container, Button, NavDropdown, Modal, Form, InputGroup } from 'r
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNotifications } from '../../App';
 import VideoPlayer from './VideoPlayer';
-import VideoPlaylist from './VideoPlaylist';
 import './VideoEditing.css';
 
 function VfxVideoEditing() {
@@ -88,13 +87,53 @@ function VfxVideoEditing() {
   ];
 
   // Sample playlist for demonstration
-  const [samplePlaylist] = useState(colinNebulaReels);
-
-  // Playlist state management
-
-  const [showPlaylist, setShowPlaylist] = useState(false);
-  const [playlistAutoAdvance, setPlaylistAutoAdvance] = useState(false);
+  // Enhanced video player state for advanced controls
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const [playlistShuffle, setPlaylistShuffle] = useState(false);
+  const [playlistRepeat, setPlaylistRepeat] = useState(false);
+  
+  // Functions for advanced video controls
+  const handleNextVideo = () => {
+    let nextIndex;
+    if (currentVideoIndex < colinNebulaReels.length - 1) {
+      nextIndex = currentVideoIndex + 1;
+    } else if (playlistRepeat) {
+      nextIndex = 0;
+    } else {
+      return;
+    }
+    
+    setCurrentVideoIndex(nextIndex);
+    setHeroVideoUrl(colinNebulaReels[nextIndex].url);
+    setIsHeroPlaying(false);
+    showNotification(`Now playing: ${colinNebulaReels[nextIndex].title}`, 'info', 2000);
+  };
+  
+  const handlePreviousVideo = () => {
+    let prevIndex;
+    if (currentVideoIndex > 0) {
+      prevIndex = currentVideoIndex - 1;
+    } else if (playlistRepeat) {
+      prevIndex = colinNebulaReels.length - 1;
+    } else {
+      return;
+    }
+    
+    setCurrentVideoIndex(prevIndex);
+    setHeroVideoUrl(colinNebulaReels[prevIndex].url);
+    setIsHeroPlaying(false);
+    showNotification(`Now playing: ${colinNebulaReels[prevIndex].title}`, 'info', 2000);
+  };
+  
+  const handleShuffleToggle = (newShuffle) => {
+    setPlaylistShuffle(newShuffle);
+    showNotification(`Shuffle ${newShuffle ? 'enabled' : 'disabled'}`, 'info', 1500);
+  };
+  
+  const handleRepeatToggle = (newRepeat) => {
+    setPlaylistRepeat(newRepeat);
+    showNotification(`Repeat ${newRepeat ? 'enabled' : 'disabled'}`, 'info', 1500);
+  };
 
   const handleCustomUrl = () => {
     if (customUrl.trim()) {
@@ -107,6 +146,8 @@ function VfxVideoEditing() {
   };
 
   const handleReelSelect = (reel) => {
+    const reelIndex = colinNebulaReels.findIndex(r => r.url === reel.url);
+    setCurrentVideoIndex(reelIndex);
     setHeroVideoUrl(reel.url);
     setIsHeroPlaying(false);
     showNotification(`Now loading: ${reel.title}`, 'info', 2000);
@@ -610,6 +651,17 @@ function VfxVideoEditing() {
                     console.info('analytics', 'hero_video_play', 'youtube');
                   }}
                   onPause={() => setIsHeroPlaying(false)}
+                  onNext={handleNextVideo}
+                  onPrevious={handlePreviousVideo}
+                  onShuffle={handleShuffleToggle}
+                  onRepeat={handleRepeatToggle}
+                  shuffle={playlistShuffle}
+                  repeat={playlistRepeat}
+                  hasNext={currentVideoIndex < colinNebulaReels.length - 1 || playlistRepeat}
+                  hasPrevious={currentVideoIndex > 0 || playlistRepeat}
+                  currentIndex={currentVideoIndex}
+                  totalVideos={colinNebulaReels.length}
+                  showAdvancedControls={true}
                   className="hero-video-player video-player"
                 />
                 
@@ -741,22 +793,6 @@ function VfxVideoEditing() {
                             >
                               <i className="bi bi-camera-video me-1"></i>Daily
                             </Button>
-                            <Button 
-                              variant={showPlaylist ? "warning" : "outline-info"} 
-                              size="sm" 
-                              className="px-2 py-1 fw-semibold flex-grow-1"
-                              onClick={() => {
-                                setShowPlaylist(!showPlaylist);
-                                showNotification(
-                                  showPlaylist ? 'Playlist hidden' : 'Playlist shown', 
-                                  'info', 
-                                  1500
-                                );
-                              }}
-                              title="Toggle playlist mode"
-                            >
-                              <i className="bi bi-collection-play me-1"></i>Playlist
-                            </Button>
                           </div>
                           
                           <Button 
@@ -813,34 +849,6 @@ function VfxVideoEditing() {
               </div>
             </Card>
           </section>
-
-          {/* Playlist Section */}
-          {showPlaylist && (
-            <section className="playlist-showcase mb-5">
-              <div className="text-center mb-4">
-                <h2 className="h2 fw-bold mb-3">
-                  <i className="bi bi-collection-play me-2 text-warning"></i>
-                  Video Playlist
-                </h2>
-                <p className="fs-6 text-muted mb-4">
-                  Experience multi-platform video playlist with auto-advance and shuffle features
-                </p>
-              </div>
-              
-              <VideoPlaylist 
-                videos={samplePlaylist}
-                autoAdvance={playlistAutoAdvance}
-                shuffle={playlistShuffle}
-                onVideoChange={(video) => {
-                  console.log('Playlist video changed:', video.title);
-                  showNotification(`Now playing: ${video.title}`, 'info');
-                }}
-                onAutoAdvanceChange={setPlaylistAutoAdvance}
-                onShuffleChange={setPlaylistShuffle}
-                className="shadow-lg"
-              />
-            </section>
-          )}
 
           {/* Portfolio grid section */}
           <div className="portfolio-grid">

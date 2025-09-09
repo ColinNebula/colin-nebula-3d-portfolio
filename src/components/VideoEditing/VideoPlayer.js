@@ -6,9 +6,20 @@ const VideoPlayer = ({
   onError, 
   onPlay,
   onPause,
+  onNext,
+  onPrevious,
+  onShuffle,
+  onRepeat,
+  shuffle = false,
+  repeat = false,
+  hasNext = false,
+  hasPrevious = false,
+  currentIndex = 0,
+  totalVideos = 1,
   className = '', 
   title = 'Professional Video Player',
   poster = '',
+  showAdvancedControls = true,
   ...props 
 }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -335,7 +346,37 @@ const VideoPlayer = ({
           
           {/* Enhanced Control Buttons */}
           <div className="d-flex align-items-center justify-content-between mt-3">
+            {/* Left Side - Playback Controls */}
             <div className="d-flex gap-2">
+              {/* Shuffle Button (only if advanced controls enabled) */}
+              {showAdvancedControls && (
+                <Button
+                  variant={shuffle ? "warning" : "outline-light"}
+                  size="sm"
+                  onClick={() => onShuffle && onShuffle(!shuffle)}
+                  className="professional-control-btn d-flex align-items-center gap-2"
+                  title={shuffle ? "Disable shuffle" : "Enable shuffle"}
+                  disabled={!onShuffle}
+                >
+                  <i className="bi bi-shuffle"></i>
+                  <span className="d-none d-lg-inline">{shuffle ? 'On' : 'Off'}</span>
+                </Button>
+              )}
+              
+              {/* Previous Button (only if advanced controls enabled) */}
+              {showAdvancedControls && (
+                <Button
+                  variant="outline-light"
+                  size="sm"
+                  onClick={() => onPrevious && onPrevious()}
+                  className="professional-control-btn d-flex align-items-center gap-2"
+                  disabled={!onPrevious || (!hasPrevious && !repeat)}
+                  title="Previous video"
+                >
+                  <i className="bi bi-skip-backward-fill"></i>
+                </Button>
+              )}
+              
               {/* Play/Pause Toggle Button */}
               <Button
                 variant={isPlaying ? "warning" : "success"}
@@ -347,6 +388,35 @@ const VideoPlayer = ({
                 <i className={`bi ${isPlaying ? 'bi-pause-fill' : 'bi-play-fill'}`}></i>
                 <span className="d-none d-sm-inline">{isPlaying ? 'Pause' : 'Play'}</span>
               </Button>
+              
+              {/* Next Button (only if advanced controls enabled) */}
+              {showAdvancedControls && (
+                <Button
+                  variant="outline-light"
+                  size="sm"
+                  onClick={() => onNext && onNext()}
+                  className="professional-control-btn d-flex align-items-center gap-2"
+                  disabled={!onNext || (!hasNext && !repeat)}
+                  title="Next video"
+                >
+                  <i className="bi bi-skip-forward-fill"></i>
+                </Button>
+              )}
+              
+              {/* Repeat Button (only if advanced controls enabled) */}
+              {showAdvancedControls && (
+                <Button
+                  variant={repeat ? "success" : "outline-light"}
+                  size="sm"
+                  onClick={() => onRepeat && onRepeat(!repeat)}
+                  className="professional-control-btn d-flex align-items-center gap-2"
+                  title={repeat ? "Disable repeat" : "Enable repeat"}
+                  disabled={!onRepeat}
+                >
+                  <i className="bi bi-repeat"></i>
+                  <span className="d-none d-lg-inline">{repeat ? 'On' : 'Off'}</span>
+                </Button>
+              )}
               
               {/* Stop Button */}
               <Button
@@ -373,20 +443,38 @@ const VideoPlayer = ({
               </Button>
             </div>
             
-            {/* Status Indicator */}
-            <div className="d-flex align-items-center gap-1">
-              <div 
-                style={{
-                  width: '8px',
-                  height: '8px',
-                  borderRadius: '50%',
-                  backgroundColor: isPlaying ? '#28a745' : '#ffc107',
-                  boxShadow: `0 0 10px ${isPlaying ? '#28a745' : '#ffc107'}`
-                }}
-              ></div>
-              <small className="text-white-50">
-                {isPlaying ? 'Playing' : 'Ready'}
-              </small>
+            {/* Right Side - Status and Info */}
+            <div className="d-flex align-items-center gap-3">
+              {/* Video Counter (only if advanced controls enabled) */}
+              {showAdvancedControls && totalVideos > 1 && (
+                <small className="text-white-50">
+                  {currentIndex + 1} / {totalVideos}
+                </small>
+              )}
+              
+              {/* State Indicators */}
+              {showAdvancedControls && (shuffle || repeat) && (
+                <div className="d-flex align-items-center gap-2">
+                  {shuffle && <i className="bi bi-shuffle text-warning" title="Shuffle enabled"></i>}
+                  {repeat && <i className="bi bi-repeat text-success" title="Repeat enabled"></i>}
+                </div>
+              )}
+              
+              {/* Status Indicator */}
+              <div className="d-flex align-items-center gap-1">
+                <div 
+                  style={{
+                    width: '8px',
+                    height: '8px',
+                    borderRadius: '50%',
+                    backgroundColor: isPlaying ? '#28a745' : '#ffc107',
+                    boxShadow: `0 0 10px ${isPlaying ? '#28a745' : '#ffc107'}`
+                  }}
+                ></div>
+                <small className="text-white-50">
+                  {isPlaying ? 'Playing' : 'Ready'}
+                </small>
+              </div>
             </div>
           </div>
         </div>
